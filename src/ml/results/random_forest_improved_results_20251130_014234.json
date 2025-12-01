@@ -1,0 +1,61 @@
+{
+  "model_type": "RandomForest_Improved",
+  "timestamp": "20251130_014234",
+  "performance_metrics": {
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1_score": 1.0,
+    "confusion_matrix": [
+      [
+        3304,
+        0
+      ],
+      [
+        0,
+        1696
+      ]
+    ],
+    "false_positive_rate": 0.0,
+    "false_negative_rate": 0.0,
+    "train_size": 15000,
+    "test_size": 5000,
+    "total_features": 24,
+    "best_params": {
+      "class_weight": "balanced",
+      "max_depth": 12,
+      "max_features": "sqrt",
+      "min_samples_leaf": 5,
+      "min_samples_split": 10,
+      "n_estimators": 300
+    },
+    "training_time": "2025-11-30T01:42:34.461714"
+  },
+  "feature_importance": {
+    "hour": 0.0007774834026950476,
+    "day_of_week": 0.00035495082482272096,
+    "is_weekend": 8.800910633289826e-05,
+    "is_night": 0.00010775996578607054,
+    "is_business_hours": 9.19674684159856e-05,
+    "recent_attempts": 0.00010746411069523748,
+    "recent_failure_rate": 0.05663797066595156,
+    "historical_success_rate": 0.06137955964008217,
+    "user_success_rate": 0.025215079010878154,
+    "user_has_recent_success": 0.022642024156416765,
+    "ip_user_diversity": 0.17842127250532158,
+    "attempts_per_minute": 0.0,
+    "attempts_per_hour": 8.337614535855734e-05,
+    "country_risk": 0.012191668575680477,
+    "is_high_risk_country": 0.010290810923688507,
+    "is_local_network": 0.0,
+    "is_failed_login": 0.052978933773769776,
+    "is_invalid_user": 0.12821091446974736,
+    "is_successful": 0.16633953739085913,
+    "is_disconnect": 0.0,
+    "rapid_fire_attack": 0.0,
+    "persistent_attack": 0.0,
+    "credential_stuffing": 0.2840812178634981,
+    "new_ip_suspicious": 0.0
+  },
+  "model_path": "src/ml/saved_models/random_forest_improved_20251130_014234.pkl"
+}

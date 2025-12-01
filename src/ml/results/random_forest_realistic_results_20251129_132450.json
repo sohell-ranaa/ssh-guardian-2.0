@@ -1,0 +1,50 @@
+{
+  "model_type": "RandomForest_Realistic",
+  "timestamp": "20251129_132450",
+  "performance_metrics": {
+    "accuracy": 0.8998,
+    "precision": 0.9034702832070204,
+    "recall": 0.8973851030110935,
+    "f1_score": 0.900417412045319,
+    "confusion_matrix": [
+      [
+        2234,
+        242
+      ],
+      [
+        259,
+        2265
+      ]
+    ],
+    "train_size": 15000,
+    "test_size": 5000,
+    "total_features": 14,
+    "best_params": {
+      "class_weight": "balanced",
+      "max_depth": 20,
+      "max_features": "sqrt",
+      "min_samples_split": 10,
+      "n_estimators": 100
+    },
+    "false_positive_rate": 0.09773828756058159,
+    "false_negative_rate": 0.1026148969889065,
+    "training_time": "2025-11-29T13:24:50.244421"
+  },
+  "feature_importance": {
+    "hour": 0.031056403671840888,
+    "day_of_week": 0.017189393576309223,
+    "is_weekend": 0.002406368297854974,
+    "is_night": 0.002363448606049106,
+    "is_business_hours": 0.0027349889914354193,
+    "is_failed_login": 0.02366628680259684,
+    "is_invalid_user": 0.03706690025959313,
+    "is_successful": 0.012078766194037261,
+    "ip_frequency": 0.04041199761939666,
+    "user_frequency": 0.07600812000889043,
+    "is_suspicious_country": 0.6412883423532584,
+    "is_standard_port": 0.04096707360807211,
+    "event_risk_score": 0.03986016832599799,
+    "failed_suspicious_country": 0.03290174168466743
+  },
+  "model_path": "src/ml/saved_models/random_forest_realistic_20251129_132450.pkl"
+}

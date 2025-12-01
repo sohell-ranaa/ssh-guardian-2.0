@@ -20,7 +20,7 @@ DB_CONFIG = {
 try:
     connection_pool = pooling.MySQLConnectionPool(
         pool_name="ssh_guardian_pool",
-        pool_size=10,
+        pool_size=20,
         pool_reset_session=True,
         **DB_CONFIG
     )
