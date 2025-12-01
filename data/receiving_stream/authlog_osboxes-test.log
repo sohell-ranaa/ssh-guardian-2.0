@@ -1,0 +1,6 @@
+2025-11-28T22:28:01.979669-05:00 osboxes sshd[10575]: Invalid user the from 192.168.200.1 port 30361
+2025-11-28T22:28:03.967250-05:00 osboxes sshd[10575]: pam_unix(sshd:auth): check pass; user unknown
+2025-11-28T22:28:03.967576-05:00 osboxes sshd[10575]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=192.168.200.1
+2025-11-28T22:28:05.587894-05:00 osboxes sshd[10575]: Failed password for invalid user the from 192.168.200.1 port 30361 ssh2
+2025-11-28T22:29:36.685559-05:00 osboxes sshd[4830]: pam_unix(sshd:session): session closed for user root
+2025-11-28T22:29:37.329811-05:00 osboxes sshd[4832]: pam_unix(sshd:session): session closed for user root

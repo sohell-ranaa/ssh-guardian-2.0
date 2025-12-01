@@ -1,0 +1,182 @@
+[
+  {
+    "detection_timestamp": "2025-11-29T14:00:19.656457",
+    "event": {
+      "timestamp": "2025-11-29T14:00:19.563758+01:00",
+      "hostname": "ranaworkspace",
+      "event_type": "invalid_user",
+      "username": "ete",
+      "source_ip": "172.16.0.4",
+      "port": 60614,
+      "location_country": "United States",
+      "raw_line": "2025-11-29T14:00:19.563758+01:00 ranaworkspace sshd[71484]: Invalid user ete from 172.16.0.4 port 60614"
+    },
+    "detection": {
+      "is_anomaly": true,
+      "risk_score": 75,
+      "threat_type": "Invalid User Attempt",
+      "confidence": 0.7543165940857557,
+      "features_used": {
+        "hour": 14,
+        "day_of_week": 5,
+        "is_weekend": 1,
+        "is_night": 0,
+        "is_business_hours": 1,
+        "is_failed_login": 0,
+        "is_invalid_user": 1,
+        "is_successful": 0,
+        "ip_frequency": 1,
+        "user_frequency": 1,
+        "is_suspicious_country": 0,
+        "is_standard_port": 0,
+        "event_risk_score": 4,
+        "failed_suspicious_country": 0
+      },
+      "timestamp": "2025-11-29T14:00:19.656116"
+    }
+  },
+  {
+    "detection_timestamp": "2025-11-29T14:00:24.236008",
+    "event": {
+      "timestamp": "2025-11-29T14:00:24.175299+01:00",
+      "hostname": "ranaworkspace",
+      "event_type": "failed_password",
+      "username": "ete",
+      "source_ip": "172.16.0.4",
+      "port": 60614,
+      "location_country": "United States",
+      "raw_line": "2025-11-29T14:00:24.175299+01:00 ranaworkspace sshd[71484]: Failed password for invalid user ete from 172.16.0.4 port 60614 ssh2"
+    },
+    "detection": {
+      "is_anomaly": true,
+      "risk_score": 62,
+      "threat_type": "Suspicious Activity",
+      "confidence": 0.6268610621945101,
+      "features_used": {
+        "hour": 14,
+        "day_of_week": 5,
+        "is_weekend": 1,
+        "is_night": 0,
+        "is_business_hours": 1,
+        "is_failed_login": 1,
+        "is_invalid_user": 0,
+        "is_successful": 0,
+        "ip_frequency": 2,
+        "user_frequency": 2,
+        "is_suspicious_country": 0,
+        "is_standard_port": 0,
+        "event_risk_score": 3,
+        "failed_suspicious_country": 0
+      },
+      "timestamp": "2025-11-29T14:00:24.235756"
+    }
+  },
+  {
+    "detection_timestamp": "2025-11-29T14:00:32.393165",
+    "event": {
+      "timestamp": "2025-11-29T14:00:32.304515+01:00",
+      "hostname": "ranaworkspace",
+      "event_type": "failed_password",
+      "username": "ete",
+      "source_ip": "172.16.0.4",
+      "port": 60614,
+      "location_country": "United States",
+      "raw_line": "2025-11-29T14:00:32.304515+01:00 ranaworkspace sshd[71484]: Failed password for invalid user ete from 172.16.0.4 port 60614 ssh2"
+    },
+    "detection": {
+      "is_anomaly": true,
+      "risk_score": 62,
+      "threat_type": "Suspicious Activity",
+      "confidence": 0.6268610621945101,
+      "features_used": {
+        "hour": 14,
+        "day_of_week": 5,
+        "is_weekend": 1,
+        "is_night": 0,
+        "is_business_hours": 1,
+        "is_failed_login": 1,
+        "is_invalid_user": 0,
+        "is_successful": 0,
+        "ip_frequency": 3,
+        "user_frequency": 3,
+        "is_suspicious_country": 0,
+        "is_standard_port": 0,
+        "event_risk_score": 3,
+        "failed_suspicious_country": 0
+      },
+      "timestamp": "2025-11-29T14:00:32.392992"
+    }
+  },
+  {
+    "detection_timestamp": "2025-11-29T14:00:38.545598",
+    "event": {
+      "timestamp": "2025-11-29T14:00:38.370988+01:00",
+      "hostname": "ranaworkspace",
+      "event_type": "failed_password",
+      "username": "ete",
+      "source_ip": "172.16.0.4",
+      "port": 60614,
+      "location_country": "United States",
+      "raw_line": "2025-11-29T14:00:38.370988+01:00 ranaworkspace sshd[71484]: Failed password for invalid user ete from 172.16.0.4 port 60614 ssh2"
+    },
+    "detection": {
+      "is_anomaly": true,
+      "risk_score": 62,
+      "threat_type": "Suspicious Activity",
+      "confidence": 0.6268610621945101,
+      "features_used": {
+        "hour": 14,
+        "day_of_week": 5,
+        "is_weekend": 1,
+        "is_night": 0,
+        "is_business_hours": 1,
+        "is_failed_login": 1,
+        "is_invalid_user": 0,
+        "is_successful": 0,
+        "ip_frequency": 4,
+        "user_frequency": 4,
+        "is_suspicious_country": 0,
+        "is_standard_port": 0,
+        "event_risk_score": 3,
+        "failed_suspicious_country": 0
+      },
+      "timestamp": "2025-11-29T14:00:38.545450"
+    }
+  },
+  {
+    "detection_timestamp": "2025-11-29T14:00:45.052701",
+    "event": {
+      "timestamp": "2025-11-29T14:00:44.958051+01:00",
+      "hostname": "ranaworkspace",
+      "event_type": "invalid_user",
+      "username": "ete",
+      "source_ip": "172.16.0.4",
+      "port": 60616,
+      "location_country": "United States",
+      "raw_line": "2025-11-29T14:00:44.958051+01:00 ranaworkspace sshd[71612]: Invalid user ete from 172.16.0.4 port 60616"
+    },
+    "detection": {
+      "is_anomaly": true,
+      "risk_score": 75,
+      "threat_type": "Invalid User Attempt",
+      "confidence": 0.7543165940857557,
+      "features_used": {
+        "hour": 14,
+        "day_of_week": 5,
+        "is_weekend": 1,
+        "is_night": 0,
+        "is_business_hours": 1,
+        "is_failed_login": 0,
+        "is_invalid_user": 1,
+        "is_successful": 0,
+        "ip_frequency": 5,
+        "user_frequency": 5,
+        "is_suspicious_country": 0,
+        "is_standard_port": 0,
+        "event_risk_score": 4,
+        "failed_suspicious_country": 0
+      },
+      "timestamp": "2025-11-29T14:00:45.052369"
+    }
+  }
+]

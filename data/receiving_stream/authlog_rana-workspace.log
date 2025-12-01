@@ -1,0 +1,55 @@
+2025-11-30T09:06:54.329670+01:00 ranaworkspace sshd[107433]: pam_unix(sshd:session): session closed for user root
+2025-11-30T09:06:54.544948+01:00 ranaworkspace sshd[107452]: pam_unix(sshd:session): session closed for user root
+2025-11-30T09:07:09.118435+01:00 ranaworkspace sshd[109777]: Invalid user eee from 172.16.0.4 port 24302
+2025-11-30T09:07:31.306597+01:00 ranaworkspace sshd[109777]: pam_unix(sshd:auth): check pass; user unknown
+2025-11-30T09:07:31.306912+01:00 ranaworkspace sshd[109777]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=172.16.0.4
+2025-11-30T09:07:32.765082+01:00 ranaworkspace sshd[109777]: Failed password for invalid user eee from 172.16.0.4 port 24302 ssh2
+2025-11-30T09:07:35.998635+01:00 ranaworkspace sshd[109777]: pam_unix(sshd:auth): check pass; user unknown
+2025-11-30T09:07:38.004523+01:00 ranaworkspace sshd[109777]: Failed password for invalid user eee from 172.16.0.4 port 24302 ssh2
+2025-11-30T09:07:43.850723+01:00 ranaworkspace sshd[109777]: pam_unix(sshd:auth): check pass; user unknown
+2025-11-30T09:07:45.289025+01:00 ranaworkspace sshd[109777]: Failed password for invalid user eee from 172.16.0.4 port 24302 ssh2
+2025-11-30T09:07:54.214651+01:00 ranaworkspace sshd[109777]: pam_unix(sshd:auth): check pass; user unknown
+2025-11-30T09:07:56.496323+01:00 ranaworkspace sshd[109777]: Failed password for invalid user eee from 172.16.0.4 port 24302 ssh2
+2025-11-30T09:08:00.380903+01:00 ranaworkspace sshd[109777]: pam_unix(sshd:auth): check pass; user unknown
+2025-11-30T09:08:02.822586+01:00 ranaworkspace sshd[109777]: Failed password for invalid user eee from 172.16.0.4 port 24302 ssh2
+2025-11-30T09:08:06.278516+01:00 ranaworkspace sshd[109777]: pam_unix(sshd:auth): check pass; user unknown
+2025-11-30T09:08:08.876284+01:00 ranaworkspace sshd[109777]: Failed password for invalid user eee from 172.16.0.4 port 24302 ssh2
+2025-11-30T09:08:09.041170+01:00 ranaworkspace sshd[109777]: error: maximum authentication attempts exceeded for invalid user eee from 172.16.0.4 port 24302 ssh2 [preauth]
+2025-11-30T09:08:09.041398+01:00 ranaworkspace sshd[109777]: Disconnecting invalid user eee 172.16.0.4 port 24302: Too many authentication failures [preauth]
+2025-11-30T09:08:09.041949+01:00 ranaworkspace sshd[109777]: PAM 5 more authentication failures; logname= uid=0 euid=0 tty=ssh ruser= rhost=172.16.0.4
+2025-11-30T09:08:09.042073+01:00 ranaworkspace sshd[109777]: PAM service(sshd) ignoring max retries; 6 > 3
+2025-11-30T09:08:40.149032+01:00 ranaworkspace sshd[110432]: Accepted password for root from 172.16.0.4 port 1373 ssh2
+2025-11-30T09:08:40.150892+01:00 ranaworkspace sshd[110432]: pam_unix(sshd:session): session opened for user root(uid=0) by root(uid=0)
+2025-11-30T09:08:41.881448+01:00 ranaworkspace sshd[110451]: Accepted password for root from 172.16.0.4 port 1374 ssh2
+2025-11-30T09:08:41.883463+01:00 ranaworkspace sshd[110451]: pam_unix(sshd:session): session opened for user root(uid=0) by root(uid=0)
+2025-11-30T10:13:41.987693+01:00 ranaworkspace sshd[104821]: pam_unix(sshd:session): session closed for user root
+2025-11-30T11:22:51.236841+01:00 ranaworkspace sshd[110451]: pam_unix(sshd:session): session closed for user root
+2025-11-30T12:10:54.828018+01:00 ranaworkspace sshd[110432]: pam_unix(sshd:session): session closed for user root
+2025-11-30T12:24:12.685325+01:00 ranaworkspace sshd[140182]: Accepted publickey for root from 172.16.0.4 port 41644 ssh2: ED25519 SHA256:TmokTsNWbZF9m8TkqHpBVVjP8H75NzL2tx9C+h1UgB4
+2025-11-30T12:24:12.690468+01:00 ranaworkspace sshd[140182]: pam_unix(sshd:session): session opened for user root(uid=0) by root(uid=0)
+2025-11-30T13:28:31.088423+01:00 ranaworkspace sshd[145321]: Accepted password for root from 172.16.0.4 port 6564 ssh2
+2025-11-30T13:28:31.091727+01:00 ranaworkspace sshd[145321]: pam_unix(sshd:session): session opened for user root(uid=0) by root(uid=0)
+2025-11-30T13:28:32.665295+01:00 ranaworkspace sshd[145340]: Accepted password for root from 172.16.0.4 port 25879 ssh2
+2025-11-30T13:28:32.665915+01:00 ranaworkspace sshd[145340]: pam_unix(sshd:session): session opened for user root(uid=0) by root(uid=0)
+2025-11-30T14:54:36.316223+01:00 ranaworkspace sshd[208384]: Invalid user eee from 172.16.0.4 port 47215
+2025-11-30T14:54:39.499530+01:00 ranaworkspace sshd[208384]: pam_unix(sshd:auth): check pass; user unknown
+2025-11-30T14:54:39.499946+01:00 ranaworkspace sshd[208384]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=172.16.0.4
+2025-11-30T14:54:41.611087+01:00 ranaworkspace sshd[208384]: Failed password for invalid user eee from 172.16.0.4 port 47215 ssh2
+2025-11-30T14:54:44.038801+01:00 ranaworkspace sshd[208384]: pam_unix(sshd:auth): check pass; user unknown
+2025-11-30T14:54:46.171295+01:00 ranaworkspace sshd[208384]: Failed password for invalid user eee from 172.16.0.4 port 47215 ssh2
+2025-11-30T14:54:48.732468+01:00 ranaworkspace sshd[208384]: pam_unix(sshd:auth): check pass; user unknown
+2025-11-30T14:54:50.414870+01:00 ranaworkspace sshd[208384]: Failed password for invalid user eee from 172.16.0.4 port 47215 ssh2
+2025-11-30T14:54:53.687629+01:00 ranaworkspace sshd[208384]: pam_unix(sshd:auth): check pass; user unknown
+2025-11-30T14:54:55.722145+01:00 ranaworkspace sshd[208384]: Failed password for invalid user eee from 172.16.0.4 port 47215 ssh2
+2025-11-30T14:55:01.395396+01:00 ranaworkspace sshd[208384]: pam_unix(sshd:auth): check pass; user unknown
+2025-11-30T14:55:02.861264+01:00 ranaworkspace sshd[208384]: Failed password for invalid user eee from 172.16.0.4 port 47215 ssh2
+2025-11-30T15:19:25.762676+01:00 ranaworkspace sshd[233942]: Invalid user eee from 172.16.0.4 port 25471
+2025-11-30T15:19:29.133085+01:00 ranaworkspace sshd[233942]: pam_unix(sshd:auth): check pass; user unknown
+2025-11-30T15:19:29.161815+01:00 ranaworkspace sshd[233942]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=172.16.0.4
+2025-11-30T15:19:31.131004+01:00 ranaworkspace sshd[233942]: Failed password for invalid user eee from 172.16.0.4 port 25471 ssh2
+2025-11-30T16:59:49.094770+01:00 ranaworkspace sshd[140182]: pam_unix(sshd:session): session closed for user root
+2025-11-30T17:04:44.499736+01:00 ranaworkspace sshd[238562]: Accepted publickey for root from 172.16.0.4 port 63783 ssh2: ED25519 SHA256:TmokTsNWbZF9m8TkqHpBVVjP8H75NzL2tx9C+h1UgB4
+2025-11-30T17:04:44.508436+01:00 ranaworkspace sshd[238562]: pam_unix(sshd:session): session opened for user root(uid=0) by root(uid=0)
+2025-11-30T17:42:57.764212+01:00 ranaworkspace sshd[145340]: pam_unix(sshd:session): session closed for user root
+2025-11-30T18:08:50.148020+01:00 ranaworkspace sshd[238562]: pam_unix(sshd:session): session closed for user root
+2025-11-30T18:44:07.783482+01:00 ranaworkspace sshd[145321]: pam_unix(sshd:session): session closed for user root

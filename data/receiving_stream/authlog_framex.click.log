@@ -1,0 +1,73 @@
+2025-11-29T09:39:20.917510+06:00 framex sshd[1212368]: Accepted password for framex1 from 161.248.188.102 port 37232 ssh2
+2025-11-29T09:39:20.920120+06:00 framex sshd[1212368]: pam_unix(sshd:session): session opened for user framex1(uid=1001) by framex1(uid=0)
+2025-11-29T09:39:23.438666+06:00 framex sshd[1212387]: Accepted password for framex1 from 161.248.188.102 port 49952 ssh2
+2025-11-29T09:39:23.441884+06:00 framex sshd[1212387]: pam_unix(sshd:session): session opened for user framex1(uid=1001) by framex1(uid=0)
+2025-11-29T09:40:53.116667+06:00 framex sshd[1212368]: pam_unix(sshd:session): session closed for user framex1
+2025-11-29T09:40:53.671538+06:00 framex sshd[1212387]: pam_unix(sshd:session): session closed for user framex1
+2025-11-29T09:41:08.405094+06:00 framex sshd[1207437]: pam_unix(sshd:session): session closed for user framex1
+2025-11-29T09:41:08.847600+06:00 framex sshd[1207456]: pam_unix(sshd:session): session closed for user framex1
+2025-11-30T11:41:53.690609+06:00 framex sshd[1221508]: Accepted password for framex1 from 161.248.188.102 port 49330 ssh2
+2025-11-30T11:41:53.694448+06:00 framex sshd[1221508]: pam_unix(sshd:session): session opened for user framex1(uid=1001) by framex1(uid=0)
+2025-11-30T11:41:56.631999+06:00 framex sshd[1221527]: Accepted password for framex1 from 161.248.188.102 port 49342 ssh2
+2025-11-30T11:41:56.636629+06:00 framex sshd[1221527]: pam_unix(sshd:session): session opened for user framex1(uid=1001) by framex1(uid=0)
+2025-11-30T11:44:15.171102+06:00 framex sshd[1221508]: pam_unix(sshd:session): session closed for user framex1
+2025-11-30T11:44:15.689537+06:00 framex sshd[1221527]: pam_unix(sshd:session): session closed for user framex1
+2025-11-30T11:44:20.192024+06:00 framex sshd[1222536]: Accepted password for framex1 from 161.248.188.102 port 47818 ssh2
+2025-11-30T11:44:20.196966+06:00 framex sshd[1222536]: pam_unix(sshd:session): session opened for user framex1(uid=1001) by framex1(uid=0)
+2025-11-30T11:44:23.010700+06:00 framex sshd[1222556]: Accepted password for framex1 from 161.248.188.102 port 47828 ssh2
+2025-11-30T11:44:23.012984+06:00 framex sshd[1222556]: pam_unix(sshd:session): session opened for user framex1(uid=1001) by framex1(uid=0)
+2025-11-30T11:44:30.746719+06:00 framex sshd[1222536]: pam_unix(sshd:session): session closed for user framex1
+2025-11-30T11:44:31.528710+06:00 framex sshd[1222556]: pam_unix(sshd:session): session closed for user framex1
+2025-11-30T11:58:33.929698+06:00 framex sshd[1222779]: Accepted password for framex1 from 161.248.188.102 port 57272 ssh2
+2025-11-30T11:58:33.933781+06:00 framex sshd[1222779]: pam_unix(sshd:session): session opened for user framex1(uid=1001) by framex1(uid=0)
+2025-11-30T11:58:36.512944+06:00 framex sshd[1222798]: Accepted password for framex1 from 161.248.188.102 port 57298 ssh2
+2025-11-30T11:58:36.516129+06:00 framex sshd[1222798]: pam_unix(sshd:session): session opened for user framex1(uid=1001) by framex1(uid=0)
+2025-11-30T11:58:42.490305+06:00 framex sshd[1222779]: pam_unix(sshd:session): session closed for user framex1
+2025-11-30T11:58:43.160751+06:00 framex sshd[1222798]: pam_unix(sshd:session): session closed for user framex1
+2025-11-30T11:58:59.061798+06:00 framex sshd[1222954]: Invalid user www from 161.248.188.102 port 39148
+2025-11-30T11:59:02.295861+06:00 framex sshd[1222954]: pam_unix(sshd:auth): check pass; user unknown
+2025-11-30T11:59:02.296336+06:00 framex sshd[1222954]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=161.248.188.102
+2025-11-30T11:59:04.442939+06:00 framex sshd[1222954]: Failed password for invalid user www from 161.248.188.102 port 39148 ssh2
+2025-11-30T11:59:11.409847+06:00 framex sshd[1222954]: pam_unix(sshd:auth): check pass; user unknown
+2025-11-30T11:59:13.792339+06:00 framex sshd[1222954]: Failed password for invalid user www from 161.248.188.102 port 39148 ssh2
+2025-11-30T11:59:19.450045+06:00 framex sshd[1222954]: pam_unix(sshd:auth): check pass; user unknown
+2025-11-30T11:59:20.929688+06:00 framex sshd[1222954]: Failed password for invalid user www from 161.248.188.102 port 39148 ssh2
+2025-11-30T11:59:28.351448+06:00 framex sshd[1222954]: pam_unix(sshd:auth): check pass; user unknown
+2025-11-30T11:59:30.066914+06:00 framex sshd[1222954]: Failed password for invalid user www from 161.248.188.102 port 39148 ssh2
+2025-11-30T11:59:42.832951+06:00 framex sshd[1222954]: pam_unix(sshd:auth): check pass; user unknown
+2025-11-30T11:59:44.804138+06:00 framex sshd[1222954]: Failed password for invalid user www from 161.248.188.102 port 39148 ssh2
+2025-11-30T11:59:51.458945+06:00 framex sshd[1222954]: pam_unix(sshd:auth): check pass; user unknown
+2025-11-30T11:59:53.666423+06:00 framex sshd[1222954]: Failed password for invalid user www from 161.248.188.102 port 39148 ssh2
+2025-11-30T11:59:54.107683+06:00 framex sshd[1222954]: error: maximum authentication attempts exceeded for invalid user www from 161.248.188.102 port 39148 ssh2 [preauth]
+2025-11-30T11:59:54.108788+06:00 framex sshd[1222954]: Disconnecting invalid user www 161.248.188.102 port 39148: Too many authentication failures [preauth]
+2025-11-30T11:59:54.109163+06:00 framex sshd[1222954]: PAM 5 more authentication failures; logname= uid=0 euid=0 tty=ssh ruser= rhost=161.248.188.102
+2025-11-30T11:59:54.109717+06:00 framex sshd[1222954]: PAM service(sshd) ignoring max retries; 6 > 3
+2025-11-30T12:06:18.443642+06:00 framex sshd[1222989]: Invalid user www from 161.248.188.102 port 54526
+2025-11-30T12:06:21.026170+06:00 framex sshd[1222989]: pam_unix(sshd:auth): check pass; user unknown
+2025-11-30T12:06:21.026718+06:00 framex sshd[1222989]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=161.248.188.102
+2025-11-30T12:06:23.107562+06:00 framex sshd[1222989]: Failed password for invalid user www from 161.248.188.102 port 54526 ssh2
+2025-11-30T12:06:27.716711+06:00 framex sshd[1222989]: pam_unix(sshd:auth): check pass; user unknown
+2025-11-30T12:06:29.952264+06:00 framex sshd[1222989]: Failed password for invalid user www from 161.248.188.102 port 54526 ssh2
+2025-11-30T12:11:52.475435+06:00 framex sshd[1223016]: Invalid user www from 161.248.188.102 port 59312
+2025-11-30T12:11:57.847377+06:00 framex sshd[1223016]: pam_unix(sshd:auth): check pass; user unknown
+2025-11-30T12:11:57.848179+06:00 framex sshd[1223016]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=161.248.188.102
+2025-11-30T12:11:59.387104+06:00 framex sshd[1223016]: Failed password for invalid user www from 161.248.188.102 port 59312 ssh2
+2025-11-30T12:12:02.801783+06:00 framex sshd[1223016]: pam_unix(sshd:auth): check pass; user unknown
+2025-11-30T12:12:04.361860+06:00 framex sshd[1223016]: Failed password for invalid user www from 161.248.188.102 port 59312 ssh2
+2025-11-30T12:12:07.320233+06:00 framex sshd[1223016]: pam_unix(sshd:auth): check pass; user unknown
+2025-11-30T12:12:09.567292+06:00 framex sshd[1223016]: Failed password for invalid user www from 161.248.188.102 port 59312 ssh2
+2025-11-30T12:12:14.119373+06:00 framex sshd[1223016]: pam_unix(sshd:auth): check pass; user unknown
+2025-11-30T12:12:15.995035+06:00 framex sshd[1223016]: Failed password for invalid user www from 161.248.188.102 port 59312 ssh2
+2025-11-30T12:12:21.104978+06:00 framex sshd[1223016]: pam_unix(sshd:auth): check pass; user unknown
+2025-11-30T12:12:22.604645+06:00 framex sshd[1223016]: Failed password for invalid user www from 161.248.188.102 port 59312 ssh2
+2025-11-30T12:12:30.762237+06:00 framex sshd[1223016]: pam_unix(sshd:auth): check pass; user unknown
+2025-11-30T12:12:32.833582+06:00 framex sshd[1223016]: Failed password for invalid user www from 161.248.188.102 port 59312 ssh2
+2025-11-30T12:12:33.410600+06:00 framex sshd[1223016]: error: maximum authentication attempts exceeded for invalid user www from 161.248.188.102 port 59312 ssh2 [preauth]
+2025-11-30T12:12:33.411160+06:00 framex sshd[1223016]: Disconnecting invalid user www 161.248.188.102 port 59312: Too many authentication failures [preauth]
+2025-11-30T12:12:33.411430+06:00 framex sshd[1223016]: PAM 5 more authentication failures; logname= uid=0 euid=0 tty=ssh ruser= rhost=161.248.188.102
+2025-11-30T12:12:33.411900+06:00 framex sshd[1223016]: PAM service(sshd) ignoring max retries; 6 > 3
+2025-11-30T13:25:16.608032+06:00 framex sshd[1223378]: Invalid user www from 161.248.188.102 port 45238
+2025-11-30T13:25:18.596169+06:00 framex sshd[1223378]: pam_unix(sshd:auth): check pass; user unknown
+2025-11-30T13:25:18.597109+06:00 framex sshd[1223378]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=161.248.188.102
+2025-11-30T13:25:20.983310+06:00 framex sshd[1223378]: Failed password for invalid user www from 161.248.188.102 port 45238 ssh2
+2025-11-30T23:49:19.409334+06:00 framex sshd[1227291]: Connection reset by 161.248.188.102 port 34764 [preauth]

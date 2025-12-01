@@ -1,0 +1,14 @@
+2025-11-28T22:19:11.420992-05:00 osboxes sshd[3100]: Received disconnect from 192.168.200.1 port 59293:11: disconnected by user
+2025-11-28T22:19:11.421656-05:00 osboxes sshd[3100]: Disconnected from user root 192.168.200.1 port 59293
+2025-11-28T22:19:11.422844-05:00 osboxes sshd[3100]: pam_unix(sshd:session): session closed for user root
+2025-11-28T22:19:57.902236-05:00 osboxes sshd[6771]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=192.168.200.1  user=root
+2025-11-28T22:19:59.804762-05:00 osboxes sshd[6771]: Failed password for root from 192.168.200.1 port 49945 ssh2
+2025-11-28T22:20:34.530410-05:00 osboxes sshd[6771]: Failed password for root from 192.168.200.1 port 49945 ssh2
+2025-11-28T22:21:53.445512-05:00 osboxes sshd[6771]: Failed password for root from 192.168.200.1 port 49945 ssh2
+2025-11-28T22:21:54.643967-05:00 osboxes sshd[6771]: Connection reset by authenticating user root 192.168.200.1 port 49945 [preauth]
+2025-11-28T22:21:54.644545-05:00 osboxes sshd[6771]: PAM 2 more authentication failures; logname= uid=0 euid=0 tty=ssh ruser= rhost=192.168.200.1  user=root
+2025-11-28T22:23:06.123560-05:00 osboxes sshd[7892]: Invalid user dfdf from 192.168.200.1 port 26497
+2025-11-28T22:23:07.862225-05:00 osboxes sshd[7892]: pam_unix(sshd:auth): check pass; user unknown
+2025-11-28T22:23:07.862343-05:00 osboxes sshd[7892]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=192.168.200.1
+2025-11-28T22:23:09.513484-05:00 osboxes sshd[7892]: Failed password for invalid user dfdf from 192.168.200.1 port 26497 ssh2
+2025-11-28T22:23:35.390616-05:00 osboxes sshd[7892]: Connection reset by invalid user dfdf 192.168.200.1 port 26497 [preauth]

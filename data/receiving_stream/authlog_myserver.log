@@ -1,0 +1,45 @@
+2025-11-29T03:50:41.096701+01:00 ranaworkspace sshd[31631]: Invalid user fakeuser from ::1 port 58756
+2025-11-29T03:50:44.185365+01:00 ranaworkspace sshd[31631]: pam_unix(sshd:auth): check pass; user unknown
+2025-11-29T03:50:44.185632+01:00 ranaworkspace sshd[31631]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=::1
+2025-11-29T03:50:46.097573+01:00 ranaworkspace sshd[31631]: Failed password for invalid user fakeuser from ::1 port 58756 ssh2
+2025-11-29T03:50:50.325465+01:00 ranaworkspace sshd[31631]: pam_unix(sshd:auth): check pass; user unknown
+2025-11-29T03:50:52.062938+01:00 ranaworkspace sshd[31631]: Failed password for invalid user fakeuser from ::1 port 58756 ssh2
+2025-11-29T03:50:55.191513+01:00 ranaworkspace sshd[31631]: pam_unix(sshd:auth): check pass; user unknown
+2025-11-29T03:50:57.280041+01:00 ranaworkspace sshd[31631]: Failed password for invalid user fakeuser from ::1 port 58756 ssh2
+2025-11-29T03:50:58.491870+01:00 ranaworkspace sshd[31631]: Connection closed by invalid user fakeuser ::1 port 58756 [preauth]
+2025-11-29T03:50:58.492252+01:00 ranaworkspace sshd[31631]: PAM 2 more authentication failures; logname= uid=0 euid=0 tty=ssh ruser= rhost=::1
+2025-11-29T03:54:22.803557+01:00 ranaworkspace sshd[32080]: Invalid user testface from ::1 port 35344
+2025-11-29T03:54:25.888861+01:00 ranaworkspace sshd[32080]: pam_unix(sshd:auth): check pass; user unknown
+2025-11-29T03:54:25.889098+01:00 ranaworkspace sshd[32080]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=::1
+2025-11-29T03:54:28.474419+01:00 ranaworkspace sshd[32080]: Failed password for invalid user testface from ::1 port 35344 ssh2
+2025-11-29T03:54:52.976973+01:00 ranaworkspace sshd[32080]: pam_unix(sshd:auth): check pass; user unknown
+2025-11-29T03:54:54.935657+01:00 ranaworkspace sshd[32080]: Failed password for invalid user testface from ::1 port 35344 ssh2
+2025-11-29T03:55:28.171825+01:00 ranaworkspace sshd[32080]: pam_unix(sshd:auth): check pass; user unknown
+2025-11-29T03:55:29.738081+01:00 ranaworkspace sshd[32080]: Failed password for invalid user testface from ::1 port 35344 ssh2
+2025-11-29T03:55:30.368340+01:00 ranaworkspace sshd[32080]: Connection closed by invalid user testface ::1 port 35344 [preauth]
+2025-11-29T03:55:30.368735+01:00 ranaworkspace sshd[32080]: PAM 2 more authentication failures; logname= uid=0 euid=0 tty=ssh ruser= rhost=::1
+2025-11-29T03:55:46.930420+01:00 ranaworkspace sshd[32453]: Accepted password for root from ::1 port 57414 ssh2
+2025-11-29T03:55:46.932630+01:00 ranaworkspace sshd[32453]: pam_unix(sshd:session): session opened for user root(uid=0) by root(uid=0)
+2025-11-29T03:56:12.706571+01:00 ranaworkspace sshd[32453]: Received disconnect from ::1 port 57414:11: disconnected by user
+2025-11-29T03:56:12.707018+01:00 ranaworkspace sshd[32453]: Disconnected from user root ::1 port 57414
+2025-11-29T03:56:12.707125+01:00 ranaworkspace sshd[32453]: pam_unix(sshd:session): session closed for user root
+2025-11-29T03:56:21.189666+01:00 ranaworkspace sshd[32710]: Accepted password for root from ::1 port 51226 ssh2
+2025-11-29T03:56:21.192562+01:00 ranaworkspace sshd[32710]: pam_unix(sshd:session): session opened for user root(uid=0) by root(uid=0)
+2025-11-29T03:58:46.311921+01:00 ranaworkspace sshd[32922]: Accepted publickey for root from 172.16.0.4 port 4844 ssh2: ED25519 SHA256:TmokTsNWbZF9m8TkqHpBVVjP8H75NzL2tx9C+h1UgB4
+2025-11-29T03:58:46.313218+01:00 ranaworkspace sshd[32922]: pam_unix(sshd:session): session opened for user root(uid=0) by root(uid=0)
+2025-11-29T03:59:30.778364+01:00 ranaworkspace sshd[32922]: Received disconnect from 172.16.0.4 port 4844:11: disconnected by user
+2025-11-29T03:59:30.779068+01:00 ranaworkspace sshd[32922]: Disconnected from user root 172.16.0.4 port 4844
+2025-11-29T03:59:30.779225+01:00 ranaworkspace sshd[32922]: pam_unix(sshd:session): session closed for user root
+2025-11-29T03:59:37.367529+01:00 ranaworkspace sshd[33090]: Invalid user abc from 172.16.0.4 port 7322
+2025-11-29T04:00:09.728940+01:00 ranaworkspace sshd[33090]: pam_unix(sshd:auth): check pass; user unknown
+2025-11-29T04:00:09.729699+01:00 ranaworkspace sshd[33090]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=172.16.0.4
+2025-11-29T04:00:12.208693+01:00 ranaworkspace sshd[33090]: Failed password for invalid user abc from 172.16.0.4 port 7322 ssh2
+2025-11-29T04:01:04.624074+01:00 ranaworkspace sshd[33090]: Connection reset by invalid user abc 172.16.0.4 port 7322 [preauth]
+2025-11-29T04:02:29.525639+01:00 ranaworkspace sshd[33295]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=172.16.0.4  user=root
+2025-11-29T04:02:31.890529+01:00 ranaworkspace sshd[33295]: Failed password for root from 172.16.0.4 port 11634 ssh2
+2025-11-29T04:04:13.924127+01:00 ranaworkspace sshd[33295]: message repeated 2 times: [ Failed password for root from 172.16.0.4 port 11634 ssh2]
+2025-11-29T04:04:15.362576+01:00 ranaworkspace sshd[33295]: Connection closed by authenticating user root 172.16.0.4 port 11634 [preauth]
+2025-11-29T04:04:15.363459+01:00 ranaworkspace sshd[33295]: PAM 2 more authentication failures; logname= uid=0 euid=0 tty=ssh ruser= rhost=172.16.0.4  user=root
+2025-11-29T04:07:00.587301+01:00 ranaworkspace sshd[32710]: Received disconnect from ::1 port 51226:11: disconnected by user
+2025-11-29T04:07:00.588384+01:00 ranaworkspace sshd[32710]: Disconnected from user root ::1 port 51226
+2025-11-29T04:07:00.588520+01:00 ranaworkspace sshd[32710]: pam_unix(sshd:session): session closed for user root

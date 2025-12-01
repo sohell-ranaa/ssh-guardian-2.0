@@ -1,0 +1,298 @@
+{
+  "detection_summary": {
+    "total_detections": 28,
+    "threat_types": {
+      "Invalid User Attempt": 4,
+      "Suspicious Activity": 6,
+      "Brute Force Attack": 18
+    },
+    "risk_score_distribution": {
+      "high": 0,
+      "medium": 28,
+      "low": 0
+    },
+    "analysis_timestamp": "2025-11-30T14:54:16.197668"
+  },
+  "detections": [
+    {
+      "event_index": 2,
+      "timestamp": "2025-11-30T09:07:09.118435+01:00",
+      "source_ip": "172.16.0.4",
+      "username": "eee",
+      "event_type": "invalid_user",
+      "threat_type": "Invalid User Attempt",
+      "risk_score": 79,
+      "confidence": 0.7977228479338504
+    },
+    {
+      "event_index": 5,
+      "timestamp": "2025-11-30T09:07:32.765082+01:00",
+      "source_ip": "172.16.0.4",
+      "username": "eee",
+      "event_type": "failed_password",
+      "threat_type": "Suspicious Activity",
+      "risk_score": 72,
+      "confidence": 0.7224558912749319
+    },
+    {
+      "event_index": 7,
+      "timestamp": "2025-11-30T09:07:38.004523+01:00",
+      "source_ip": "172.16.0.4",
+      "username": "eee",
+      "event_type": "failed_password",
+      "threat_type": "Suspicious Activity",
+      "risk_score": 72,
+      "confidence": 0.7224558912749319
+    },
+    {
+      "event_index": 9,
+      "timestamp": "2025-11-30T09:07:45.289025+01:00",
+      "source_ip": "172.16.0.4",
+      "username": "eee",
+      "event_type": "failed_password",
+      "threat_type": "Suspicious Activity",
+      "risk_score": 72,
+      "confidence": 0.7224558912749319
+    },
+    {
+      "event_index": 11,
+      "timestamp": "2025-11-30T09:07:56.496323+01:00",
+      "source_ip": "172.16.0.4",
+      "username": "eee",
+      "event_type": "failed_password",
+      "threat_type": "Suspicious Activity",
+      "risk_score": 72,
+      "confidence": 0.7224558912749319
+    },
+    {
+      "event_index": 13,
+      "timestamp": "2025-11-30T09:08:02.822586+01:00",
+      "source_ip": "172.16.0.4",
+      "username": "eee",
+      "event_type": "failed_password",
+      "threat_type": "Suspicious Activity",
+      "risk_score": 72,
+      "confidence": 0.722455891274932
+    },
+    {
+      "event_index": 15,
+      "timestamp": "2025-11-30T09:08:08.876284+01:00",
+      "source_ip": "172.16.0.4",
+      "username": "eee",
+      "event_type": "failed_password",
+      "threat_type": "Suspicious Activity",
+      "risk_score": 72,
+      "confidence": 0.7283671007021714
+    },
+    {
+      "event_index": 31,
+      "timestamp": "2025-11-30T09:07:09.118435+01:00",
+      "source_ip": "172.16.0.4",
+      "username": "eee",
+      "event_type": "invalid_user",
+      "threat_type": "Invalid User Attempt",
+      "risk_score": 79,
+      "confidence": 0.7977228479338504
+    },
+    {
+      "event_index": 34,
+      "timestamp": "2025-11-30T09:07:32.765082+01:00",
+      "source_ip": "172.16.0.4",
+      "username": "eee",
+      "event_type": "failed_password",
+      "threat_type": "Brute Force Attack",
+      "risk_score": 76,
+      "confidence": 0.7690472142710191
+    },
+    {
+      "event_index": 36,
+      "timestamp": "2025-11-30T09:07:38.004523+01:00",
+      "source_ip": "172.16.0.4",
+      "username": "eee",
+      "event_type": "failed_password",
+      "threat_type": "Brute Force Attack",
+      "risk_score": 75,
+      "confidence": 0.759047214271019
+    },
+    {
+      "event_index": 38,
+      "timestamp": "2025-11-30T09:07:45.289025+01:00",
+      "source_ip": "172.16.0.4",
+      "username": "eee",
+      "event_type": "failed_password",
+      "threat_type": "Brute Force Attack",
+      "risk_score": 76,
+      "confidence": 0.764622334983648
+    },
+    {
+      "event_index": 40,
+      "timestamp": "2025-11-30T09:07:56.496323+01:00",
+      "source_ip": "172.16.0.4",
+      "username": "eee",
+      "event_type": "failed_password",
+      "threat_type": "Brute Force Attack",
+      "risk_score": 74,
+      "confidence": 0.7467160135084882
+    },
+    {
+      "event_index": 42,
+      "timestamp": "2025-11-30T09:08:02.822586+01:00",
+      "source_ip": "172.16.0.4",
+      "username": "eee",
+      "event_type": "failed_password",
+      "threat_type": "Brute Force Attack",
+      "risk_score": 71,
+      "confidence": 0.7118296787423221
+    },
+    {
+      "event_index": 44,
+      "timestamp": "2025-11-30T09:08:08.876284+01:00",
+      "source_ip": "172.16.0.4",
+      "username": "eee",
+      "event_type": "failed_password",
+      "threat_type": "Brute Force Attack",
+      "risk_score": 71,
+      "confidence": 0.7195788240184455
+    },
+    {
+      "event_index": 64,
+      "timestamp": "2025-11-30T09:07:09.118435+01:00",
+      "source_ip": "172.16.0.4",
+      "username": "eee",
+      "event_type": "invalid_user",
+      "threat_type": "Invalid User Attempt",
+      "risk_score": 75,
+      "confidence": 0.7578332956254186
+    },
+    {
+      "event_index": 67,
+      "timestamp": "2025-11-30T09:07:32.765082+01:00",
+      "source_ip": "172.16.0.4",
+      "username": "eee",
+      "event_type": "failed_password",
+      "threat_type": "Brute Force Attack",
+      "risk_score": 72,
+      "confidence": 0.7231793706558995
+    },
+    {
+      "event_index": 69,
+      "timestamp": "2025-11-30T09:07:38.004523+01:00",
+      "source_ip": "172.16.0.4",
+      "username": "eee",
+      "event_type": "failed_password",
+      "threat_type": "Brute Force Attack",
+      "risk_score": 72,
+      "confidence": 0.7209596258977534
+    },
+    {
+      "event_index": 71,
+      "timestamp": "2025-11-30T09:07:45.289025+01:00",
+      "source_ip": "172.16.0.4",
+      "username": "eee",
+      "event_type": "failed_password",
+      "threat_type": "Brute Force Attack",
+      "risk_score": 70,
+      "confidence": 0.7086814682597112
+    },
+    {
+      "event_index": 73,
+      "timestamp": "2025-11-30T09:07:56.496323+01:00",
+      "source_ip": "172.16.0.4",
+      "username": "eee",
+      "event_type": "failed_password",
+      "threat_type": "Brute Force Attack",
+      "risk_score": 70,
+      "confidence": 0.7068898822276162
+    },
+    {
+      "event_index": 75,
+      "timestamp": "2025-11-30T09:08:02.822586+01:00",
+      "source_ip": "172.16.0.4",
+      "username": "eee",
+      "event_type": "failed_password",
+      "threat_type": "Brute Force Attack",
+      "risk_score": 69,
+      "confidence": 0.6943940317432374
+    },
+    {
+      "event_index": 77,
+      "timestamp": "2025-11-30T09:08:08.876284+01:00",
+      "source_ip": "172.16.0.4",
+      "username": "eee",
+      "event_type": "failed_password",
+      "threat_type": "Brute Force Attack",
+      "risk_score": 69,
+      "confidence": 0.6943940317432374
+    },
+    {
+      "event_index": 97,
+      "timestamp": "2025-11-30T09:07:09.118435+01:00",
+      "source_ip": "172.16.0.4",
+      "username": "eee",
+      "event_type": "invalid_user",
+      "threat_type": "Invalid User Attempt",
+      "risk_score": 75,
+      "confidence": 0.7553373053296313
+    },
+    {
+      "event_index": 100,
+      "timestamp": "2025-11-30T09:07:32.765082+01:00",
+      "source_ip": "172.16.0.4",
+      "username": "eee",
+      "event_type": "failed_password",
+      "threat_type": "Brute Force Attack",
+      "risk_score": 66,
+      "confidence": 0.6672538895754754
+    },
+    {
+      "event_index": 102,
+      "timestamp": "2025-11-30T09:07:38.004523+01:00",
+      "source_ip": "172.16.0.4",
+      "username": "eee",
+      "event_type": "failed_password",
+      "threat_type": "Brute Force Attack",
+      "risk_score": 66,
+      "confidence": 0.6672538895754754
+    },
+    {
+      "event_index": 104,
+      "timestamp": "2025-11-30T09:07:45.289025+01:00",
+      "source_ip": "172.16.0.4",
+      "username": "eee",
+      "event_type": "failed_password",
+      "threat_type": "Brute Force Attack",
+      "risk_score": 66,
+      "confidence": 0.6672538895754754
+    },
+    {
+      "event_index": 106,
+      "timestamp": "2025-11-30T09:07:56.496323+01:00",
+      "source_ip": "172.16.0.4",
+      "username": "eee",
+      "event_type": "failed_password",
+      "threat_type": "Brute Force Attack",
+      "risk_score": 66,
+      "confidence": 0.6672538895754754
+    },
+    {
+      "event_index": 108,
+      "timestamp": "2025-11-30T09:08:02.822586+01:00",
+      "source_ip": "172.16.0.4",
+      "username": "eee",
+      "event_type": "failed_password",
+      "threat_type": "Brute Force Attack",
+      "risk_score": 66,
+      "confidence": 0.6672538895754754
+    },
+    {
+      "event_index": 110,
+      "timestamp": "2025-11-30T09:08:08.876284+01:00",
+      "source_ip": "172.16.0.4",
+      "username": "eee",
+      "event_type": "failed_password",
+      "threat_type": "Brute Force Attack",
+      "risk_score": 66,
+      "confidence": 0.6672538895754754
+    }
+  ]
+}
