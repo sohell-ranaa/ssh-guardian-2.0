@@ -1,24 +1,54 @@
+# Python
 __pycache__/
-*.pyc
-.DS_Store
-.idea/
-node_modules/
-dist/
+*.py[cod]
+*$py.class
+*.so
+.Python
 build/
-*.sqlite3
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
 *.egg-info/
-coverage/
-htmlcov/
-.tox/
-.pytest_cache/
-.mypy_cache/
-.pyre/
-.pytype/
-.ipynb_checkpoints/
+.installed.cfg
+*.egg
+
 # Virtual Environment
 venv/
 .venv/
 env/
+ENV/
 
-# VSCode
+# IDEs
 .vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Testing
+.pytest_cache/
+.tox/
+.coverage
+.coverage.*
+htmlcov/
+.mypy_cache/
+.pyre/
+.pytype/
+
+# Project specific
+*.sqlite3
+.env
+.plan
+data/parsed_json/*/
+data/detections/*.json
+data/api_cache/
+*.log
