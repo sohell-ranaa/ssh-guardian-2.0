@@ -1,0 +1,40 @@
+SSH Guardian 2.0 - ML Model Training Report
+Generated: 2025-12-02T18:22:20.886773
+================================================================================
+
+
+RANDOM_FOREST
+--------------------------------------------------------------------------------
+accuracy: 1.0
+precision: 1.0
+recall: 1.0
+f1_score: 1.0
+auc_roc: 1.0
+false_positive_rate: 0.0
+false_negative_rate: 0.0
+true_negatives: 6845
+false_positives: 0
+false_negatives: 0
+true_positives: 5577
+
+Confusion Matrix:
+[[6845, 0],
+ [0, 5577]]
+
+ISOLATION_FOREST
+--------------------------------------------------------------------------------
+accuracy: 0.7385284173241023
+precision: 0.7089538848017226
+recall: 0.708445400753093
+f1_score: 0.7086995515695067
+auc_roc: 0.8259359340440421
+false_positive_rate: 0.23696128560993426
+false_negative_rate: 0.29155459924690696
+true_negatives: 5223
+false_positives: 1622
+false_negatives: 1626
+true_positives: 3951
+
+Confusion Matrix:
+[[5223, 1622],
+ [1626, 3951]]
