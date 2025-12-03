@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSH Guardian 2.0 - Enhanced Security Dashboard</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+    <!-- DataTables -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+
+    <style>
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --danger: #f56565;
+            --warning: #f6ad55;
+            --success: #48bb78;
+            --info: #4299e1;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 260px;
+            background: rgba(26, 32, 44, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            overflow-y: auto;
+            z-index: 1000;
+            border-right: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-logo i {
+            color: var(--primary);
+        }
+
+        .nav-item {
+            margin-bottom: 5px;
+        }
+
+        .nav-link {
+            color: rgba(255,255,255,0.7);
+            padding: 12px 15px;
+            border-radius: 8px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(102, 126, 234, 0.2);
+            color: white;
+        }
+
+        .nav-link i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            padding: 30px;
+        }
+
+        .page-header {
+            background: white;
+            border-radius: 15px;
+            padding: 25px 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+
+        .stat-label {
+            color: #718096;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .icon-primary { background: rgba(102, 126, 234, 0.1); color: var(--primary); }
+        .icon-danger { background: rgba(245, 101, 101, 0.1); color: var(--danger); }
+        .icon-warning { background: rgba(246, 173, 85, 0.1); color: var(--warning); }
+        .icon-success { background: rgba(72, 187, 120, 0.1); color: var(--success); }
+        .icon-info { background: rgba(66, 153, 225, 0.1); color: var(--info); }
+
+        .card-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .card-header-custom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin: 0;
+        }
+
+        .badge-custom {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .btn-action {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .threat-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .threat-critical { background: #fee; color: #c00; }
+        .threat-high { background: #fed7d7; color: #c53030; }
+        .threat-medium { background: #feebc8; color: #c05621; }
+        .threat-low { background: #d1fae5; color: #065f46; }
+
+        .live-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: rgba(72, 187, 120, 0.1);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: var(--success);
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            padding-left: 40px;
+            border-radius: 10px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0;
+        }
+
+        .event-stream {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .event-item {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background 0.2s;
+        }
+
+        .event-item:hover {
+            background: #f7fafc;
+        }
+
+        .event-item:last-child {
+            border-bottom: none;
+        }
+
+        .modal-content {
+            border-radius: 15px;
+            border: none;
+        }
+
+        .modal-header {
+            border-bottom: 2px solid #f0f0f0;
+            padding: 20px 25px;
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tab-content-panel {
+            display: none;
+        }
+
+        .tab-content-panel.active {
+            display: block;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+        }
+
+        /* Dark theme adjustments */
+        [data-bs-theme="dark"] .card-panel,
+        [data-bs-theme="dark"] .stat-card,
+        [data-bs-theme="dark"] .page-header {
+            background: rgba(26, 32, 44, 0.95);
+            color: white;
+        }
+
+        [data-bs-theme="dark"] .card-title {
+            color: white;
+        }
+
+        [data-bs-theme="dark"] .event-item {
+            border-bottom-color: rgba(255,255,255,0.1);
+        }
+
+        [data-bs-theme="dark"] .event-item:hover {
+            background: rgba(255,255,255,0.05);
+        }
+
+        [data-bs-theme="dark"] .card-header-custom {
+            border-bottom-color: rgba(255,255,255,0.1);
+        }
+
+        [data-bs-theme="dark"] .modal-content {
+            background: #1a202c;
+        }
+
+        .ip-badge {
+            font-family: 'Courier New', monospace;
+            background: rgba(102, 126, 234, 0.1);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .country-flag {
+            width: 24px;
+            height: 16px;
+            object-fit: cover;
+            border-radius: 3px;
+            margin-right: 6px;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            min-width: 300px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            z-index: 9999;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .toolbar {
+            background: rgba(255,255,255,0.95);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        [data-bs-theme="dark"] .toolbar {
+            background: rgba(26, 32, 44, 0.95);
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <i class="fas fa-shield-alt"></i>
+            <span>SSH Guardian</span>
+        </div>
+
+        <nav class="nav flex-column">
+            <a class="nav-link active" href="#" data-tab="overview">
+                <i class="fas fa-home"></i>
+                <span>Overview</span>
+            </a>
+            <a class="nav-link" href="#" data-tab="threats">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>Threats</span>
+            </a>
+            <a class="nav-link" href="#" data-tab="live-stream">
+                <i class="fas fa-stream"></i>
+                <span>Live Stream</span>
+            </a>
+            <a class="nav-link" href="#" data-tab="ip-management">
+                <i class="fas fa-network-wired"></i>
+                <span>IP Management</span>
+            </a>
+            <a class="nav-link" href="#" data-tab="search">
+                <i class="fas fa-search"></i>
+                <span>Search & Filter</span>
+            </a>
+            <a class="nav-link" href="#" data-tab="analytics">
+                <i class="fas fa-chart-line"></i>
+                <span>Analytics</span>
+            </a>
+            <a class="nav-link" href="#" data-tab="settings">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </a>
+            <a class="nav-link" href="#" data-tab="users" id="nav-users" style="display: none;">
+                <i class="fas fa-users"></i>
+                <span>User Management</span>
+            </a>
+        </nav>
+
+        <div class="mt-auto pt-4" style="border-top: 1px solid rgba(255,255,255,0.1);">
+            <div class="small text-white-50">
+                <div class="mb-2" id="user-info-sidebar">
+                    <i class="fas fa-circle text-success"></i> System Online
+                </div>
+                <div>Version 2.0</div>
+                <div class="mt-2">
+                    <button class="btn btn-sm btn-outline-danger w-100" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Overview Tab -->
+        <div class="tab-content-panel active" id="overview-tab">
+            <div class="page-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h1 class="mb-1">Security Dashboard</h1>
+                        <p class="text-muted mb-0">Real-time SSH threat monitoring and management</p>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <div class="live-indicator">
+                            <div class="live-dot"></div>
+                            <span>Live</span>
+                        </div>
+                        <button class="btn btn-outline-primary btn-sm" onclick="refreshDashboard()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="row">
+                <div class="col-xl-3 col-lg-6">
+                    <div class="stat-card">
+                        <div class="stat-icon icon-primary">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="stat-label">Events (24h)</div>
+                        <div class="stat-value" id="stat-events-24h">0</div>
+                        <div class="text-muted small" id="stat-events-1h">0 in last hour</div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-6">
+                    <div class="stat-card">
+                        <div class="stat-icon icon-danger">
+                            <i class="fas fa-shield-virus"></i>
+                        </div>
+                        <div class="stat-label">High Risk Threats</div>
+                        <div class="stat-value text-danger" id="stat-high-risk">0</div>
+                        <div class="text-muted small">Risk score ≥ 70</div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-6">
+                    <div class="stat-card">
+                        <div class="stat-icon icon-warning">
+                            <i class="fas fa-ban"></i>
+                        </div>
+                        <div class="stat-label">Blocked IPs</div>
+                        <div class="stat-value text-warning" id="stat-blocked">0</div>
+                        <div class="text-muted small">Currently active blocks</div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-6">
+                    <div class="stat-card">
+                        <div class="stat-icon icon-info">
+                            <i class="fas fa-globe"></i>
+                        </div>
+                        <div class="stat-label">Unique IPs</div>
+                        <div class="stat-value text-info" id="stat-unique-ips">0</div>
+                        <div class="text-muted small">Last 24 hours</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Threats -->
+            <div class="card-panel">
+                <div class="card-header-custom">
+                    <h5 class="card-title"><i class="fas fa-fire text-danger"></i> Recent High-Risk Threats</h5>
+                    <select class="form-select form-select-sm" style="width: auto;" onchange="loadRecentThreats(this.value)">
+                        <option value="50">Last 50</option>
+                        <option value="100">Last 100</option>
+                        <option value="200">Last 200</option>
+                    </select>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover" id="threats-table">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>IP Address</th>
+                                <th>Country</th>
+                                <th>Username</th>
+                                <th>Type</th>
+                                <th>Risk Score</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="threats-tbody">
+                            <tr>
+                                <td colspan="7" class="text-center py-4">
+                                    <div class="loading-spinner"></div>
+                                    <div class="mt-2">Loading threats...</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Live Stream Tab -->
+        <div class="tab-content-panel" id="live-stream-tab">
+            <div class="page-header">
+                <h1>Live Event Stream</h1>
+                <p class="text-muted mb-0">Real-time SSH authentication events</p>
+            </div>
+
+            <div class="card-panel">
+                <div class="card-header-custom">
+                    <h5 class="card-title"><i class="fas fa-stream"></i> Recent Events</h5>
+                    <div class="action-buttons">
+                        <button class="btn btn-sm btn-success" onclick="toggleAutoRefresh()">
+                            <i class="fas fa-play" id="auto-refresh-icon"></i> <span id="auto-refresh-text">Start Auto-Refresh</span>
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="loadLiveEvents()">
+                            <i class="fas fa-sync"></i> Refresh Now
+                        </button>
+                    </div>
+                </div>
+                <div class="event-stream" id="live-events">
+                    <div class="text-center py-5">
+                        <i class="fas fa-stream fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">Click "Start Auto-Refresh" to begin streaming events</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- IP Management Tab -->
+        <div class="tab-content-panel" id="ip-management-tab">
+            <div class="page-header">
+                <h1>IP Management</h1>
+                <p class="text-muted mb-0">Block, unblock, and whitelist IP addresses</p>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="card-panel">
+                        <div class="card-header-custom">
+                            <h5 class="card-title"><i class="fas fa-ban text-danger"></i> Blocked IPs</h5>
+                            <button class="btn btn-sm btn-danger" onclick="clearAllBlocks()">
+                                <i class="fas fa-trash"></i> Clear All
+                            </button>
+                        </div>
+                        <div id="blocked-ips-list">
+                            <div class="text-center py-4">
+                                <div class="loading-spinner"></div>
+                                <div class="mt-2">Loading blocked IPs...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card-panel">
+                        <div class="card-header-custom">
+                            <h5 class="card-title"><i class="fas fa-check-circle text-success"></i> Whitelisted IPs</h5>
+                            <button class="btn btn-sm btn-success" onclick="showAddWhitelistModal()">
+                                <i class="fas fa-plus"></i> Add IP
+                            </button>
+                        </div>
+                        <div id="whitelist-ips-list">
+                            <div class="text-center py-4">
+                                <div class="loading-spinner"></div>
+                                <div class="mt-2">Loading whitelist...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-panel">
+                <div class="card-header-custom">
+                    <h5 class="card-title"><i class="fas fa-search-plus"></i> IP Lookup</h5>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="search-box mb-3">
+                            <i class="fas fa-search"></i>
+                            <input type="text" class="form-control" id="ip-lookup-input" placeholder="Enter IP address (e.g., 1.2.3.4)">
+                        </div>
+                        <div class="action-buttons">
+                            <button class="btn btn-primary" onclick="lookupIP()">
+                                <i class="fas fa-search"></i> Lookup
+                            </button>
+                            <button class="btn btn-danger" onclick="blockIPFromLookup()">
+                                <i class="fas fa-ban"></i> Block IP
+                            </button>
+                            <button class="btn btn-success" onclick="whitelistIPFromLookup()">
+                                <i class="fas fa-check"></i> Whitelist IP
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div id="ip-lookup-result"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Tab -->
+        <div class="tab-content-panel" id="search-tab">
+            <div class="page-header">
+                <h1>Search & Filter Events</h1>
+                <p class="text-muted mb-0">Advanced event search and filtering</p>
+            </div>
+
+            <div class="card-panel">
+                <form id="search-form" onsubmit="searchEvents(); return false;">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label">IP Address</label>
+                            <input type="text" class="form-control" id="search-ip" placeholder="1.2.3.4">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Username</label>
+                            <input type="text" class="form-control" id="search-username" placeholder="root">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Country</label>
+                            <input type="text" class="form-control" id="search-country" placeholder="United States">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Min Risk Score</label>
+                            <input type="number" class="form-control" id="search-risk" min="0" max="100" placeholder="70">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Event Type</label>
+                            <select class="form-select" id="search-event-type">
+                                <option value="">All</option>
+                                <option value="failed">Failed</option>
+                                <option value="successful">Successful</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Time Range</label>
+                            <select class="form-select" id="search-hours">
+                                <option value="1">Last Hour</option>
+                                <option value="6">Last 6 Hours</option>
+                                <option value="24" selected>Last 24 Hours</option>
+                                <option value="72">Last 3 Days</option>
+                                <option value="168">Last Week</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Limit</label>
+                            <select class="form-select" id="search-limit">
+                                <option value="50">50 Results</option>
+                                <option value="100" selected>100 Results</option>
+                                <option value="500">500 Results</option>
+                                <option value="1000">1000 Results</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">&nbsp;</label>
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-search"></i> Search
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card-panel">
+                <div class="card-header-custom">
+                    <h5 class="card-title"><i class="fas fa-list"></i> Search Results</h5>
+                    <span class="badge bg-primary" id="search-count">0 results</span>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover table-sm" id="search-results-table">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>IP</th>
+                                <th>Username</th>
+                                <th>Country</th>
+                                <th>City</th>
+                                <th>Type</th>
+                                <th>Risk</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="search-results-tbody">
+                            <tr>
+                                <td colspan="8" class="text-center py-4 text-muted">
+                                    Use the filters above to search events
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div class="tab-content-panel" id="settings-tab">
+            <div class="page-header">
+                <h1>System Settings</h1>
+                <p class="text-muted mb-0">Configuration and system management</p>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="card-panel">
+                        <div class="card-header-custom">
+                            <h5 class="card-title"><i class="fas fa-bell"></i> Alert Settings</h5>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Alert Threshold</label>
+                            <input type="number" class="form-control" value="70" min="0" max="100">
+                            <small class="form-text text-muted">Send alerts for events with risk score above this value</small>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Auto-Block Threshold</label>
+                            <input type="number" class="form-control" value="85" min="0" max="100">
+                            <small class="form-text text-muted">Automatically block IPs with risk score above this value</small>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="enable-auto-block" checked>
+                            <label class="form-check-label" for="enable-auto-block">
+                                Enable automatic IP blocking
+                            </label>
+                        </div>
+                        <button class="btn btn-primary">
+                            <i class="fas fa-save"></i> Save Settings
+                        </button>
+                        <button class="btn btn-outline-secondary" onclick="testAlert()">
+                            <i class="fas fa-vial"></i> Test Alert
+                        </button>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card-panel">
+                        <div class="card-header-custom">
+                            <h5 class="card-title"><i class="fas fa-heartbeat"></i> System Health</h5>
+                        </div>
+                        <div id="system-health">
+                            <div class="text-center py-4">
+                                <div class="loading-spinner"></div>
+                                <div class="mt-2">Loading system health...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Management Tab (Super Admin Only) -->
+        <div class="tab-content-panel" id="users-tab">
+            <div class="page-header">
+                <h1>User Management</h1>
+                <p class="text-muted mb-0">Manage user accounts and roles</p>
+            </div>
+
+            <div class="card-panel">
+                <div class="card-header-custom">
+                    <h5 class="card-title"><i class="fas fa-users"></i> All Users</h5>
+                    <button class="btn btn-sm btn-primary" onclick="showCreateUserModal()">
+                        <i class="fas fa-plus"></i> Create User
+                    </button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover" id="users-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Email</th>
+                                <th>Full Name</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Last Login</th>
+                                <th>Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-tbody">
+                            <tr>
+                                <td colspan="8" class="text-center py-4">
+                                    <div class="loading-spinner"></div>
+                                    <div class="mt-2">Loading users...</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card-panel">
+                <div class="card-header-custom">
+                    <h5 class="card-title"><i class="fas fa-shield-alt"></i> Available Roles</h5>
+                </div>
+                <div id="roles-list">
+                    <div class="text-center py-4">
+                        <div class="loading-spinner"></div>
+                        <div class="mt-2">Loading roles...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <!-- Block IP Modal -->
+    <div class="modal fade" id="blockIPModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-ban text-danger"></i> Block IP Address</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">IP Address</label>
+                        <input type="text" class="form-control" id="block-ip-address" placeholder="1.2.3.4">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Duration (hours)</label>
+                        <select class="form-select" id="block-duration">
+                            <option value="1">1 Hour</option>
+                            <option value="6">6 Hours</option>
+                            <option value="24" selected>24 Hours</option>
+                            <option value="72">3 Days</option>
+                            <option value="168">1 Week</option>
+                            <option value="0">Permanent</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Reason</label>
+                        <textarea class="form-control" id="block-reason" rows="3" placeholder="Manual block via dashboard"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" onclick="confirmBlockIP()">
+                        <i class="fas fa-ban"></i> Block IP
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create/Edit User Modal -->
+    <div class="modal fade" id="userModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="userModalTitle">
+                        <i class="fas fa-user-plus"></i> Create User
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="user-form">
+                        <input type="hidden" id="user-id" value="">
+
+                        <div class="mb-3">
+                            <label class="form-label">Email <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" id="user-email" placeholder="user@example.com" required>
+                        </div>
+
+                        <div class="mb-3" id="password-field">
+                            <label class="form-label">Password <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control" id="user-password" placeholder="Min 8 chars, uppercase, lowercase, digit, special" required>
+                            <small class="form-text text-muted">Must be at least 8 characters with uppercase, lowercase, digit, and special character</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Full Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="user-fullname" placeholder="John Doe" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Role <span class="text-danger">*</span></label>
+                            <select class="form-select" id="user-role" required>
+                                <option value="">Select a role...</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3 form-check" id="active-field">
+                            <input type="checkbox" class="form-check-input" id="user-active" checked>
+                            <label class="form-check-label" for="user-active">
+                                Account Active
+                            </label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="saveUser()">
+                        <i class="fas fa-save"></i> <span id="save-user-text">Create User</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- jQuery & DataTables -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+
+    <!-- Custom JavaScript -->
+    <script src="/static/js/enhanced-dashboard.js"></script>
+</body>
+</html>

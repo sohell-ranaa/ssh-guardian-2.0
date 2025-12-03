@@ -9,7 +9,7 @@ SSH Guardian 2.0 is a lightweight, intelligent security monitoring solution desi
 ### Core Security Features
 - **Real-Time Log Processing**: Event-driven architecture processes SSH logs instantly
 - **ML-Powered Anomaly Detection**: Behavioral analysis with risk scoring (0-100)
-- **Threat Intelligence Integration**: Daily-updated feeds from multiple sources
+- **Threat Intelligence Integration**: Local feeds + VirusTotal, AbuseIPDB, Shodan APIs (optional)
 - **GeoIP Enrichment**: Location tracking with timezone support
 - **Smart Alerting**: Comprehensive Telegram notifications with analytics
 
@@ -65,6 +65,13 @@ SSH Guardian 2.0 is a lightweight, intelligent security monitoring solution desi
 5. **Download GeoIP database**
    - Register at MaxMind for free download
    - Place GeoLite2-City.mmdb in data/geoip/ folder
+
+6. **[Optional] Set up API Integration** (Recommended - 10 minutes)
+   ```bash
+   # Get enhanced threat intelligence from VirusTotal, AbuseIPDB, Shodan
+   ./scripts/setup_api_integration.sh
+   # See API_QUICKSTART.md for details
+   ```
 
 ### Running the System
 

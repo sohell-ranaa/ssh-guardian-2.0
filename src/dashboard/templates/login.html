@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - SSH Guardian 2.0</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .login-container {
+            max-width: 450px;
+            width: 100%;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .login-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .login-header h1 {
+            font-size: 2rem;
+            margin: 0 0 10px 0;
+            font-weight: 700;
+        }
+
+        .login-header .subtitle {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .login-body {
+            padding: 40px 30px;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            padding: 12px 15px;
+            border-radius: 10px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
+        }
+
+        .input-group-text {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-right: none;
+            border-radius: 10px 0 0 10px;
+        }
+
+        .input-group .form-control {
+            border-left: none;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #2d3748;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .alert {
+            border-radius: 10px;
+            border: none;
+        }
+
+        .otp-inputs {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .otp-input {
+            width: 50px;
+            height: 50px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+
+        .otp-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            color: #718096;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            position: relative;
+        }
+
+        .step.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .step.completed {
+            background: #48bb78;
+            color: white;
+        }
+
+        .step-line {
+            width: 80px;
+            height: 2px;
+            background: #e2e8f0;
+        }
+
+        .step-line.active {
+            background: #667eea;
+        }
+
+        #password-step {
+            display: block;
+        }
+
+        #otp-step {
+            display: none;
+        }
+
+        .password-strength {
+            margin-top: 10px;
+            font-size: 0.85rem;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .timer {
+            font-size: 0.9rem;
+            color: #718096;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .timer.warning {
+            color: #f56565;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <i class="fas fa-shield-alt fa-3x mb-3"></i>
+                <h1>SSH Guardian</h1>
+                <p class="subtitle">Advanced SSH Security Monitoring</p>
+            </div>
+
+            <div class="login-body">
+                <!-- Alert messages -->
+                <div id="alert-container"></div>
+
+                <!-- Step indicator -->
+                <div class="step-indicator">
+                    <div class="step active" id="step1">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="step-line" id="line1"></div>
+                    <div class="step" id="step2">
+                        <i class="fas fa-key"></i>
+                    </div>
+                </div>
+
+                <!-- Step 1: Password Login -->
+                <div id="password-step">
+                    <form id="login-form">
+                        <div class="mb-3">
+                            <label class="form-label">Email Address</label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-envelope"></i>
+                                </span>
+                                <input type="email" class="form-control" id="email" placeholder="admin@localhost" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-lock"></i>
+                                </span>
+                                <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
+                                <button class="btn btn-outline-secondary" type="button" id="toggle-password">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="remember-me" checked>
+                            <label class="form-check-label" for="remember-me">
+                                Remember me for 30 days
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100" id="login-btn">
+                            <i class="fas fa-sign-in-alt me-2"></i>
+                            <span id="login-btn-text">Continue</span>
+                        </button>
+                    </form>
+
+                    <div class="text-center mt-3">
+                        <small class="text-muted">
+                            Default: admin@localhost / Admin@123
+                        </small>
+                    </div>
+                </div>
+
+                <!-- Step 2: OTP Verification -->
+                <div id="otp-step">
+                    <div class="text-center mb-4">
+                        <h5>Enter Verification Code</h5>
+                        <p class="text-muted">We've sent a 6-digit code to<br><strong id="user-email"></strong></p>
+                    </div>
+
+                    <form id="otp-form">
+                        <div class="otp-inputs">
+                            <input type="text" class="otp-input" maxlength="1" id="otp1" autofocus>
+                            <input type="text" class="otp-input" maxlength="1" id="otp2">
+                            <input type="text" class="otp-input" maxlength="1" id="otp3">
+                            <input type="text" class="otp-input" maxlength="1" id="otp4">
+                            <input type="text" class="otp-input" maxlength="1" id="otp5">
+                            <input type="text" class="otp-input" maxlength="1" id="otp6">
+                        </div>
+
+                        <div class="timer" id="otp-timer">
+                            Valid for <span id="timer-minutes">5</span>:<span id="timer-seconds">00</span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 mt-3" id="verify-btn">
+                            <i class="fas fa-check me-2"></i>
+                            <span id="verify-btn-text">Verify & Login</span>
+                        </button>
+
+                        <button type="button" class="btn btn-secondary w-100 mt-2" id="back-btn">
+                            <i class="fas fa-arrow-left me-2"></i>
+                            Back to Login
+                        </button>
+                    </form>
+
+                    <div class="text-center mt-3">
+                        <small class="text-muted">
+                            Didn't receive the code? Check your email spam folder
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-3">
+            <small style="color: rgba(255,255,255,0.8);">
+                SSH Guardian 2.0 - Secure Access Only
+            </small>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Login Script -->
+    <script>
+        let userId = null;
+        let otpTimer = null;
+        let timeLeft = 300; // 5 minutes in seconds
+
+        // Toggle password visibility
+        document.getElementById('toggle-password').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const icon = this.querySelector('i');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+
+        // Handle login form submission
+        document.getElementById('login-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const loginBtn = document.getElementById('login-btn');
+            const loginBtnText = document.getElementById('login-btn-text');
+
+            // Show loading
+            loginBtn.disabled = true;
+            loginBtnText.innerHTML = '<span class="loading-spinner"></span> Sending OTP...';
+
+            try {
+                const response = await fetch('/auth/login', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    userId = data.user_id;
+
+                    // Show success and move to OTP step
+                    showAlert('OTP sent to your email!', 'success');
+
+                    document.getElementById('user-email').textContent = email;
+                    document.getElementById('password-step').style.display = 'none';
+                    document.getElementById('otp-step').style.display = 'block';
+
+                    // Update step indicator
+                    document.getElementById('step1').classList.add('completed');
+                    document.getElementById('step1').classList.remove('active');
+                    document.getElementById('line1').classList.add('active');
+                    document.getElementById('step2').classList.add('active');
+
+                    // Focus first OTP input
+                    document.getElementById('otp1').focus();
+
+                    // Start timer
+                    startOTPTimer();
+
+                    // Show OTP in console for development (if email not sent)
+                    if (data.otp_for_dev) {
+                        console.log('OTP for development:', data.otp_for_dev);
+                        showAlert(`Development Mode: OTP is ${data.otp_for_dev}`, 'info');
+                    }
+                } else {
+                    showAlert(data.error || 'Login failed', 'danger');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showAlert('Network error. Please try again.', 'danger');
+            } finally {
+                loginBtn.disabled = false;
+                loginBtnText.textContent = 'Continue';
+            }
+        });
+
+        // OTP input handling
+        const otpInputs = document.querySelectorAll('.otp-input');
+
+        otpInputs.forEach((input, index) => {
+            input.addEventListener('input', function(e) {
+                if (this.value.length === 1 && index < otpInputs.length - 1) {
+                    otpInputs[index + 1].focus();
+                }
+            });
+
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Backspace' && !this.value && index > 0) {
+                    otpInputs[index - 1].focus();
+                }
+            });
+
+            // Auto-paste handling
+            input.addEventListener('paste', function(e) {
+                e.preventDefault();
+                const pastedData = e.clipboardData.getData('text');
+                const digits = pastedData.replace(/\D/g, '').split('').slice(0, 6);
+
+                digits.forEach((digit, i) => {
+                    if (otpInputs[i]) {
+                        otpInputs[i].value = digit;
+                    }
+                });
+
+                if (digits.length === 6) {
+                    otpInputs[5].focus();
+                }
+            });
+        });
+
+        // Handle OTP form submission
+        document.getElementById('otp-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const otp = Array.from(otpInputs).map(input => input.value).join('');
+
+            if (otp.length !== 6) {
+                showAlert('Please enter all 6 digits', 'warning');
+                return;
+            }
+
+            const verifyBtn = document.getElementById('verify-btn');
+            const verifyBtnText = document.getElementById('verify-btn-text');
+
+            verifyBtn.disabled = true;
+            verifyBtnText.innerHTML = '<span class="loading-spinner"></span> Verifying...';
+
+            try {
+                const response = await fetch('/auth/verify-otp', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        user_id: userId,
+                        otp_code: otp,
+                        remember_me: document.getElementById('remember-me').checked
+                    }),
+                    credentials: 'include'
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showAlert('Login successful! Redirecting...', 'success');
+
+                    // Stop timer
+                    if (otpTimer) {
+                        clearInterval(otpTimer);
+                    }
+
+                    // Redirect to dashboard
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 1000);
+                } else {
+                    showAlert(data.error || 'Invalid OTP', 'danger');
+
+                    // Clear OTP inputs
+                    otpInputs.forEach(input => input.value = '');
+                    otpInputs[0].focus();
+                }
+            } catch (error) {
+                console.error('OTP verification error:', error);
+                showAlert('Network error. Please try again.', 'danger');
+            } finally {
+                verifyBtn.disabled = false;
+                verifyBtnText.textContent = 'Verify & Login';
+            }
+        });
+
+        // Back button
+        document.getElementById('back-btn').addEventListener('click', function() {
+            document.getElementById('otp-step').style.display = 'none';
+            document.getElementById('password-step').style.display = 'block';
+
+            // Reset step indicator
+            document.getElementById('step1').classList.remove('completed');
+            document.getElementById('step1').classList.add('active');
+            document.getElementById('line1').classList.remove('active');
+            document.getElementById('step2').classList.remove('active');
+
+            // Clear OTP inputs
+            otpInputs.forEach(input => input.value = '');
+
+            // Stop timer
+            if (otpTimer) {
+                clearInterval(otpTimer);
+            }
+        });
+
+        // OTP timer
+        function startOTPTimer() {
+            timeLeft = 300; // Reset to 5 minutes
+
+            otpTimer = setInterval(() => {
+                timeLeft--;
+
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+
+                document.getElementById('timer-minutes').textContent = minutes;
+                document.getElementById('timer-seconds').textContent = seconds.toString().padStart(2, '0');
+
+                // Warning if less than 1 minute
+                if (timeLeft < 60) {
+                    document.getElementById('otp-timer').classList.add('warning');
+                }
+
+                // Expired
+                if (timeLeft <= 0) {
+                    clearInterval(otpTimer);
+                    showAlert('OTP expired. Please login again.', 'danger');
+                    document.getElementById('back-btn').click();
+                }
+            }, 1000);
+        }
+
+        // Alert helper
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alert-container');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type} alert-dismissible fade show`;
+            alert.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+
+            alertContainer.innerHTML = '';
+            alertContainer.appendChild(alert);
+
+            // Auto dismiss after 5 seconds
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

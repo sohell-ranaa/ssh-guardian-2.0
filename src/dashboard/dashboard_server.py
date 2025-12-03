@@ -1,40 +1,88 @@
 """
 SSH Guardian 2.0 - Web Dashboard Server
-Real-time monitoring and management interface
+Real-time monitoring and management interface with Authentication
 """
 
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, redirect, url_for
 from flask_cors import CORS
 from datetime import datetime, timedelta
 import os
 import sys
+import secrets
 from pathlib import Path
 
 # Add project root to path
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 sys.path.append(str(PROJECT_ROOT))
 sys.path.append(str(PROJECT_ROOT / "dbs"))
+sys.path.append(str(Path(__file__).parent))  # Add dashboard dir for auth modules
+
+from dotenv import load_dotenv
+
+# Load environment variables FIRST before importing auth modules
+load_dotenv()
 
 from connection import get_connection
-from dotenv import load_dotenv
 import requests
 
-load_dotenv()
+# Import authentication modules AFTER loading .env
+from auth import login_required, permission_required, SessionManager
+from auth_routes import auth_bp
 
 app = Flask(__name__,
            template_folder='templates',
            static_folder='static')
-CORS(app)
+
+# Secret key for session management
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', secrets.token_hex(32))
+app.config['SESSION_COOKIE_SECURE'] = os.getenv('SESSION_COOKIE_SECURE', 'False') == 'True'
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+
+CORS(app, supports_credentials=True)
+
+# Register authentication blueprint
+app.register_blueprint(auth_bp)
 
 # Guardian API endpoint
 GUARDIAN_API = os.getenv('GUARDIAN_API_URL', 'http://localhost:5000')
 
+@app.route('/login')
+def login_page():
+    """Login page"""
+    # Check if already authenticated
+    session_token = request.cookies.get('session_token')
+    if session_token and SessionManager.validate_session(session_token):
+        return redirect('/')
+    return render_template('login.html')
+
 @app.route('/')
 def index():
-    """Main dashboard page"""
+    """Main dashboard page - requires authentication"""
+    # Check authentication
+    session_token = request.cookies.get('session_token')
+    if not session_token or not SessionManager.validate_session(session_token):
+        return redirect('/login')
+    return render_template('enhanced_dashboard.html')
+
+@app.route('/classic')
+def classic_dashboard():
+    """Original dashboard page - requires authentication"""
+    session_token = request.cookies.get('session_token')
+    if not session_token or not SessionManager.validate_session(session_token):
+        return redirect('/login')
     return render_template('dashboard.html')
 
+@app.route('/enhanced')
+def enhanced_dashboard():
+    """Enhanced dashboard with advanced controls - requires authentication"""
+    session_token = request.cookies.get('session_token')
+    if not session_token or not SessionManager.validate_session(session_token):
+        return redirect('/login')
+    return render_template('enhanced_dashboard.html')
+
 @app.route('/api/stats/overview')
+@login_required
 def get_overview_stats():
     """Get high-level overview statistics"""
     try:
@@ -150,6 +198,7 @@ def get_overview_stats():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/stats/timeline')
+@login_required
 def get_timeline_stats():
     """Get timeline data for charts"""
     try:
@@ -220,6 +269,7 @@ def get_timeline_stats():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/threats/recent')
+@login_required
 def get_recent_threats():
     """Get recent high-risk threats"""
     try:
@@ -263,6 +313,7 @@ def get_recent_threats():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/threats/geographic')
+@login_required
 def get_geographic_threats():
     """Get geographic distribution of threats"""
     try:
@@ -335,6 +386,7 @@ def get_geographic_threats():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/threats/top-ips')
+@login_required
 def get_top_malicious_ips():
     """Get top malicious IPs"""
     try:
@@ -384,6 +436,7 @@ def get_top_malicious_ips():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/threats/usernames')
+@login_required
 def get_targeted_usernames():
     """Get most targeted usernames"""
     try:
@@ -426,6 +479,7 @@ def get_targeted_usernames():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/blocks/active')
+@login_required
 def get_active_blocks():
     """Get currently blocked IPs"""
     try:
@@ -437,6 +491,7 @@ def get_active_blocks():
         return jsonify({'error': str(e), 'blocks': []}), 500
 
 @app.route('/api/admin/block-ip', methods=['POST'])
+@permission_required('manage_blocks')
 def block_ip():
     """Manually block an IP"""
     try:
@@ -456,6 +511,7 @@ def block_ip():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/admin/unblock-ip', methods=['POST'])
+@permission_required('manage_blocks')
 def unblock_ip():
     """Manually unblock an IP"""
     try:
@@ -473,6 +529,7 @@ def unblock_ip():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/system/health')
+@login_required
 def get_system_health():
     """Get system health metrics"""
     try:
@@ -542,6 +599,312 @@ def get_system_health():
 
     except Exception as e:
         print(f"Error in get_system_health: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/threats/lookup/<ip>')
+@login_required
+def lookup_ip(ip):
+    """Lookup detailed threat intelligence for an IP"""
+    try:
+        conn = get_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        # Get events for this IP
+        cursor.execute("""
+            SELECT
+                timestamp, source_ip, username, country, city,
+                'failed' as event_type, ml_risk_score, ml_threat_type
+            FROM failed_logins
+            WHERE source_ip = %s
+            UNION ALL
+            SELECT
+                timestamp, source_ip, username, country, city,
+                'successful' as event_type, ml_risk_score, ml_threat_type
+            FROM successful_logins
+            WHERE source_ip = %s
+            ORDER BY timestamp DESC
+            LIMIT 100
+        """, (ip, ip))
+
+        events = cursor.fetchall()
+
+        # Convert datetime to string
+        for event in events:
+            if event['timestamp']:
+                event['timestamp'] = event['timestamp'].isoformat()
+
+        # Get statistics
+        cursor.execute("""
+            SELECT
+                COUNT(*) as total_attempts,
+                COUNT(DISTINCT username) as unique_usernames,
+                AVG(ml_risk_score) as avg_risk,
+                MAX(ml_risk_score) as max_risk,
+                MIN(timestamp) as first_seen,
+                MAX(timestamp) as last_seen
+            FROM (
+                SELECT username, ml_risk_score, timestamp FROM failed_logins WHERE source_ip = %s
+                UNION ALL
+                SELECT username, ml_risk_score, timestamp FROM successful_logins WHERE source_ip = %s
+            ) AS combined
+        """, (ip, ip))
+
+        stats = cursor.fetchone()
+        if stats['first_seen']:
+            stats['first_seen'] = stats['first_seen'].isoformat()
+        if stats['last_seen']:
+            stats['last_seen'] = stats['last_seen'].isoformat()
+
+        cursor.close()
+        conn.close()
+
+        # Try to get threat intelligence from Guardian API
+        threat_intel = {}
+        try:
+            response = requests.get(f"{GUARDIAN_API}/threat/check/{ip}", timeout=2)
+            if response.status_code == 200:
+                threat_intel = response.json()
+        except:
+            pass
+
+        return jsonify({
+            'ip': ip,
+            'events': events,
+            'statistics': stats,
+            'threat_intelligence': threat_intel
+        })
+
+    except Exception as e:
+        print(f"Error in lookup_ip: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/events/live')
+@login_required
+def get_live_events():
+    """Get most recent events for live stream"""
+    try:
+        limit = int(request.args.get('limit', 20))
+        since_id = request.args.get('since_id')
+
+        conn = get_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        query = """
+            SELECT
+                id, timestamp, source_ip, username, country, city,
+                'failed' as event_type, ml_risk_score, ml_threat_type, is_anomaly
+            FROM failed_logins
+        """
+
+        params = []
+        if since_id:
+            query += " WHERE id > %s"
+            params.append(since_id)
+
+        query += """
+            UNION ALL
+            SELECT
+                id, timestamp, source_ip, username, country, city,
+                'successful' as event_type, ml_risk_score, ml_threat_type, is_anomaly
+            FROM successful_logins
+        """
+
+        if since_id:
+            query += " WHERE id > %s"
+            params.append(since_id)
+
+        query += " ORDER BY timestamp DESC LIMIT %s"
+        params.append(limit)
+
+        cursor.execute(query, params if params else (limit,))
+        events = cursor.fetchall()
+
+        # Convert datetime to string
+        for event in events:
+            if event['timestamp']:
+                event['timestamp'] = event['timestamp'].isoformat()
+
+        cursor.close()
+        conn.close()
+
+        return jsonify(events)
+
+    except Exception as e:
+        print(f"Error in get_live_events: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/admin/whitelist', methods=['GET', 'POST', 'DELETE'])
+@permission_required('manage_blocks')
+def manage_whitelist():
+    """Manage IP whitelist"""
+    try:
+        if request.method == 'GET':
+            # Read whitelist
+            whitelist_file = PROJECT_ROOT / 'data' / 'ip_whitelist.txt'
+            if whitelist_file.exists():
+                with open(whitelist_file, 'r') as f:
+                    ips = [line.strip() for line in f if line.strip() and not line.startswith('#')]
+                return jsonify({'whitelist': ips})
+            return jsonify({'whitelist': []})
+
+        elif request.method == 'POST':
+            # Add to whitelist
+            data = request.json
+            ip = data.get('ip')
+
+            whitelist_file = PROJECT_ROOT / 'data' / 'ip_whitelist.txt'
+            with open(whitelist_file, 'a') as f:
+                f.write(f"{ip}\n")
+
+            return jsonify({'success': True, 'message': f'Added {ip} to whitelist'})
+
+        elif request.method == 'DELETE':
+            # Remove from whitelist
+            data = request.json
+            ip = data.get('ip')
+
+            whitelist_file = PROJECT_ROOT / 'data' / 'ip_whitelist.txt'
+            if whitelist_file.exists():
+                with open(whitelist_file, 'r') as f:
+                    lines = f.readlines()
+
+                with open(whitelist_file, 'w') as f:
+                    for line in lines:
+                        if line.strip() != ip:
+                            f.write(line)
+
+            return jsonify({'success': True, 'message': f'Removed {ip} from whitelist'})
+
+    except Exception as e:
+        print(f"Error in manage_whitelist: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/admin/clear-blocks', methods=['POST'])
+@permission_required('manage_blocks')
+def clear_all_blocks():
+    """Clear all IP blocks"""
+    try:
+        # This would need to be implemented in the Guardian API
+        response = requests.post(f"{GUARDIAN_API}/blocks/clear-all", timeout=2)
+        return jsonify(response.json()), response.status_code
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/admin/test-alert', methods=['POST'])
+@permission_required('manage_blocks')
+def test_alert():
+    """Send a test alert"""
+    try:
+        data = request.json
+        message = data.get('message', 'Test alert from SSH Guardian Dashboard')
+
+        # This would need to be implemented in the Guardian API
+        response = requests.post(
+            f"{GUARDIAN_API}/alert/test",
+            json={'message': message},
+            timeout=2
+        )
+        return jsonify(response.json()), response.status_code
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/search/events')
+@login_required
+def search_events():
+    """Search events with filters"""
+    try:
+        # Get search parameters
+        ip = request.args.get('ip')
+        username = request.args.get('username')
+        country = request.args.get('country')
+        min_risk = request.args.get('min_risk', type=int)
+        event_type = request.args.get('event_type')
+        hours = request.args.get('hours', 24, type=int)
+        limit = request.args.get('limit', 100, type=int)
+
+        start_time = datetime.now() - timedelta(hours=hours)
+
+        conn = get_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        # Build query dynamically
+        conditions = ["timestamp >= %s"]
+        params = [start_time]
+
+        if ip:
+            conditions.append("source_ip = %s")
+            params.append(ip)
+
+        if username:
+            conditions.append("username LIKE %s")
+            params.append(f"%{username}%")
+
+        if country:
+            conditions.append("country = %s")
+            params.append(country)
+
+        if min_risk:
+            conditions.append("ml_risk_score >= %s")
+            params.append(min_risk)
+
+        where_clause = " AND ".join(conditions)
+
+        # Query based on event type
+        if event_type == 'failed' or not event_type:
+            query_failed = f"""
+                SELECT
+                    id, timestamp, source_ip, username, country, city,
+                    'failed' as event_type, ml_risk_score, ml_threat_type, is_anomaly
+                FROM failed_logins
+                WHERE {where_clause}
+            """
+
+        if event_type == 'successful' or not event_type:
+            query_successful = f"""
+                SELECT
+                    id, timestamp, source_ip, username, country, city,
+                    'successful' as event_type, ml_risk_score, ml_threat_type, is_anomaly
+                FROM successful_logins
+                WHERE {where_clause}
+            """
+
+        if event_type == 'failed':
+            query = query_failed
+        elif event_type == 'successful':
+            query = query_successful
+        else:
+            query = f"{query_failed} UNION ALL {query_successful}"
+            params = params * 2
+
+        query += " ORDER BY timestamp DESC LIMIT %s"
+        params.append(limit)
+
+        cursor.execute(query, params)
+        events = cursor.fetchall()
+
+        # Convert datetime to string
+        for event in events:
+            if event['timestamp']:
+                event['timestamp'] = event['timestamp'].isoformat()
+
+        cursor.close()
+        conn.close()
+
+        return jsonify({
+            'events': events,
+            'count': len(events),
+            'filters': {
+                'ip': ip,
+                'username': username,
+                'country': country,
+                'min_risk': min_risk,
+                'event_type': event_type,
+                'hours': hours
+            }
+        })
+
+    except Exception as e:
+        print(f"Error in search_events: {e}")
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
