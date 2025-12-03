@@ -1,0 +1,46 @@
+{
+  "incident_id": "INC-20251203-085318",
+  "timestamp": "2025-12-03T08:53:18.467519",
+  "severity": "CRITICAL",
+  "attack_type": "Brute Force SSH Attack",
+  "attacker": {
+    "ip": "89.248.165.211",
+    "location": "Moscow, Russia",
+    "reputation": "Known malicious actor"
+  },
+  "target": {
+    "server": "prod-web-01",
+    "service": "SSH (Port 22)",
+    "status": "Protected"
+  },
+  "attack_details": {
+    "total_attempts": 30,
+    "duration_seconds": 87.0,
+    "usernames_targeted": [
+      "root",
+      "test",
+      "user",
+      "admin",
+      "ubuntu"
+    ],
+    "pattern": "Rapid credential stuffing"
+  },
+  "detection": {
+    "geoip_risk": "HIGH",
+    "threat_intel": {
+      "vt_malicious": 25,
+      "abuse_score": 87,
+      "total_reports": 146
+    },
+    "ml_confidence": "73.33%",
+    "ml_risk_score": 73
+  },
+  "response": {
+    "ip_blocked": true,
+    "firewall_updated": true,
+    "alerts_sent": true,
+    "detection_time": "< 1 second",
+    "response_time": "< 2 seconds"
+  },
+  "status": "THREAT NEUTRALIZED"
+}
