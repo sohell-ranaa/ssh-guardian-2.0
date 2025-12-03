@@ -9,6 +9,7 @@ from datetime import datetime, timedelta
 import os
 import sys
 import secrets
+import time
 from pathlib import Path
 
 # Add project root to path
@@ -28,6 +29,16 @@ import requests
 # Import authentication modules AFTER loading .env
 from auth import login_required, permission_required, SessionManager
 from auth_routes import auth_bp
+
+# Import simulation modules
+sys.path.append(str(PROJECT_ROOT / "src"))
+from simulation import AttackSimulator, ATTACK_TEMPLATES
+from simulation.ip_pools import get_pool_manager
+import json as json_module
+import threading
+
+# Import ML analytics
+from ml.analytics.ml_effectiveness_tracker import MLEffectivenessTracker
 
 app = Flask(__name__,
            template_folder='templates',
@@ -906,6 +917,501 @@ def search_events():
     except Exception as e:
         print(f"Error in search_events: {e}")
         return jsonify({'error': str(e)}), 500
+
+
+# ============================================================================
+# SIMULATION API ENDPOINTS
+# ============================================================================
+
+# Global storage for active simulations (for SSE streaming)
+active_simulations = {}
+simulation_locks = {}
+
+
+@app.route('/api/simulation/templates')
+@login_required
+def get_simulation_templates():
+    """Get all available attack templates"""
+    try:
+        templates = []
+        for template_id, template_data in ATTACK_TEMPLATES.items():
+            templates.append({
+                'id': template_id,
+                'name': template_data['name'],
+                'description': template_data['description'],
+                'category': template_data['category'],
+                'severity': template_data['severity'],
+                'icon': template_data['icon'],
+                'template': template_data['template']
+            })
+
+        return jsonify({
+            'success': True,
+            'templates': templates,
+            'count': len(templates)
+        })
+
+    except Exception as e:
+        print(f"Error getting templates: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/simulation/template/<template_id>')
+@login_required
+def get_simulation_template(template_id):
+    """Get a specific template with IP auto-filled"""
+    try:
+        if template_id not in ATTACK_TEMPLATES:
+            return jsonify({'error': 'Template not found'}), 404
+
+        template = ATTACK_TEMPLATES[template_id].copy()
+        template_json = template['template'].copy()
+
+        # Auto-fill IPs based on template type
+        ip_param = template_json.get('source_ip', '')
+        if ip_param.startswith('<from_pool:'):
+            # Parse and populate with actual IP
+            pool_manager = get_pool_manager()
+            parts = ip_param.strip('<>').split(':')
+            pool_type = parts[1]
+
+            count = 1
+            if len(parts) >= 4 and parts[2] == 'multiple':
+                count = int(parts[3])
+
+            ips = pool_manager.get_ips(pool_type, count)
+
+            # Replace placeholder with actual IPs
+            if count == 1:
+                template_json['source_ip'] = ips[0]
+            else:
+                template_json['source_ip'] = ips
+
+            template_json['_ip_pool_type'] = pool_type
+            template_json['_ip_count'] = count
+
+        return jsonify({
+            'success': True,
+            'template': template,
+            'json': template_json
+        })
+
+    except Exception as e:
+        print(f"Error getting template {template_id}: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/simulation/ip-pool/<pool_type>')
+@login_required
+def get_ip_pool(pool_type):
+    """Get IPs from a specific pool"""
+    try:
+        count = int(request.args.get('count', 10))
+        pool_manager = get_pool_manager()
+
+        if pool_type not in ['malicious', 'trusted', 'random']:
+            return jsonify({'error': 'Invalid pool type'}), 400
+
+        ips = pool_manager.get_ips(pool_type, count)
+
+        return jsonify({
+            'success': True,
+            'pool_type': pool_type,
+            'ips': ips,
+            'count': len(ips)
+        })
+
+    except Exception as e:
+        print(f"Error getting IP pool: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/simulation/ip-pool/info')
+@login_required
+def get_ip_pool_info():
+    """Get information about available IP pools"""
+    try:
+        pool_manager = get_pool_manager()
+        info = pool_manager.get_pool_info()
+
+        return jsonify({
+            'success': True,
+            'pools': info
+        })
+
+    except Exception as e:
+        print(f"Error getting pool info: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/simulation/execute', methods=['POST'])
+@login_required
+@permission_required('simulation_execute')
+def execute_simulation():
+    """Execute an attack simulation"""
+    try:
+        data = request.get_json()
+
+        template_name = data.get('template_name')
+        custom_params = data.get('parameters', {})
+
+        if not template_name:
+            return jsonify({'error': 'template_name is required'}), 400
+
+        # Get current user info
+        session_token = request.cookies.get('session_token')
+        user_data = SessionManager.get_user_from_session(session_token)
+
+        # Execute simulation synchronously (it's fast enough)
+        simulator = AttackSimulator(guardian_api_url=GUARDIAN_API)
+        result = simulator.execute(
+            template_name=template_name,
+            custom_params=custom_params,
+            user_id=user_data.get('id'),
+            user_email=user_data.get('email')
+        )
+
+        simulation_id = result['simulation_id']
+
+        return jsonify({
+            'success': True,
+            'message': 'Simulation completed',
+            'simulation_id': simulation_id,
+            'status': result['status'],
+            'summary': result['summary']
+        })
+
+    except Exception as e:
+        print(f"Error executing simulation: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/simulation/history')
+@login_required
+def get_simulation_history():
+    """Get simulation history"""
+    try:
+        limit = int(request.args.get('limit', 50))
+        offset = int(request.args.get('offset', 0))
+
+        conn = get_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        cursor.execute("""
+            SELECT
+                id,
+                user_email,
+                template_name,
+                template_display_name,
+                status,
+                total_events,
+                events_processed,
+                ips_blocked,
+                alerts_sent,
+                error_message,
+                created_at,
+                completed_at,
+                duration_seconds
+            FROM simulation_history
+            ORDER BY created_at DESC
+            LIMIT %s OFFSET %s
+        """, (limit, offset))
+
+        history = cursor.fetchall()
+
+        # Convert datetime to string
+        for record in history:
+            if record['created_at']:
+                record['created_at'] = record['created_at'].isoformat()
+            if record['completed_at']:
+                record['completed_at'] = record['completed_at'].isoformat()
+
+        # Get total count
+        cursor.execute("SELECT COUNT(*) as total FROM simulation_history")
+        total = cursor.fetchone()['total']
+
+        cursor.close()
+        conn.close()
+
+        return jsonify({
+            'success': True,
+            'history': history,
+            'total': total,
+            'limit': limit,
+            'offset': offset
+        })
+
+    except Exception as e:
+        print(f"Error getting simulation history: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/simulation/history/<int:simulation_id>')
+@login_required
+def get_simulation_detail(simulation_id):
+    """Get detailed information about a specific simulation"""
+    try:
+        conn = get_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        # Get simulation record
+        cursor.execute("""
+            SELECT * FROM simulation_history
+            WHERE id = %s
+        """, (simulation_id,))
+
+        simulation = cursor.fetchone()
+
+        if not simulation:
+            return jsonify({'error': 'Simulation not found'}), 404
+
+        # Convert datetime
+        if simulation['created_at']:
+            simulation['created_at'] = simulation['created_at'].isoformat()
+        if simulation['completed_at']:
+            simulation['completed_at'] = simulation['completed_at'].isoformat()
+
+        # Parse JSON
+        if simulation['request_json']:
+            simulation['request_json'] = json_module.loads(simulation['request_json'])
+
+        cursor.close()
+        conn.close()
+
+        return jsonify({
+            'success': True,
+            'simulation': simulation
+        })
+
+    except Exception as e:
+        print(f"Error getting simulation detail: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/simulation/logs/<int:simulation_id>')
+@login_required
+def get_simulation_logs(simulation_id):
+    """Get logs for a specific simulation"""
+    try:
+        conn = get_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        cursor.execute("""
+            SELECT
+                id,
+                timestamp,
+                sequence_number,
+                stage,
+                level,
+                message,
+                metadata
+            FROM simulation_logs
+            WHERE simulation_id = %s
+            ORDER BY sequence_number ASC
+        """, (simulation_id,))
+
+        logs = cursor.fetchall()
+
+        # Convert datetime and parse JSON
+        for log in logs:
+            if log['timestamp']:
+                log['timestamp'] = log['timestamp'].isoformat()
+            if log['metadata']:
+                try:
+                    log['metadata'] = json_module.loads(log['metadata'])
+                except:
+                    pass
+
+        cursor.close()
+        conn.close()
+
+        return jsonify({
+            'success': True,
+            'simulation_id': simulation_id,
+            'logs': logs,
+            'count': len(logs)
+        })
+
+    except Exception as e:
+        print(f"Error getting simulation logs: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/simulation/stream/<int:simulation_id>')
+@login_required
+def stream_simulation_logs(simulation_id):
+    """Server-Sent Events stream for real-time simulation logs"""
+    from flask import Response
+    import time
+
+    def generate():
+        """Generator for SSE"""
+        last_sequence = 0
+
+        # Send initial message
+        yield f"data: {json_module.dumps({'type': 'connected', 'simulation_id': simulation_id})}\n\n"
+
+        try:
+            while True:
+                conn = get_connection()
+                cursor = conn.cursor(dictionary=True)
+
+                # Fetch new logs
+                cursor.execute("""
+                    SELECT
+                        timestamp,
+                        sequence_number,
+                        stage,
+                        level,
+                        message,
+                        metadata
+                    FROM simulation_logs
+                    WHERE simulation_id = %s AND sequence_number > %s
+                    ORDER BY sequence_number ASC
+                """, (simulation_id, last_sequence))
+
+                new_logs = cursor.fetchall()
+
+                for log in new_logs:
+                    # Convert datetime
+                    if log['timestamp']:
+                        log['timestamp'] = log['timestamp'].isoformat()
+                    if log['metadata']:
+                        try:
+                            log['metadata'] = json_module.loads(log['metadata'])
+                        except:
+                            pass
+
+                    # Send log via SSE
+                    yield f"data: {json_module.dumps(log)}\n\n"
+
+                    last_sequence = log['sequence_number']
+
+                cursor.close()
+                conn.close()
+
+                # Check if simulation is complete
+                conn = get_connection()
+                cursor = conn.cursor(dictionary=True)
+                cursor.execute("""
+                    SELECT status FROM simulation_history WHERE id = %s
+                """, (simulation_id,))
+                status_row = cursor.fetchone()
+                cursor.close()
+                conn.close()
+
+                if status_row and status_row['status'] in ['completed', 'failed', 'cancelled']:
+                    # Send completion message
+                    yield f"data: {json_module.dumps({'type': 'completed', 'status': status_row['status']})}\n\n"
+                    break
+
+                time.sleep(1)  # Poll every second
+
+        except GeneratorExit:
+            # Client disconnected
+            pass
+        except Exception as e:
+            yield f"data: {json_module.dumps({'type': 'error', 'message': str(e)})}\n\n"
+
+    return Response(generate(), mimetype='text/event-stream')
+
+
+# ==================== ML ANALYTICS ENDPOINTS ====================
+
+@app.route('/api/ml/effectiveness')
+@login_required
+def get_ml_effectiveness():
+    """
+    Get ML effectiveness metrics
+    Query params:
+        days: Number of days to analyze (default: 7)
+    """
+    try:
+        days = request.args.get('days', 7, type=int)
+
+        tracker = MLEffectivenessTracker()
+        metrics = tracker.get_ml_performance_metrics(days)
+        tracker.close()
+
+        return jsonify({
+            'status': 'success',
+            'data': metrics
+        })
+
+    except Exception as e:
+        return jsonify({
+            'status': 'error',
+            'error': str(e)
+        }), 500
+
+
+@app.route('/api/ml/comparison')
+@login_required
+def get_ml_comparison():
+    """
+    Compare ML-based detection vs rule-based detection
+    Query params:
+        days: Number of days to analyze (default: 7)
+    """
+    try:
+        days = request.args.get('days', 7, type=int)
+
+        tracker = MLEffectivenessTracker()
+        comparison = tracker.compare_ml_vs_baseline(days)
+        tracker.close()
+
+        return jsonify({
+            'status': 'success',
+            'data': comparison
+        })
+
+    except Exception as e:
+        return jsonify({
+            'status': 'error',
+            'error': str(e)
+        }), 500
+
+
+@app.route('/api/ml/report')
+@login_required
+def get_ml_report():
+    """
+    Generate comprehensive ML effectiveness report
+    Query params:
+        days: Number of days to analyze (default: 7)
+        format: 'text' or 'json' (default: 'json')
+    """
+    try:
+        days = request.args.get('days', 7, type=int)
+        format_type = request.args.get('format', 'json', type=str)
+
+        tracker = MLEffectivenessTracker()
+
+        if format_type == 'text':
+            report = tracker.generate_effectiveness_report(days)
+            tracker.close()
+            return Response(report, mimetype='text/plain')
+        else:
+            metrics = tracker.get_ml_performance_metrics(days)
+            comparison = tracker.compare_ml_vs_baseline(days)
+            model_info = tracker.get_ml_model_info()
+            tracker.close()
+
+            return jsonify({
+                'status': 'success',
+                'data': {
+                    'model_info': model_info,
+                    'performance_metrics': metrics,
+                    'ml_vs_baseline_comparison': comparison
+                }
+            })
+
+    except Exception as e:
+        return jsonify({
+            'status': 'error',
+            'error': str(e)
+        }), 500
+
 
 if __name__ == '__main__':
     print("🚀 Starting SSH Guardian Dashboard Server...")

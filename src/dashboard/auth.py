@@ -377,6 +377,21 @@ class SessionManager:
             cursor.close()
             conn.close()
 
+    @staticmethod
+    def get_user_from_session(session_token):
+        """Get user data from session token"""
+        session_data = SessionManager.validate_session(session_token)
+        if not session_data:
+            return None
+
+        return {
+            'id': session_data['user_id'],
+            'email': session_data['email'],
+            'full_name': session_data['full_name'],
+            'role': session_data['role_name'],
+            'permissions': json.loads(session_data['permissions']) if isinstance(session_data['permissions'], str) else session_data['permissions']
+        }
+
 
 class UserManager:
     """User management operations"""

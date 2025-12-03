@@ -84,6 +84,11 @@ function switchTab(tabName) {
             loadUsers();
             loadRoles();
             break;
+        case 'simulation':
+            if (typeof initializeSimulation === 'function') {
+                initializeSimulation();
+            }
+            break;
     }
 }
 
@@ -122,6 +127,14 @@ async function checkAuthentication() {
             const navUsers = document.getElementById('nav-users');
             if (navUsers) {
                 navUsers.style.display = 'block';
+            }
+        }
+
+        // Show simulation tab if user has permission
+        if (currentUser.permissions && currentUser.permissions.simulation_execute === true) {
+            const navSimulation = document.getElementById('nav-simulation');
+            if (navSimulation) {
+                navSimulation.style.display = 'block';
             }
         }
 

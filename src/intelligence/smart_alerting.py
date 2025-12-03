@@ -202,18 +202,28 @@ class SmartAlertManager:
 
         emoji = emoji_map.get(alert.severity, '⚠️')
 
+        # Escape special Markdown characters to avoid parsing errors
+        def escape_md(text):
+            """Escape special characters for Telegram Markdown"""
+            if not text:
+                return text
+            special_chars = ['_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!']
+            for char in special_chars:
+                text = str(text).replace(char, f'\\{char}')
+            return text
+
         message = f"{emoji} *{alert.severity.upper()} SECURITY ALERT*\n\n"
-        message += f"*Threat:* {alert.threat_type}\n"
+        message += f"*Threat:* {escape_md(alert.threat_type)}\n"
         message += f"*Risk Score:* {alert.risk_score}/100\n\n"
-        message += f"*Attacker:* `{alert.source_ip}`\n"
-        message += f"*Target:* {alert.server}\n"
-        message += f"*User:* {alert.username}\n"
-        message += f"*Location:* {alert.details.get('country', 'Unknown')}\n\n"
+        message += f"*Attacker:* {alert.source_ip}\n"  # IPs are safe, no need to escape
+        message += f"*Target:* {escape_md(alert.server)}\n"
+        message += f"*User:* {escape_md(alert.username)}\n"
+        message += f"*Location:* {escape_md(alert.details.get('country', 'Unknown'))}\n\n"
 
         if alert.details.get('actions'):
             message += "*Recommended Actions:*\n"
             for action in alert.details['actions'][:3]:
-                message += f"• {action}\n"
+                message += f"• {escape_md(action)}\n"
 
         message += f"\n🕐 {alert.timestamp.strftime('%Y-%m-%d %H:%M:%S')}"
 

@@ -284,6 +284,7 @@
         @media (max-width: 992px) {
             .sidebar {
                 transform: translateX(-100%);
+                transition: transform 0.3s ease-in-out;
             }
 
             .sidebar.show {
@@ -293,6 +294,57 @@
             .main-content {
                 margin-left: 0;
             }
+        }
+
+        /* Hamburger Menu Button */
+        .hamburger-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            background: var(--primary);
+            border: none;
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 8px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .hamburger-btn:hover {
+            background: var(--secondary);
+            transform: scale(1.05);
+        }
+
+        .hamburger-btn i {
+            font-size: 20px;
+        }
+
+        @media (max-width: 992px) {
+            .hamburger-btn {
+                display: flex;
+            }
+        }
+
+        /* Mobile overlay */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+
+        .sidebar-overlay.show {
+            display: block;
         }
 
         /* Dark theme adjustments */
@@ -391,9 +443,123 @@
         [data-bs-theme="dark"] .toolbar {
             background: rgba(26, 32, 44, 0.95);
         }
+
+        /* Simulation UI Styles */
+        .template-item {
+            padding: 12px;
+            margin-bottom: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .template-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+            border-color: var(--primary);
+        }
+
+        .template-item.active {
+            background: rgba(102, 126, 234, 0.2);
+            border-color: var(--primary);
+            border-width: 2px;
+        }
+
+        .template-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .severity-critical { background: rgba(245, 101, 101, 0.2); color: #f56565; }
+        .severity-high { background: rgba(246, 173, 85, 0.2); color: #f6ad55; }
+        .severity-medium { background: rgba(66, 153, 225, 0.2); color: #4299e1; }
+        .severity-low { background: rgba(72, 187, 120, 0.2); color: #48bb78; }
+
+        .sim-log-console {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            padding: 15px;
+            height: 400px;
+            overflow-y: auto;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .log-entry {
+            margin-bottom: 6px;
+            padding: 4px 0;
+            border-left: 3px solid transparent;
+            padding-left: 8px;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .log-timestamp {
+            color: #858585;
+            font-size: 11px;
+        }
+
+        .log-stage {
+            color: #4ec9b0;
+            font-weight: bold;
+            padding: 2px 6px;
+            background: rgba(78, 201, 176, 0.1);
+            border-radius: 4px;
+        }
+
+        .log-level-INFO { border-left-color: #4299e1; }
+        .log-level-SUCCESS { border-left-color: #48bb78; }
+        .log-level-WARNING { border-left-color: #f6ad55; }
+        .log-level-ERROR { border-left-color: #f56565; }
+        .log-level-DEBUG { border-left-color: #858585; }
+
+        .log-message {
+            color: #d4d4d4;
+        }
+
+        [data-bs-theme="dark"] .sim-log-console {
+            background: #0d1117;
+            border-color: rgba(255,255,255,0.1);
+        }
+
+        #sim-json-editor {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        [data-bs-theme="dark"] #sim-json-editor {
+            background: #0d1117;
+        }
+
+        .template-category-badge {
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
     </style>
 </head>
 <body>
+    <!-- Hamburger Menu Button (Mobile Only) -->
+    <button class="hamburger-btn" id="hamburger-btn" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar Overlay (Mobile Only) -->
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <div class="sidebar-logo">
@@ -425,6 +591,10 @@
             <a class="nav-link" href="#" data-tab="analytics">
                 <i class="fas fa-chart-line"></i>
                 <span>Analytics</span>
+            </a>
+            <a class="nav-link" href="#" data-tab="simulation" id="nav-simulation" style="display: none;">
+                <i class="fas fa-flask"></i>
+                <span>Attack Simulation</span>
             </a>
             <a class="nav-link" href="#" data-tab="settings">
                 <i class="fas fa-cog"></i>
@@ -799,6 +969,129 @@
             </div>
         </div>
 
+        <!-- Attack Simulation Tab -->
+        <div class="tab-content-panel" id="simulation-tab">
+            <div class="page-header">
+                <h1><i class="fas fa-flask"></i> Attack Simulation</h1>
+                <p class="text-muted mb-0">Test and validate security responses with realistic attack scenarios</p>
+            </div>
+
+            <div class="row">
+                <!-- Left: Template List (30%) -->
+                <div class="col-md-3">
+                    <div class="card-panel" style="position: sticky; top: 20px;">
+                        <div class="card-header-custom">
+                            <h5 class="card-title"><i class="fas fa-list"></i> Attack Templates</h5>
+                        </div>
+                        <div id="template-list" style="max-height: 600px; overflow-y: auto;">
+                            <div class="text-center py-4">
+                                <div class="loading-spinner"></div>
+                                <div class="mt-2">Loading templates...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Editor + Logs (70%) -->
+                <div class="col-md-9">
+                    <!-- JSON Editor -->
+                    <div class="card-panel">
+                        <div class="card-header-custom">
+                            <h5 class="card-title"><i class="fas fa-code"></i> Simulation Parameters</h5>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-secondary" onclick="refreshIPPool()">
+                                    <i class="fas fa-sync"></i> Refresh IPs
+                                </button>
+                                <button class="btn btn-sm btn-success" onclick="executeSimulation()" id="execute-btn">
+                                    <i class="fas fa-play"></i> Execute Simulation
+                                </button>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="small text-muted" id="selected-template-name">No template selected</span>
+                                <button class="btn btn-sm btn-outline-primary" onclick="formatJSON()">
+                                    <i class="fas fa-align-left"></i> Format
+                                </button>
+                            </div>
+                            <textarea id="sim-json-editor" class="form-control" rows="12" style="font-family: 'Courier New', monospace; font-size: 13px;" placeholder='Select a template from the left to begin...'></textarea>
+                        </div>
+                        <div class="alert alert-info mb-0">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Note:</strong> All simulations are flagged and will actually execute through the Guardian pipeline. IPs will be blocked, alerts sent (with [SIMULATION] prefix), and ML models engaged.
+                        </div>
+                    </div>
+
+                    <!-- Live Execution Logs -->
+                    <div class="card-panel">
+                        <div class="card-header-custom">
+                            <h5 class="card-title"><i class="fas fa-terminal"></i> Live Execution Logs</h5>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-outline-secondary" onclick="clearSimulationLogs()">
+                                    <i class="fas fa-trash"></i> Clear
+                                </button>
+                                <button class="btn btn-sm btn-outline-primary" onclick="showSimulationHistory()">
+                                    <i class="fas fa-history"></i> History
+                                </button>
+                            </div>
+                        </div>
+                        <div id="sim-logs" class="sim-log-console">
+                            <div class="text-center text-muted py-5">
+                                <i class="fas fa-terminal fa-3x mb-3"></i>
+                                <p>Execute a simulation to view real-time logs...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Simulation History -->
+                    <div class="card-panel" id="simulation-history-panel" style="display: none;">
+                        <div class="card-header-custom">
+                            <h5 class="card-title"><i class="fas fa-history"></i> Simulation History</h5>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="hideSimulationHistory()">
+                                <i class="fas fa-times"></i> Close
+                            </button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Template</th>
+                                        <th>User</th>
+                                        <th>Status</th>
+                                        <th>Events</th>
+                                        <th>IPs Blocked</th>
+                                        <th>Duration</th>
+                                        <th>Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="history-tbody">
+                                    <tr>
+                                        <td colspan="9" class="text-center py-4">
+                                            <div class="loading-spinner"></div>
+                                            <div class="mt-2">Loading history...</div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div class="small text-muted" id="history-info">Loading...</div>
+                            <div>
+                                <button class="btn btn-sm btn-outline-secondary" onclick="loadHistoryPage('prev')" id="history-prev-btn" disabled>
+                                    <i class="fas fa-chevron-left"></i> Previous
+                                </button>
+                                <button class="btn btn-sm btn-outline-secondary" onclick="loadHistoryPage('next')" id="history-next-btn">
+                                    Next <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- User Management Tab (Super Admin Only) -->
         <div class="tab-content-panel" id="users-tab">
             <div class="page-header">
@@ -956,7 +1249,37 @@
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
 
+    <!-- Mobile Menu Toggle -->
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('show');
+            overlay.classList.toggle('show');
+        }
+
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.remove('show');
+            overlay.classList.remove('show');
+        }
+
+        // Close sidebar when clicking a nav link on mobile
+        document.addEventListener('DOMContentLoaded', function() {
+            const navLinks = document.querySelectorAll('.sidebar .nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    if (window.innerWidth <= 992) {
+                        closeSidebar();
+                    }
+                });
+            });
+        });
+    </script>
+
     <!-- Custom JavaScript -->
     <script src="/static/js/enhanced-dashboard.js"></script>
+    <script src="/static/js/simulation.js"></script>
 </body>
 </html>

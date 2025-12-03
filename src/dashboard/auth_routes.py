@@ -143,13 +143,17 @@ def verify_otp():
         }))
 
         # Set secure HTTP-only cookie
+        # Always set max_age to keep session active while browser is open
+        # If remember_me is true, extend to 30 days
+        # If remember_me is false, set to 24 hours (persists across browser reopens for convenience)
         response.set_cookie(
             'session_token',
             session_token,
-            max_age=30*24*60*60 if remember_me else None,  # 30 days or session
-            secure=request.is_secure,  # HTTPS only in production
+            max_age=30*24*60*60 if remember_me else 24*60*60,  # 30 days or 24 hours
+            secure=False,  # Set to True in production with HTTPS
             httponly=True,  # Not accessible via JavaScript
-            samesite='Lax'
+            samesite='Lax',
+            path='/'  # Ensure cookie is available for all paths
         )
 
         return response, 200
@@ -174,7 +178,7 @@ def logout():
                               ip_address=request.remote_addr, user_agent=request.user_agent.string)
 
         response = make_response(jsonify({'success': True, 'message': 'Logged out successfully'}))
-        response.delete_cookie('session_token')
+        response.delete_cookie('session_token', path='/', samesite='Lax')
 
         return response, 200
 
