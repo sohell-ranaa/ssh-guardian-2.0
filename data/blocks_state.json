@@ -1,19 +1,307 @@
 {
-  "185.183.159.40": {
-    "ip": "185.183.159.40",
-    "reason": "[SIMULATION] Suspicious username: root",
-    "threat_level": "critical",
-    "blocked_at": "2025-12-03T12:10:33.010284",
-    "unblock_at": "2025-12-10T12:10:33.010284",
-    "duration_hours": 168,
-    "manual": false
-  },
   "129.212.185.151": {
     "ip": "129.212.185.151",
     "reason": "[SIMULATION] Suspicious username: root",
     "threat_level": "critical",
     "blocked_at": "2025-12-03T12:26:37.952453",
     "unblock_at": "2025-12-10T12:26:37.952453",
+    "duration_hours": 168,
+    "manual": false
+  },
+  "111.238.174.6": {
+    "ip": "111.238.174.6",
+    "reason": "[SIMULATION] ",
+    "threat_level": "critical",
+    "blocked_at": "2025-12-03T15:39:53.985372",
+    "unblock_at": "2025-12-10T15:39:53.985372",
+    "duration_hours": 168,
+    "manual": false
+  },
+  "141.39.58.104": {
+    "ip": "141.39.58.104",
+    "reason": "[SIMULATION] ",
+    "threat_level": "critical",
+    "blocked_at": "2025-12-03T15:40:07.093464",
+    "unblock_at": "2025-12-10T15:40:07.093464",
+    "duration_hours": 168,
+    "manual": false
+  },
+  "176.117.107.91": {
+    "ip": "176.117.107.91",
+    "reason": "[SIMULATION] Suspicious username: root",
+    "threat_level": "critical",
+    "blocked_at": "2025-12-03T15:51:01.800976",
+    "unblock_at": "2025-12-10T15:51:01.800976",
+    "duration_hours": 168,
+    "manual": false
+  },
+  "185.220.101.63": {
+    "ip": "185.220.101.63",
+    "reason": "[SIMULATION] Suspicious username: root",
+    "threat_level": "critical",
+    "blocked_at": "2025-12-03T17:23:12.332811",
+    "unblock_at": "2025-12-10T17:23:12.332811",
+    "duration_hours": 168,
+    "manual": false
+  },
+  "128.222.212.57": {
+    "ip": "128.222.212.57",
+    "reason": "[SIMULATION] Suspicious username: admin",
+    "threat_level": "critical",
+    "blocked_at": "2025-12-03T18:13:01.099740",
+    "unblock_at": "2025-12-10T18:13:01.099740",
+    "duration_hours": 168,
+    "manual": false
+  },
+  "143.198.27.218": {
+    "ip": "143.198.27.218",
+    "reason": "[SIMULATION] Suspicious username: root; Off-hours access attempt",
+    "threat_level": "critical",
+    "blocked_at": "2025-12-04T03:06:12.489593",
+    "unblock_at": "2025-12-11T03:06:12.489593",
+    "duration_hours": 168,
+    "manual": false
+  },
+  "117.221.170.33": {
+    "ip": "117.221.170.33",
+    "reason": "[SIMULATION] Off-hours access attempt",
+    "threat_level": "critical",
+    "blocked_at": "2025-12-04T03:08:16.926976",
+    "unblock_at": "2025-12-11T03:08:16.926976",
+    "duration_hours": 168,
+    "manual": false
+  },
+  "14.103.159.224": {
+    "ip": "14.103.159.224",
+    "reason": "[SIMULATION] Off-hours access attempt",
+    "threat_level": "critical",
+    "blocked_at": "2025-12-04T03:11:42.533394",
+    "unblock_at": "2025-12-11T03:11:42.533394",
+    "duration_hours": 168,
+    "manual": false
+  },
+  "3.161.184.168": {
+    "ip": "3.161.184.168",
+    "reason": "[SIMULATION] Suspicious username: admin; Off-hours access attempt",
+    "threat_level": "critical",
+    "blocked_at": "2025-12-04T03:17:24.361906",
+    "unblock_at": "2025-12-11T03:17:24.361906",
+    "duration_hours": 168,
+    "manual": false
+  },
+  "161.140.38.77": {
+    "ip": "161.140.38.77",
+    "reason": "[SIMULATION] Suspicious username: admin; Off-hours access attempt",
+    "threat_level": "critical",
+    "blocked_at": "2025-12-04T03:43:57.095480",
+    "unblock_at": "2025-12-11T03:43:57.095480",
+    "duration_hours": 168,
+    "manual": false
+  },
+  "103.77.207.53": {
+    "ip": "103.77.207.53",
+    "reason": "[SIMULATION] Off-hours access attempt",
+    "threat_level": "critical",
+    "blocked_at": "2025-12-04T03:44:29.006953",
+    "unblock_at": "2025-12-11T03:44:29.006953",
+    "duration_hours": 168,
+    "manual": false
+  },
+  "167.99.213.36": {
+    "ip": "167.99.213.36",
+    "reason": "[SIMULATION] Off-hours access attempt",
+    "threat_level": "critical",
+    "blocked_at": "2025-12-04T03:49:03.609902",
+    "unblock_at": "2025-12-11T03:49:03.609902",
+    "duration_hours": 168,
+    "manual": false
+  },
+  "3.88.95.117": {
+    "ip": "3.88.95.117",
+    "reason": "[SIMULATION] Suspicious username: admin; Off-hours access attempt",
+    "threat_level": "critical",
+    "blocked_at": "2025-12-04T04:41:46.312015",
+    "unblock_at": "2025-12-11T04:41:46.312015",
+    "duration_hours": 168,
+    "manual": false
+  },
+  "185.247.137.160": {
+    "ip": "185.247.137.160",
+    "reason": "[SIMULATION] Off-hours access attempt",
+    "threat_level": "critical",
+    "blocked_at": "2025-12-04T04:45:23.752392",
+    "unblock_at": "2025-12-11T04:45:23.752392",
+    "duration_hours": 168,
+    "manual": false
+  },
+  "45.142.154.16": {
+    "ip": "45.142.154.16",
+    "reason": "[SIMULATION] Off-hours access attempt",
+    "threat_level": "critical",
+    "blocked_at": "2025-12-04T04:49:31.579096",
+    "unblock_at": "2025-12-11T04:49:31.579096",
+    "duration_hours": 168,
+    "manual": false
+  },
+  "172.81.131.139": {
+    "ip": "172.81.131.139",
+    "reason": "[SIMULATION] Off-hours access attempt",
+    "threat_level": "critical",
+    "blocked_at": "2025-12-04T04:51:59.597083",
+    "unblock_at": "2025-12-11T04:51:59.597083",
+    "duration_hours": 168,
+    "manual": false
+  },
+  "196.44.140.66": {
+    "ip": "196.44.140.66",
+    "reason": "[SIMULATION] Suspicious username: admin; Off-hours access attempt",
+    "threat_level": "critical",
+    "blocked_at": "2025-12-04T04:54:09.919373",
+    "unblock_at": "2025-12-11T04:54:09.919373",
+    "duration_hours": 168,
+    "manual": false
+  },
+  "14.103.114.90": {
+    "ip": "14.103.114.90",
+    "reason": "[SIMULATION] Suspicious username: root; Off-hours access attempt",
+    "threat_level": "critical",
+    "blocked_at": "2025-12-04T04:57:08.356771",
+    "unblock_at": "2025-12-11T04:57:08.356771",
+    "duration_hours": 168,
+    "manual": false
+  },
+  "167.99.218.31": {
+    "ip": "167.99.218.31",
+    "reason": "[SIMULATION] Off-hours access attempt",
+    "threat_level": "critical",
+    "blocked_at": "2025-12-04T05:03:34.311251",
+    "unblock_at": "2025-12-11T05:03:34.311251",
+    "duration_hours": 168,
+    "manual": false
+  },
+  "203.83.40.179": {
+    "ip": "203.83.40.179",
+    "reason": "[SIMULATION] Off-hours access attempt",
+    "threat_level": "critical",
+    "blocked_at": "2025-12-04T05:07:26.502752",
+    "unblock_at": "2025-12-11T05:07:26.502752",
+    "duration_hours": 168,
+    "manual": false
+  },
+  "152.32.151.128": {
+    "ip": "152.32.151.128",
+    "reason": "[SIMULATION] Suspicious username: root; Off-hours access attempt",
+    "threat_level": "critical",
+    "blocked_at": "2025-12-04T05:11:11.317923",
+    "unblock_at": "2025-12-11T05:11:11.317923",
+    "duration_hours": 168,
+    "manual": false
+  },
+  "115.190.25.109": {
+    "ip": "115.190.25.109",
+    "reason": "[SIMULATION] Off-hours access attempt",
+    "threat_level": "critical",
+    "blocked_at": "2025-12-04T05:21:14.422683",
+    "unblock_at": "2025-12-11T05:21:14.422683",
+    "duration_hours": 168,
+    "manual": false
+  },
+  "151.47.88.40": {
+    "ip": "151.47.88.40",
+    "reason": "[SIMULATION] Off-hours access attempt",
+    "threat_level": "critical",
+    "blocked_at": "2025-12-04T05:25:49.970386",
+    "unblock_at": "2025-12-11T05:25:49.970386",
+    "duration_hours": 168,
+    "manual": false
+  },
+  "101.126.130.65": {
+    "ip": "101.126.130.65",
+    "reason": "[SIMULATION] Off-hours access attempt",
+    "threat_level": "critical",
+    "blocked_at": "2025-12-04T05:44:25.075301",
+    "unblock_at": "2025-12-11T05:44:25.075301",
+    "duration_hours": 168,
+    "manual": false
+  },
+  "164.90.160.221": {
+    "ip": "164.90.160.221",
+    "reason": "[SIMULATION] Off-hours access attempt",
+    "threat_level": "critical",
+    "blocked_at": "2025-12-04T05:55:44.112932",
+    "unblock_at": "2025-12-11T05:55:44.112932",
+    "duration_hours": 168,
+    "manual": false
+  },
+  "134.199.207.6": {
+    "ip": "134.199.207.6",
+    "reason": "[SIMULATION] Off-hours access attempt",
+    "threat_level": "critical",
+    "blocked_at": "2025-12-04T05:58:30.528627",
+    "unblock_at": "2025-12-11T05:58:30.528627",
+    "duration_hours": 168,
+    "manual": false
+  },
+  "107.175.228.153": {
+    "ip": "107.175.228.153",
+    "reason": "[SIMULATION] Off-hours access attempt",
+    "threat_level": "critical",
+    "blocked_at": "2025-12-04T06:00:37.786733",
+    "unblock_at": "2025-12-11T06:00:37.786733",
+    "duration_hours": 168,
+    "manual": false
+  },
+  "103.13.215.175": {
+    "ip": "103.13.215.175",
+    "reason": "[SIMULATION] Suspicious username: root",
+    "threat_level": "critical",
+    "blocked_at": "2025-12-04T07:05:57.799068",
+    "unblock_at": "2025-12-11T07:05:57.799068",
+    "duration_hours": 168,
+    "manual": false
+  },
+  "185.246.128.170": {
+    "ip": "185.246.128.170",
+    "reason": "[SIMULATION] Suspicious username: root",
+    "threat_level": "critical",
+    "blocked_at": "2025-12-04T07:12:20.767112",
+    "unblock_at": "2025-12-11T07:12:20.767112",
+    "duration_hours": 168,
+    "manual": false
+  },
+  "103.183.74.214": {
+    "ip": "103.183.74.214",
+    "reason": "[SIMULATION] Suspicious username: root",
+    "threat_level": "critical",
+    "blocked_at": "2025-12-04T07:16:58.793478",
+    "unblock_at": "2025-12-11T07:16:58.793478",
+    "duration_hours": 168,
+    "manual": false
+  },
+  "107.189.11.111": {
+    "ip": "107.189.11.111",
+    "reason": "[SIMULATION] Suspicious username: root",
+    "threat_level": "critical",
+    "blocked_at": "2025-12-04T07:22:35.236071",
+    "unblock_at": "2025-12-11T07:22:35.236071",
+    "duration_hours": 168,
+    "manual": false
+  },
+  "43.136.47.18": {
+    "ip": "43.136.47.18",
+    "reason": "[SIMULATION] ",
+    "threat_level": "critical",
+    "blocked_at": "2025-12-04T07:46:59.353102",
+    "unblock_at": "2025-12-11T07:46:59.353102",
+    "duration_hours": 168,
+    "manual": false
+  },
+  "206.189.3.167": {
+    "ip": "206.189.3.167",
+    "reason": "[SIMULATION] ",
+    "threat_level": "critical",
+    "blocked_at": "2025-12-04T07:50:17.021381",
+    "unblock_at": "2025-12-11T07:50:17.021381",
     "duration_hours": 168,
     "manual": false
   }

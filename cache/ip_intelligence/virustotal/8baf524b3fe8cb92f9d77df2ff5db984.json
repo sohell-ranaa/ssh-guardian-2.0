@@ -1,0 +1,70 @@
+{
+  "timestamp": "2025-12-04T07:50:18.986288",
+  "key": "vt_206.189.3.167",
+  "data": {
+    "service": "virustotal",
+    "ip_address": "206.189.3.167",
+    "malicious_count": 3,
+    "suspicious_count": 4,
+    "harmless_count": 59,
+    "undetected_count": 29,
+    "total_scanners": 95,
+    "is_malicious": true,
+    "threat_score": 5.26,
+    "reputation": -2,
+    "network_info": {
+      "as_owner": "DIGITALOCEAN-ASN",
+      "country": "NL",
+      "network": "206.189.0.0/16"
+    },
+    "detections": [
+      {
+        "scanner": "Criminal IP",
+        "category": "malicious",
+        "result": "malicious"
+      },
+      {
+        "scanner": "AlphaSOC",
+        "category": "suspicious",
+        "result": "suspicious"
+      },
+      {
+        "scanner": "Cyble",
+        "category": "malicious",
+        "result": "malicious"
+      },
+      {
+        "scanner": "CyRadar",
+        "category": "suspicious",
+        "result": "suspicious"
+      },
+      {
+        "scanner": "Gridinsoft",
+        "category": "suspicious",
+        "result": "suspicious"
+      },
+      {
+        "scanner": "MalwareURL",
+        "category": "malicious",
+        "result": "malware"
+      },
+      {
+        "scanner": "SOCRadar",
+        "category": "suspicious",
+        "result": "suspicious"
+      }
+    ],
+    "total_votes": {
+      "harmless": 0,
+      "malicious": 2
+    },
+    "last_analysis_date": 1762207692,
+    "raw_stats": {
+      "malicious": 3,
+      "suspicious": 4,
+      "undetected": 29,
+      "harmless": 59,
+      "timeout": 0
+    }
+  }
+}

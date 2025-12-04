@@ -1,0 +1,34 @@
+{
+  "timestamp": "2025-12-03T17:00:02.338582",
+  "key": "vt_157.248.170.45",
+  "data": {
+    "service": "virustotal",
+    "ip_address": "157.248.170.45",
+    "malicious_count": 0,
+    "suspicious_count": 0,
+    "harmless_count": 0,
+    "undetected_count": 95,
+    "total_scanners": 95,
+    "is_malicious": false,
+    "threat_score": 0.0,
+    "reputation": 0,
+    "network_info": {
+      "as_owner": "Unknown",
+      "country": "US",
+      "network": "Unknown"
+    },
+    "detections": [],
+    "total_votes": {
+      "harmless": 0,
+      "malicious": 0
+    },
+    "last_analysis_date": null,
+    "raw_stats": {
+      "malicious": 0,
+      "suspicious": 0,
+      "undetected": 95,
+      "harmless": 0,
+      "timeout": 0
+    }
+  }
+}

@@ -581,13 +581,16 @@ class AttackSimulator:
         cursor = conn.cursor(dictionary=True)
 
         try:
-            # Count IPs blocked
+            # Get blocked IPs list (distinct IPs in order of first block)
             cursor.execute("""
-                SELECT COUNT(DISTINCT ip_address) as blocked_count
+                SELECT ip_address
                 FROM ip_blocks
                 WHERE is_simulation = TRUE AND simulation_id = %s
+                GROUP BY ip_address
+                ORDER BY MIN(blocked_at) DESC
             """, (simulation_id,))
-            blocked_count = cursor.fetchone()['blocked_count']
+            blocked_ips = [row['ip_address'] for row in cursor.fetchall()]
+            blocked_count = len(blocked_ips)
 
             # Count events by risk level
             cursor.execute("""
@@ -607,6 +610,7 @@ class AttackSimulator:
                 'successful_submissions': successful_submissions,
                 'failed_submissions': failed_submissions,
                 'ips_blocked': blocked_count,
+                'blocked_ips': blocked_ips,  # Add list of blocked IPs
                 'high_risk_events': high_risk_count,
                 'completion_rate': (successful_submissions / len(results) * 100) if results else 0
             }

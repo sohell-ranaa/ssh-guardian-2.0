@@ -48,7 +48,7 @@ class Config:
     RECEIVING_DIR = DATA_DIR / "receiving_stream"
     THREAT_FEEDS_DIR = DATA_DIR / "threat_feeds"
     API_CACHE_DIR = DATA_DIR / "api_cache"
-    GEOIP_DB = DATA_DIR / "GeoLite2-City.mmdb"
+    GEOIP_DB = DATA_DIR / "geoip" / "GeoLite2-City.mmdb"
     BLOCKS_STATE_FILE = DATA_DIR / "blocks_state.json"
     WHITELIST_FILE = DATA_DIR / "ip_whitelist.txt"
     QUEUE_SIZE = 1000
@@ -220,6 +220,54 @@ def enrich_with_geoip(event: dict) -> dict:
 # smart grouping to prevent spam. No need for manual alert sending.
 
 
+# Database saving function
+def _save_login_to_database(event: dict, classification: dict):
+    """Save login event to database"""
+    try:
+        from dbs.connection import get_connection
+        conn = get_connection()
+        cursor = conn.cursor()
+
+        event_type = event.get('event_type', 'failed')
+        source_ip = event.get('source_ip')
+        username = event.get('username')
+        timestamp = event.get('timestamp', datetime.now())
+
+        # Extract GeoIP data
+        geoip = event.get('geoip', {})
+        country = geoip.get('country', event.get('country', 'Unknown'))
+        city = geoip.get('city', event.get('city', 'Unknown'))
+
+        risk_score = classification.get('risk_score', 0)
+        is_simulation = event.get('is_simulation', False)
+        simulation_id = event.get('simulation_id')
+        server_hostname = event.get('server_hostname', 'simulation-server')
+
+        if event_type == 'successful':
+            cursor.execute("""
+                INSERT INTO successful_logins
+                (source_ip, username, timestamp, country, city, ml_risk_score,
+                 is_simulation, simulation_id, server_hostname)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """, (source_ip, username, timestamp, country, city, risk_score,
+                  is_simulation, simulation_id, server_hostname))
+        else:
+            cursor.execute("""
+                INSERT INTO failed_logins
+                (source_ip, username, timestamp, country, city, ml_risk_score,
+                 is_simulation, simulation_id, server_hostname)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """, (source_ip, username, timestamp, country, city, risk_score,
+                  is_simulation, simulation_id, server_hostname))
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+    except Exception as e:
+        logger.error(f"Error saving login to database: {e}")
+
+
 # Log processor worker with Guardian Engine integration
 def log_processor_worker():
     """Enhanced log processor using Guardian Engine"""
@@ -265,6 +313,9 @@ def log_processor_worker():
                         f"Level: {classification.get('threat_level', 'unknown')} | "
                         f"Action: {classification.get('action', 'unknown')}"
                     )
+
+                    # Save login event to database
+                    _save_login_to_database(event, classification)
 
         except queue.Empty:
             continue
@@ -337,7 +388,7 @@ def get_statistics():
 def get_blocked_ips():
     """Get list of blocked IPs"""
     try:
-        blocks = guardian_engine.ip_blocker.get_blocked_ips()
+        blocks = guardian_engine.original_guardian.ip_blocker.get_blocked_ips()
         return jsonify({
             'status': 'success',
             'blocked_ips': blocks
@@ -355,7 +406,7 @@ def manual_block_ip(ip):
         reason = data.get('reason', 'Manual block via API')
         duration_hours = data.get('duration_hours')
 
-        result = guardian_engine.ip_blocker.block_ip(
+        result = guardian_engine.original_guardian.ip_blocker.block_ip(
             ip=ip,
             reason=reason,
             threat_level='high',
@@ -372,7 +423,7 @@ def manual_block_ip(ip):
 def manual_unblock_ip(ip):
     """Manually unblock an IP"""
     try:
-        result = guardian_engine.ip_blocker.unblock_ip(ip, reason='Manual unblock via API')
+        result = guardian_engine.original_guardian.ip_blocker.unblock_ip(ip, reason='Manual unblock via API')
         return jsonify(result), 200 if result['success'] else 400
     except Exception as e:
         logger.error(f"Error unblocking IP: {e}")

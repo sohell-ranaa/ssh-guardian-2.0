@@ -207,11 +207,12 @@ class EnhancedGuardianEngine:
                 # Use original Guardian's IP blocker
                 # Add simulation flag if applicable
                 is_simulation = event.get('is_simulation', False)
+                simulation_id = event.get('simulation_id')
                 reason = block_info['reason']
                 if is_simulation:
                     reason = f"[SIMULATION] {reason}"
 
-                self.original_guardian.ip_blocker.block_ip(
+                result = self.original_guardian.ip_blocker.block_ip(
                     ip=source_ip,
                     reason=reason,
                     threat_level='critical',  # Use threat level from classification
@@ -223,8 +224,44 @@ class EnhancedGuardianEngine:
                     f"Reason: {block_info['reason'][:100]}"
                 )
 
+                # Save block to database
+                if result.get('success'):
+                    self._save_block_to_database(source_ip, reason, is_simulation, simulation_id,
+                                                 block_info['duration_hours'], classification)
+
         except Exception as e:
             logger.error(f"Error executing block: {e}")
+
+    def _save_block_to_database(self, ip: str, reason: str, is_simulation: bool,
+                                 simulation_id: int, duration_hours: int, classification):
+        """Save IP block to database"""
+        try:
+            from connection import get_connection
+            conn = get_connection()
+            cursor = conn.cursor()
+
+            cursor.execute("""
+                INSERT INTO ip_blocks
+                (ip_address, block_reason, blocked_at, unblock_at, block_source,
+                 is_active, is_simulation, simulation_id)
+                VALUES (%s, %s, NOW(), DATE_ADD(NOW(), INTERVAL %s HOUR), %s, %s, %s, %s)
+            """, (
+                ip,
+                reason,
+                duration_hours,
+                'ml_analysis',
+                True,
+                is_simulation,
+                simulation_id
+            ))
+
+            conn.commit()
+            cursor.close()
+            conn.close()
+            logger.info(f"✅ Block saved to database: {ip}")
+
+        except Exception as e:
+            logger.error(f"Error saving block to database: {e}")
 
     def get_statistics(self) -> Dict:
         """Get comprehensive statistics"""

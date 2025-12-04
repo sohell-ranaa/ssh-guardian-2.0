@@ -1,0 +1,137 @@
+{
+  "timestamp": "2025-12-04T07:47:02.000679",
+  "key": "abuseipdb_43.136.47.18_90",
+  "data": {
+    "service": "abuseipdb",
+    "ip_address": "43.136.47.18",
+    "is_public": true,
+    "ip_version": 4,
+    "is_whitelisted": false,
+    "abuse_confidence_score": 100,
+    "threat_score": 100,
+    "threat_level": "critical",
+    "is_threat": true,
+    "location": {
+      "country_code": "CN",
+      "country_name": "China"
+    },
+    "network_info": {
+      "usage_type": "Data Center/Web Hosting/Transit",
+      "isp": "Tencent Cloud Computing (Beijing) Co., Ltd",
+      "domain": "tencent.com",
+      "hostnames": [],
+      "tor": false
+    },
+    "report_stats": {
+      "total_reports": 1692,
+      "distinct_reporters": 612,
+      "last_reported_at": "2025-12-03T22:50:04+00:00"
+    },
+    "recent_reports": [
+      {
+        "reported_at": "2025-12-03T22:24:00+00:00",
+        "comment": "ThreatBook Intelligence: Zombie,Scanner more details on https://threatbook.io/ip/43.136.47.18",
+        "categories": [
+          22
+        ],
+        "reporter_id": 56171,
+        "reporter_country": "CN"
+      },
+      {
+        "reported_at": "2025-12-03T20:11:32+00:00",
+        "comment": "list.rtbh.com.tr report: tcp/0",
+        "categories": [
+          18
+        ],
+        "reporter_id": 162131,
+        "reporter_country": "TR"
+      },
+      {
+        "reported_at": "2025-12-03T19:20:30+00:00",
+        "comment": "Invalid user toto from 43.136.47.18 port 38156",
+        "categories": [
+          18,
+          22
+        ],
+        "reporter_id": 88899,
+        "reporter_country": "DE"
+      },
+      {
+        "reported_at": "2025-12-03T16:40:48+00:00",
+        "comment": "failed authentication for user 'nrk'.  Reason: Authentication profile not found for the user. From: 43.136.47.18.",
+        "categories": [
+          5,
+          18
+        ],
+        "reporter_id": 82538,
+        "reporter_country": "MX"
+      },
+      {
+        "reported_at": "2025-12-03T15:00:23+00:00",
+        "comment": "Invalid user user1 from 43.136.47.18 port 56326",
+        "categories": [
+          14,
+          18,
+          22
+        ],
+        "reporter_id": 40991,
+        "reporter_country": "KR"
+      },
+      {
+        "reported_at": "2025-12-03T08:00:18+00:00",
+        "comment": "SSH login attempts with user root.",
+        "categories": [
+          18,
+          22
+        ],
+        "reporter_id": 28979,
+        "reporter_country": "US"
+      },
+      {
+        "reported_at": "2025-12-03T07:28:55+00:00",
+        "comment": "Dec 3 07:28:55 sshd[270736]: Invalid user XXXX from 43.136.47.18 port 41704",
+        "categories": [
+          18,
+          22
+        ],
+        "reporter_id": 120131,
+        "reporter_country": "DE"
+      },
+      {
+        "reported_at": "2025-12-03T06:50:14+00:00",
+        "comment": "Unauthorized connection attempt detected, SSH Brute-Force",
+        "categories": [
+          14,
+          18,
+          22
+        ],
+        "reporter_id": 57005,
+        "reporter_country": "DE"
+      },
+      {
+        "reported_at": "2025-12-03T06:22:31+00:00",
+        "comment": "Dec  2 22:18:21 spidey sshd-session[18692]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=43.136.47.18 \nDec  2 22:18:24 spidey sshd-session[18692]: Failed pas",
+        "categories": [
+          18,
+          22
+        ],
+        "reporter_id": 6104,
+        "reporter_country": "US"
+      },
+      {
+        "reported_at": "2025-12-03T05:38:48+00:00",
+        "comment": "2025-12-03T06:37:23.462237+01:00 Server sshd[2353593]: Invalid user user01 from 43.136.47.18 port 38842\n2025-12-03T06:37:23.468153+01:00 Server sshd[2353593]: pam_unix(sshd:auth): authentication failu",
+        "categories": [
+          18,
+          22
+        ],
+        "reporter_id": 42203,
+        "reporter_country": "IT"
+      }
+    ],
+    "threat_indicators": [
+      "1692 abuse reports from 612 users",
+      "Usage type: Data Center/Web Hosting/Transit"
+    ]
+  }
+}

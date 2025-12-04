@@ -1,0 +1,85 @@
+{
+  "timestamp": "2025-12-04T05:00:50.808731",
+  "key": "vt_185.220.101.45",
+  "data": {
+    "service": "virustotal",
+    "ip_address": "185.220.101.45",
+    "malicious_count": 16,
+    "suspicious_count": 2,
+    "harmless_count": 48,
+    "undetected_count": 29,
+    "total_scanners": 95,
+    "is_malicious": true,
+    "threat_score": 17.89,
+    "reputation": -18,
+    "network_info": {
+      "as_owner": "Stiftung Erneuerbare Freiheit",
+      "country": "DE",
+      "network": "185.220.101.0/24"
+    },
+    "detections": [
+      {
+        "scanner": "Abusix",
+        "category": "malicious",
+        "result": "malicious"
+      },
+      {
+        "scanner": "Criminal IP",
+        "category": "malicious",
+        "result": "malicious"
+      },
+      {
+        "scanner": "alphaMountain.ai",
+        "category": "malicious",
+        "result": "phishing"
+      },
+      {
+        "scanner": "AlphaSOC",
+        "category": "suspicious",
+        "result": "suspicious"
+      },
+      {
+        "scanner": "ArcSight Threat Intelligence",
+        "category": "suspicious",
+        "result": "suspicious"
+      },
+      {
+        "scanner": "BitDefender",
+        "category": "malicious",
+        "result": "phishing"
+      },
+      {
+        "scanner": "Certego",
+        "category": "malicious",
+        "result": "phishing"
+      },
+      {
+        "scanner": "CRDF",
+        "category": "malicious",
+        "result": "malicious"
+      },
+      {
+        "scanner": "CyRadar",
+        "category": "malicious",
+        "result": "malicious"
+      },
+      {
+        "scanner": "Fortinet",
+        "category": "malicious",
+        "result": "malware"
+      }
+    ],
+    "total_votes": {
+      "harmless": 0,
+      "malicious": 7
+    },
+    "last_analysis_date": 1764796368,
+    "raw_stats": {
+      "malicious": 16,
+      "suspicious": 2,
+      "undetected": 29,
+      "harmless": 48,
+      "timeout": 0
+    }
+  }
+}

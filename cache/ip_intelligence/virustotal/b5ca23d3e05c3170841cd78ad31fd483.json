@@ -1,0 +1,34 @@
+{
+  "timestamp": "2025-12-03T16:57:24.552783",
+  "key": "vt_103.236.168.25",
+  "data": {
+    "service": "virustotal",
+    "ip_address": "103.236.168.25",
+    "malicious_count": 0,
+    "suspicious_count": 0,
+    "harmless_count": 0,
+    "undetected_count": 95,
+    "total_scanners": 95,
+    "is_malicious": false,
+    "threat_score": 0.0,
+    "reputation": 0,
+    "network_info": {
+      "as_owner": "Unknown",
+      "country": "IN",
+      "network": "Unknown"
+    },
+    "detections": [],
+    "total_votes": {
+      "harmless": 0,
+      "malicious": 0
+    },
+    "last_analysis_date": null,
+    "raw_stats": {
+      "malicious": 0,
+      "suspicious": 0,
+      "undetected": 95,
+      "harmless": 0,
+      "timeout": 0
+    }
+  }
+}

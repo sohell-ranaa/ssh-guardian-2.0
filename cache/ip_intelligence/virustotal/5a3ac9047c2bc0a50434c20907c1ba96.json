@@ -1,0 +1,85 @@
+{
+  "timestamp": "2025-12-04T07:06:18.000513",
+  "key": "vt_103.13.215.175",
+  "data": {
+    "service": "virustotal",
+    "ip_address": "103.13.215.175",
+    "malicious_count": 7,
+    "suspicious_count": 3,
+    "harmless_count": 56,
+    "undetected_count": 29,
+    "total_scanners": 95,
+    "is_malicious": true,
+    "threat_score": 8.95,
+    "reputation": -1,
+    "network_info": {
+      "as_owner": "BUNNY-COMMUNICATIONS-GLOBAL",
+      "country": "TH",
+      "network": "103.13.212.0/22"
+    },
+    "detections": [
+      {
+        "scanner": "Criminal IP",
+        "category": "malicious",
+        "result": "malicious"
+      },
+      {
+        "scanner": "alphaMountain.ai",
+        "category": "suspicious",
+        "result": "suspicious"
+      },
+      {
+        "scanner": "AlphaSOC",
+        "category": "suspicious",
+        "result": "suspicious"
+      },
+      {
+        "scanner": "CRDF",
+        "category": "malicious",
+        "result": "malicious"
+      },
+      {
+        "scanner": "Cyble",
+        "category": "malicious",
+        "result": "malicious"
+      },
+      {
+        "scanner": "CyRadar",
+        "category": "malicious",
+        "result": "malicious"
+      },
+      {
+        "scanner": "Fortinet",
+        "category": "malicious",
+        "result": "malware"
+      },
+      {
+        "scanner": "Gridinsoft",
+        "category": "suspicious",
+        "result": "suspicious"
+      },
+      {
+        "scanner": "MalwareURL",
+        "category": "malicious",
+        "result": "malware"
+      },
+      {
+        "scanner": "SOCRadar",
+        "category": "malicious",
+        "result": "malware"
+      }
+    ],
+    "total_votes": {
+      "harmless": 0,
+      "malicious": 1
+    },
+    "last_analysis_date": 1764362637,
+    "raw_stats": {
+      "malicious": 7,
+      "suspicious": 3,
+      "undetected": 29,
+      "harmless": 56,
+      "timeout": 0
+    }
+  }
+}

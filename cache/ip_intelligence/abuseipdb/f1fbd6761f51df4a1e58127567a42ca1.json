@@ -1,0 +1,135 @@
+{
+  "timestamp": "2025-12-04T07:17:19.339863",
+  "key": "abuseipdb_103.183.74.214_90",
+  "data": {
+    "service": "abuseipdb",
+    "ip_address": "103.183.74.214",
+    "is_public": true,
+    "ip_version": 4,
+    "is_whitelisted": false,
+    "abuse_confidence_score": 100,
+    "threat_score": 100,
+    "threat_level": "critical",
+    "is_threat": true,
+    "location": {
+      "country_code": "ID",
+      "country_name": "Indonesia"
+    },
+    "network_info": {
+      "usage_type": "Data Center/Web Hosting/Transit",
+      "isp": "PT Cloud Hosting Indonesia",
+      "domain": "cloudhost.web.id"
+    },
+    "report_stats": {
+      "total_reports": 4519,
+      "distinct_reporters": 944,
+      "last_reported_at": "2025-12-04T06:03:51+00:00"
+    },
+    "recent_reports": [
+      {
+        "reported_at": "2025-12-04T06:03:51+00:00",
+        "comment": "103.183.74.214 (ID/Indonesia/ip103-183-74-214.cloudhost.web.id), 5 distributed sshd attacks on account [root] in the last 3600 secs; Ports: *; Direction: 1; Trigger: LF_DISTATTACK; Logs: Dec  4 00:01:",
+        "categories": [
+          18,
+          22
+        ],
+        "reporter_id": 98823,
+        "reporter_country": "US"
+      },
+      {
+        "reported_at": "2025-12-04T06:01:25+00:00",
+        "comment": "Dec  3 22:57:15 b146-13 sshd[607304]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=103.183.74.214 \nDec  3 22:57:17 b146-13 sshd[607304]: Failed password for ",
+        "categories": [
+          18,
+          22
+        ],
+        "reporter_id": 147003,
+        "reporter_country": "US"
+      },
+      {
+        "reported_at": "2025-12-04T05:59:28+00:00",
+        "comment": "Dec  4 05:59:26 dev sshd[3442458]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=103.183.74.214 \nDec  4 05:59:28 dev sshd[3442458]: Failed password for invali",
+        "categories": [
+          18,
+          22
+        ],
+        "reporter_id": 85650,
+        "reporter_country": "DE"
+      },
+      {
+        "reported_at": "2025-12-04T05:58:48+00:00",
+        "comment": "Cowrie Honeypot: 2 unauthorised SSH/Telnet login attempts between 2025-12-04T05:58:45Z and 2025-12-04T05:58:48Z",
+        "categories": [
+          18,
+          22
+        ],
+        "reporter_id": 51407,
+        "reporter_country": "US"
+      },
+      {
+        "reported_at": "2025-12-04T05:16:16+00:00",
+        "comment": "2025-12-04T06:08:40.569003+01:00 axisverse sshd-session[3472040]: Invalid user sftp from 103.183.74.214 port 46758\n2025-12-04T06:12:27.717456+01:00 axisverse sshd-session[3476371]: Invalid user opc fr",
+        "categories": [
+          18,
+          22
+        ],
+        "reporter_id": 100962,
+        "reporter_country": "CN"
+      },
+      {
+        "reported_at": "2025-12-04T05:16:07+00:00",
+        "comment": "Fail2Ban SSH Brute-Force Block on Buscoou Server",
+        "categories": [
+          18,
+          22
+        ],
+        "reporter_id": 185609,
+        "reporter_country": "US"
+      },
+      {
+        "reported_at": "2025-12-04T05:12:44+00:00",
+        "comment": "Dec  4 00:09:39 vps sshd[900738]: Failed password for invalid user sftp from 103.183.74.214 port 54074 ssh2\nDec  4 00:11:25 vps sshd[900803]: Invalid user erpnext from 103.183.74.214 port 50610\nDec  4",
+        "categories": [
+          18,
+          22
+        ],
+        "reporter_id": 149436,
+        "reporter_country": "US"
+      },
+      {
+        "reported_at": "2025-12-04T05:11:15+00:00",
+        "comment": "Dec  4 05:09:00 vps324820 sshd[1245058]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=103.183.74.214 \nDec  4 05:09:03 vps324820 sshd[1245058]: Failed passwor",
+        "categories": [
+          18,
+          22
+        ],
+        "reporter_id": 12964,
+        "reporter_country": "FR"
+      },
+      {
+        "reported_at": "2025-12-04T04:53:18+00:00",
+        "comment": "Dec  4 05:50:35 C1D543E sshd[378150]: User root from 103.183.74.214 not allowed because not listed in AllowUsers\nDec  4 05:50:35 C1D543E sshd[378150]: Failed password for invalid user root from 103.18",
+        "categories": [
+          18,
+          22
+        ],
+        "reporter_id": 25874,
+        "reporter_country": "ES"
+      },
+      {
+        "reported_at": "2025-12-04T04:30:03+00:00",
+        "comment": "(sshd) Failed SSH login from 103.183.74.214 (ID/Indonesia/ip103-183-74-214.cloudhost.web.id): 5 in the last 3600 secs; Ports: *; Direction: 1; Trigger: LF_SSHD; Logs: Dec  3 22:26:19 16829 sshd[12208]",
+        "categories": [
+          18,
+          22
+        ],
+        "reporter_id": 98823,
+        "reporter_country": "US"
+      }
+    ],
+    "threat_indicators": [
+      "4519 abuse reports from 944 users",
+      "Usage type: Data Center/Web Hosting/Transit"
+    ]
+  }
+}

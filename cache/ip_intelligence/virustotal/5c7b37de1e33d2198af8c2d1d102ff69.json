@@ -1,0 +1,80 @@
+{
+  "timestamp": "2025-12-04T07:47:00.625865",
+  "key": "vt_43.136.47.18",
+  "data": {
+    "service": "virustotal",
+    "ip_address": "43.136.47.18",
+    "malicious_count": 7,
+    "suspicious_count": 2,
+    "harmless_count": 54,
+    "undetected_count": 32,
+    "total_scanners": 95,
+    "is_malicious": true,
+    "threat_score": 8.42,
+    "reputation": -3,
+    "network_info": {
+      "as_owner": "Shenzhen Tencent Computer Systems Company Limited",
+      "country": "CN",
+      "network": "43.136.0.0/13"
+    },
+    "detections": [
+      {
+        "scanner": "Criminal IP",
+        "category": "malicious",
+        "result": "malicious"
+      },
+      {
+        "scanner": "alphaMountain.ai",
+        "category": "suspicious",
+        "result": "suspicious"
+      },
+      {
+        "scanner": "ArcSight Threat Intelligence",
+        "category": "suspicious",
+        "result": "suspicious"
+      },
+      {
+        "scanner": "Cyble",
+        "category": "malicious",
+        "result": "malicious"
+      },
+      {
+        "scanner": "CyRadar",
+        "category": "malicious",
+        "result": "malicious"
+      },
+      {
+        "scanner": "Fortinet",
+        "category": "malicious",
+        "result": "malware"
+      },
+      {
+        "scanner": "IPsum",
+        "category": "malicious",
+        "result": "malicious"
+      },
+      {
+        "scanner": "Lionic",
+        "category": "malicious",
+        "result": "malicious"
+      },
+      {
+        "scanner": "SOCRadar",
+        "category": "malicious",
+        "result": "malicious"
+      }
+    ],
+    "total_votes": {
+      "harmless": 0,
+      "malicious": 3
+    },
+    "last_analysis_date": 1764617626,
+    "raw_stats": {
+      "malicious": 7,
+      "suspicious": 2,
+      "undetected": 32,
+      "harmless": 54,
+      "timeout": 0
+    }
+  }
+}

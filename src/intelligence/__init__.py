@@ -1,20 +1,16 @@
 """
-Threat Intelligence Module
-Provides unified access to multiple threat intelligence sources
+IP Threat Intelligence Module
+Integrates multiple threat intelligence sources for comprehensive IP analysis
 """
 
-from .api_clients import (
-    ThreatIntelligenceAggregator,
-    VirusTotalClient,
-    AbuseIPDBClient,
-    ShodanClient,
-    IntelligenceCache
-)
+from .ip_enrichment_service import IPEnrichmentService
+from .virustotal_client import VirusTotalClient
+from .shodan_client import ShodanClient
+from .abuseipdb_client import AbuseIPDBClient
 
 __all__ = [
-    'ThreatIntelligenceAggregator',
+    'IPEnrichmentService',
     'VirusTotalClient',
-    'AbuseIPDBClient',
     'ShodanClient',
-    'IntelligenceCache'
+    'AbuseIPDBClient'
 ]

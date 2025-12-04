@@ -1,0 +1,75 @@
+{
+  "timestamp": "2025-12-04T07:13:00.518072",
+  "key": "vt_185.246.128.170",
+  "data": {
+    "service": "virustotal",
+    "ip_address": "185.246.128.170",
+    "malicious_count": 5,
+    "suspicious_count": 3,
+    "harmless_count": 56,
+    "undetected_count": 31,
+    "total_scanners": 95,
+    "is_malicious": true,
+    "threat_score": 6.84,
+    "reputation": -5,
+    "network_info": {
+      "as_owner": "w1n ltd",
+      "country": "SE",
+      "network": "185.246.128.0/23"
+    },
+    "detections": [
+      {
+        "scanner": "alphaMountain.ai",
+        "category": "suspicious",
+        "result": "suspicious"
+      },
+      {
+        "scanner": "AlphaSOC",
+        "category": "suspicious",
+        "result": "suspicious"
+      },
+      {
+        "scanner": "ArcSight Threat Intelligence",
+        "category": "suspicious",
+        "result": "suspicious"
+      },
+      {
+        "scanner": "Cyble",
+        "category": "malicious",
+        "result": "malicious"
+      },
+      {
+        "scanner": "CyRadar",
+        "category": "malicious",
+        "result": "malicious"
+      },
+      {
+        "scanner": "Fortinet",
+        "category": "malicious",
+        "result": "malware"
+      },
+      {
+        "scanner": "Lionic",
+        "category": "malicious",
+        "result": "malicious"
+      },
+      {
+        "scanner": "SOCRadar",
+        "category": "malicious",
+        "result": "malware"
+      }
+    ],
+    "total_votes": {
+      "harmless": 0,
+      "malicious": 5
+    },
+    "last_analysis_date": 1764729633,
+    "raw_stats": {
+      "malicious": 5,
+      "suspicious": 3,
+      "undetected": 31,
+      "harmless": 56,
+      "timeout": 0
+    }
+  }
+}

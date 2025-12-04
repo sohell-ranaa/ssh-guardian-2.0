@@ -1,0 +1,85 @@
+{
+  "timestamp": "2025-12-04T06:04:38.172546",
+  "key": "vt_27.128.229.223",
+  "data": {
+    "service": "virustotal",
+    "ip_address": "27.128.229.223",
+    "malicious_count": 10,
+    "suspicious_count": 4,
+    "harmless_count": 52,
+    "undetected_count": 29,
+    "total_scanners": 95,
+    "is_malicious": true,
+    "threat_score": 12.63,
+    "reputation": -6,
+    "network_info": {
+      "as_owner": "Chinanet",
+      "country": "CN",
+      "network": "27.128.224.0/19"
+    },
+    "detections": [
+      {
+        "scanner": "Criminal IP",
+        "category": "suspicious",
+        "result": "suspicious"
+      },
+      {
+        "scanner": "alphaMountain.ai",
+        "category": "suspicious",
+        "result": "suspicious"
+      },
+      {
+        "scanner": "AlphaSOC",
+        "category": "suspicious",
+        "result": "suspicious"
+      },
+      {
+        "scanner": "ArcSight Threat Intelligence",
+        "category": "suspicious",
+        "result": "suspicious"
+      },
+      {
+        "scanner": "BitDefender",
+        "category": "malicious",
+        "result": "phishing"
+      },
+      {
+        "scanner": "Certego",
+        "category": "malicious",
+        "result": "malicious"
+      },
+      {
+        "scanner": "CRDF",
+        "category": "malicious",
+        "result": "malicious"
+      },
+      {
+        "scanner": "Fortinet",
+        "category": "malicious",
+        "result": "malware"
+      },
+      {
+        "scanner": "G-Data",
+        "category": "malicious",
+        "result": "phishing"
+      },
+      {
+        "scanner": "GreenSnow",
+        "category": "malicious",
+        "result": "malicious"
+      }
+    ],
+    "total_votes": {
+      "harmless": 0,
+      "malicious": 6
+    },
+    "last_analysis_date": 1763001747,
+    "raw_stats": {
+      "malicious": 10,
+      "suspicious": 4,
+      "undetected": 29,
+      "harmless": 52,
+      "timeout": 0
+    }
+  }
+}

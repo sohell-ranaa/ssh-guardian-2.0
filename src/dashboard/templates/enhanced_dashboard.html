@@ -1,9 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SSH Guardian 2.0 - Enhanced Security Dashboard</title>
+    <title>SSH Guardian 2.0 - Dashboard</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
 
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -14,23 +17,46 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
-    <!-- DataTables -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
-
     <style>
         :root {
-            --primary: #667eea;
-            --secondary: #764ba2;
-            --danger: #f56565;
-            --warning: #f6ad55;
-            --success: #48bb78;
-            --info: #4299e1;
+            /* Azure Primary Colors - Actual Microsoft Azure palette */
+            --primary: #0078D4;
+            --primary-hover: #005A9E;
+            --primary-light: #50E6FF;
+
+            /* Azure Status Colors - Softer, more professional */
+            --danger: #E74856;
+            --warning: #FFA500;
+            --success: #10893E;
+            --info: #0086CE;
+
+            /* Backgrounds - Clean and subtle */
+            --bg: #F5F5F5;
+            --sidebar-bg: #FFFFFF;
+            --panel-bg: #FFFFFF;
+            --header-bg: #FAFAFA;
+
+            /* Text - Better contrast */
+            --text: #323130;
+            --text-muted: #605E5C;
+            --text-secondary: #8A8886;
+
+            /* Borders - Subtle */
+            --border: #E1DFDD;
+            --border-light: #EDEBE9;
+
+            /* Shadows - Azure Fluent Design */
+            --shadow-card: 0 0.3px 0.9px rgba(0,0,0,0.108), 0 1.6px 3.6px rgba(0,0,0,0.132);
+            --shadow-hover: 0 3.2px 7.2px rgba(0,0,0,0.132), 0 0.6px 1.8px rgba(0,0,0,0.108);
         }
 
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 14px;
+            color: var(--text);
         }
 
         .sidebar {
@@ -38,169 +64,325 @@
             top: 0;
             left: 0;
             height: 100vh;
-            width: 260px;
-            background: rgba(26, 32, 44, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 20px;
+            width: 48px;
+            background: #F8F8F8;
+            padding: 0;
             overflow-y: auto;
+            overflow-x: hidden;
             z-index: 1000;
-            border-right: 1px solid rgba(255,255,255,0.1);
+            border-right: 1px solid #E1DFDD;
+            transition: width 0.2s;
+        }
+
+        .sidebar:hover {
+            width: 240px;
         }
 
         .sidebar-logo {
-            font-size: 24px;
-            font-weight: 700;
-            color: white;
-            margin-bottom: 30px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .sidebar-logo i {
-            color: var(--primary);
-        }
-
-        .nav-item {
-            margin-bottom: 5px;
-        }
-
-        .nav-link {
-            color: rgba(255,255,255,0.7);
-            padding: 12px 15px;
-            border-radius: 8px;
-            transition: all 0.3s;
+            font-size: 16px;
+            font-weight: 600;
+            color: #262626;
+            padding: 14px 12px;
             display: flex;
             align-items: center;
             gap: 12px;
+            border-bottom: 1px solid #E1DFDD;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.1s;
+            white-space: nowrap;
+            height: 48px;
         }
 
-        .nav-link:hover, .nav-link.active {
-            background: rgba(102, 126, 234, 0.2);
-            color: white;
+        .sidebar-logo:hover {
+            background: #F3F2F1;
+        }
+
+        .sidebar-logo i {
+            color: #0078D4;
+            font-size: 20px;
+            min-width: 20px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-logo span {
+            color: #262626;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .sidebar:hover .sidebar-logo span {
+            opacity: 1;
+        }
+
+        .nav-item {
+            margin: 0;
+        }
+
+        .nav-link {
+            color: #605E5C;
+            padding: 10px 12px;
+            transition: all 0.1s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 13.33px;
+            border-left: 2px solid transparent;
+            text-decoration: none;
+            white-space: nowrap;
+            height: 40px;
+        }
+
+        .nav-link:hover {
+            background: #F3F2F1;
+            color: #262626;
+            border-left-color: transparent;
+        }
+
+        .nav-link.active {
+            background: #FFFFFF;
+            color: #0078D4;
+            border-left-color: #0078D4;
+            font-weight: 600;
         }
 
         .nav-link i {
             width: 20px;
+            min-width: 20px;
             text-align: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .nav-link span {
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .sidebar:hover .nav-link span {
+            opacity: 1;
         }
 
         .main-content {
-            margin-left: 260px;
-            padding: 30px;
+            margin-left: 48px;
+            padding: 24px;
+            transition: margin-left 0.2s;
         }
 
         .page-header {
-            background: white;
-            border-radius: 15px;
-            padding: 25px 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            background: var(--panel-bg);
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-card);
+        }
+
+        .page-header h1 {
+            font-size: 22px;
+            font-weight: 600;
+            margin: 0;
+            color: var(--text);
+        }
+
+        .page-header p {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin: 8px 0 0;
         }
 
         .stat-card {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            transition: transform 0.2s, box-shadow 0.2s;
+            background: var(--panel-bg);
+            border-radius: 6px;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-card);
+            transition: box-shadow 0.3s;
         }
 
         .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            box-shadow: var(--shadow-hover);
         }
 
         .stat-value {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin: 10px 0;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 4px 0;
+            line-height: 1.3;
         }
 
         .stat-label {
-            color: #718096;
-            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-size: 10px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            font-weight: 600;
         }
 
         .stat-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 12px;
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
-            margin-bottom: 15px;
+            font-size: 16px;
+            margin-bottom: 6px;
         }
 
-        .icon-primary { background: rgba(102, 126, 234, 0.1); color: var(--primary); }
-        .icon-danger { background: rgba(245, 101, 101, 0.1); color: var(--danger); }
-        .icon-warning { background: rgba(246, 173, 85, 0.1); color: var(--warning); }
-        .icon-success { background: rgba(72, 187, 120, 0.1); color: var(--success); }
-        .icon-info { background: rgba(66, 153, 225, 0.1); color: var(--info); }
+        .stat-detail {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+            line-height: 1.3;
+        }
+
+        .stat-info {
+            flex: 1;
+        }
+
+        /* Icon backgrounds - Azure style with better visibility */
+        .icon-primary { background: #E8F4FD; color: var(--primary); }
+        .icon-danger { background: #FEF0F1; color: var(--danger); }
+        .icon-warning { background: #FFF7E6; color: var(--warning); }
+        .icon-success { background: #E8F5EA; color: var(--success); }
+        .icon-info { background: #E6F4FA; color: var(--info); }
 
         .card-panel {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            background: var(--panel-bg);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-card);
         }
 
         .card-header-custom {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #f0f0f0;
+            margin-bottom: 16px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-footer-custom {
+            margin-top: 16px;
+            padding-top: 14px;
+            border-top: 1px solid var(--border);
         }
 
         .card-title {
-            font-size: 1.25rem;
+            font-size: 16px;
             font-weight: 600;
-            color: #2d3748;
+            color: var(--text);
             margin: 0;
         }
 
+        .card-title i {
+            font-size: 15px;
+            margin-right: 8px;
+        }
+
         .badge-custom {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.75rem;
+            padding: 5px 12px;
+            border-radius: 12px;
+            font-size: 13px;
             font-weight: 600;
+        }
+
+        /* Badge variants - Azure style */
+        .badge-critical { background: #D13438 !important; color: #FFFFFF !important; font-weight: 700 !important; }
+        .badge-high { background: #FFF4E5 !important; color: #CA5010 !important; font-weight: 600 !important; }
+        .badge-danger { background: #FEF0F1 !important; color: #E74856 !important; }
+        .badge-warning { background: #FFF7E6 !important; color: #F59100 !important; }
+        .badge-success { background: #E8F5EA !important; color: #10893E !important; }
+        .badge-info { background: #E6F4FA !important; color: #0086CE !important; }
+        .badge-primary { background: #E8F4FD !important; color: #0078D4 !important; }
+
+        /* Bootstrap badge overrides - Azure colors */
+        .bg-info {
+            background: #E6F4FA !important;
+            color: #0086CE !important;
+            border: 1px solid #B8E2F6 !important;
+        }
+
+        .bg-success {
+            background: #E8F5EA !important;
+            color: #10893E !important;
+            border: 1px solid #C4E7CC !important;
+        }
+
+        .bg-danger {
+            background: #FEF0F1 !important;
+            color: #E74856 !important;
+            border: 1px solid #FACFD2 !important;
+        }
+
+        .bg-warning {
+            background: #FFF7E6 !important;
+            color: #F59100 !important;
+            border: 1px solid #FFE5B3 !important;
+        }
+
+        .bg-primary {
+            background: #E8F4FD !important;
+            color: #0078D4 !important;
+            border: 1px solid #C7E0F4 !important;
+        }
+
+        /* Text color override for badges */
+        .text-dark {
+            color: #323130 !important;
         }
 
         .btn-action {
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-weight: 500;
-            transition: all 0.3s;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all 0.2s;
         }
 
+        /* Threat badges - Azure soft colors */
         .threat-badge {
-            padding: 4px 10px;
+            padding: 5px 12px;
             border-radius: 12px;
-            font-size: 0.75rem;
+            font-size: 12px;
             font-weight: 600;
         }
 
-        .threat-critical { background: #fee; color: #c00; }
-        .threat-high { background: #fed7d7; color: #c53030; }
-        .threat-medium { background: #feebc8; color: #c05621; }
-        .threat-low { background: #d1fae5; color: #065f46; }
+        .threat-critical {
+            background: #FEF0F1 !important;
+            color: #E74856 !important;
+            border: 1px solid #FACFD2;
+        }
+        .threat-high {
+            background: #FFF7E6 !important;
+            color: #F59100 !important;
+            border: 1px solid #FFE5B3;
+        }
+        .threat-medium {
+            background: #FFF9E6 !important;
+            color: #CA8500 !important;
+            border: 1px solid #FFEDB3;
+        }
+        .threat-low {
+            background: #E8F5EA !important;
+            color: #10893E !important;
+            border: 1px solid #C4E7CC;
+        }
 
         .live-indicator {
             display: inline-flex;
             align-items: center;
             gap: 8px;
             padding: 6px 12px;
-            background: rgba(72, 187, 120, 0.1);
+            background: #E8F5EA;
             border-radius: 20px;
             font-size: 0.85rem;
             color: var(--success);
+            font-weight: 500;
         }
 
         .live-dot {
@@ -213,7 +395,111 @@
 
         @keyframes pulse {
             0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+            50% { opacity: 0.4; }
+        }
+
+        table {
+            font-size: 14px;
+        }
+
+        table th {
+            font-weight: 600;
+            color: var(--text);
+            background: var(--header-bg);
+            border-bottom: 1px solid var(--border);
+            padding: 14px 16px;
+        }
+
+        table td {
+            color: var(--text);
+            padding: 14px 16px;
+            border-bottom: 1px solid #F3F2F1;
+        }
+
+        table tr:hover {
+            background: #F3F2F1;
+        }
+
+        .btn {
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            border-color: var(--primary-hover);
+        }
+
+        /* Button variants - Azure palette */
+        .btn-danger {
+            background: var(--danger);
+            border-color: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #D02F3D;
+            border-color: #D02F3D;
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            border-color: var(--warning);
+            color: #323130;
+        }
+
+        .btn-warning:hover {
+            background: #E69500;
+            border-color: #E69500;
+            color: #323130;
+        }
+
+        .btn-success {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #0E7A36;
+            border-color: #0E7A36;
+            color: white;
+        }
+
+        .btn-outline-primary {
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .btn-outline-primary:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        /* Text color utilities - Azure palette */
+        .text-danger { color: var(--danger) !important; }
+        .text-warning { color: var(--warning) !important; }
+        .text-success { color: var(--success) !important; }
+        .text-info { color: var(--info) !important; }
+
+        .form-control, .form-select {
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            font-size: 14px;
+            padding: 8px 12px;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.1);
         }
 
         .search-box {
@@ -283,12 +569,22 @@
         /* Responsive */
         @media (max-width: 992px) {
             .sidebar {
-                transform: translateX(-100%);
+                width: 240px;
+                transform: translateX(-240px);
                 transition: transform 0.3s ease-in-out;
+            }
+
+            .sidebar:hover {
+                width: 240px;
             }
 
             .sidebar.show {
                 transform: translateX(0);
+            }
+
+            .sidebar-logo span,
+            .nav-link span {
+                opacity: 1;
             }
 
             .main-content {
@@ -297,32 +593,40 @@
         }
 
         /* Hamburger Menu Button */
+        /* Hamburger Menu Button - Azure Design */
         .hamburger-btn {
             position: fixed;
             top: 20px;
             left: 20px;
             z-index: 1001;
-            background: var(--primary);
-            border: none;
-            color: white;
-            width: 45px;
-            height: 45px;
-            border-radius: 8px;
+            background: #FFFFFF;
+            border: 1px solid #E1DFDD;
+            color: #323130;
+            width: 44px;
+            height: 44px;
+            border-radius: 6px;
             display: none;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease;
+            box-shadow: 0 0.3px 0.9px rgba(0,0,0,0.108), 0 1.6px 3.6px rgba(0,0,0,0.132);
+            transition: all 0.2s;
         }
 
         .hamburger-btn:hover {
-            background: var(--secondary);
-            transform: scale(1.05);
+            background: #F3F2F1;
+            border-color: #0078D4;
+            color: #0078D4;
+            box-shadow: 0 3.2px 7.2px rgba(0,0,0,0.132), 0 0.6px 1.8px rgba(0,0,0,0.108);
+        }
+
+        .hamburger-btn:active {
+            background: #EDEBE9;
+            transform: scale(0.97);
         }
 
         .hamburger-btn i {
-            font-size: 20px;
+            font-size: 18px;
         }
 
         @media (max-width: 992px) {
@@ -405,20 +709,99 @@
             to { transform: rotate(360deg); }
         }
 
+        /* Notification Toaster - Azure Design */
         .notification {
             position: fixed;
             top: 20px;
             right: 20px;
-            min-width: 300px;
-            padding: 15px 20px;
-            border-radius: 10px;
-            background: white;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            min-width: 320px;
+            max-width: 400px;
+            padding: 16px 20px;
+            border-radius: 6px;
+            background: #FFFFFF;
+            border-left: 4px solid #0078D4;
+            box-shadow: 0 3.2px 7.2px rgba(0,0,0,0.132), 0 0.6px 1.8px rgba(0,0,0,0.108);
             z-index: 9999;
-            animation: slideIn 0.3s ease;
+            animation: slideInRight 0.3s ease;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
         }
 
-        @keyframes slideIn {
+        .notification.notification-success {
+            border-left-color: #10893E;
+        }
+
+        .notification.notification-error {
+            border-left-color: #E74856;
+        }
+
+        .notification.notification-warning {
+            border-left-color: #FFA500;
+        }
+
+        .notification.notification-info {
+            border-left-color: #0086CE;
+        }
+
+        .notification-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .notification-icon i {
+            font-size: 16px;
+        }
+
+        .notification-success .notification-icon i { color: #10893E; }
+        .notification-error .notification-icon i { color: #E74856; }
+        .notification-warning .notification-icon i { color: #FFA500; }
+        .notification-info .notification-icon i { color: #0086CE; }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #323130;
+            margin: 0 0 4px 0;
+        }
+
+        .notification-message {
+            font-size: 13px;
+            color: #605E5C;
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        .notification-close {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            color: #8A8886;
+            cursor: pointer;
+            border-radius: 4px;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+
+        .notification-close:hover {
+            background: #F3F2F1;
+            color: #323130;
+        }
+
+        @keyframes slideInRight {
             from {
                 transform: translateX(400px);
                 opacity: 0;
@@ -427,6 +810,40 @@
                 transform: translateX(0);
                 opacity: 1;
             }
+        }
+
+        /* Breadcrumb - Azure Design */
+        .breadcrumb {
+            background: transparent !important;
+            padding: 0 !important;
+            margin: 0 0 16px 0 !important;
+            font-size: 13px;
+        }
+
+        .breadcrumb-item {
+            color: #605E5C;
+        }
+
+        .breadcrumb-item + .breadcrumb-item::before {
+            content: "/" !important;
+            color: #8A8886;
+            padding: 0 8px;
+        }
+
+        .breadcrumb-item a {
+            color: #0078D4;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .breadcrumb-item a:hover {
+            color: #005A9E;
+            text-decoration: underline;
+        }
+
+        .breadcrumb-item.active {
+            color: #323130;
+            font-weight: 500;
         }
 
         .toolbar {
@@ -444,31 +861,121 @@
             background: rgba(26, 32, 44, 0.95);
         }
 
-        /* Simulation UI Styles */
-        .template-item {
-            padding: 12px;
-            margin-bottom: 8px;
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 8px;
+        /* Simulation UI Styles - Compact Dropdown Design */
+        .template-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .template-dropdown-btn {
+            background: #F8FCFF;
+            border: 1px solid #C7E0F4;
+            border-radius: 6px;
+            padding: 10px 16px;
+            font-size: 14px;
+            color: #323130;
             cursor: pointer;
-            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            min-width: 280px;
+            justify-content: space-between;
+        }
+
+        .template-dropdown-btn:hover {
+            background: #E8F4FD;
+            border-color: #0078D4;
+        }
+
+        .template-dropdown-btn i {
+            color: #0078D4;
+        }
+
+        .template-dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            margin-top: 8px;
+            background: #FFFFFF;
+            border: 2px solid #E1DFDD;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15), 0 1px 3px rgba(0,0,0,0.1);
+            max-height: 500px;
+            overflow-y: auto;
+            min-width: 450px;
+            z-index: 1000;
+            display: none;
+            padding: 12px;
+        }
+
+        .template-dropdown.open .template-dropdown-menu {
+            display: block;
+        }
+
+        /* Support both CSS classes and inline structure */
+        .template-category,
+        .template-dropdown-menu .mb-3 {
+            padding: 8px 0;
+        }
+
+        .template-category:not(:first-child),
+        .template-dropdown-menu .mb-3:not(:first-child) {
+            margin-top: 16px !important;
+            padding-top: 16px;
+            border-top: 2px solid #F3F2F1;
+        }
+
+        .template-category-title,
+        .template-dropdown-menu .small.text-uppercase {
+            font-size: 11px !important;
+            font-weight: 600 !important;
+            color: #605E5C !important;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px !important;
+            padding-left: 12px;
+            display: block;
+        }
+
+        .template-item {
+            padding: 14px 16px;
+            margin: 0 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-radius: 6px;
+            border-left: 3px solid transparent;
+            border-bottom: 1px solid #F9FAFB;
+        }
+
+        .template-item:last-child {
+            border-bottom: none;
         }
 
         .template-item:hover {
-            background: rgba(102, 126, 234, 0.1);
-            border-color: var(--primary);
+            background: #F0F6FC;
+            border-left-color: #0078D4;
+            border-bottom-color: #E8F4FD;
         }
 
         .template-item.active {
-            background: rgba(102, 126, 234, 0.2);
-            border-color: var(--primary);
-            border-width: 2px;
+            background: #E8F4FD;
+            border-left-color: #0078D4;
+            border-bottom-color: #C7E0F4;
+        }
+
+        .template-item .fw-bold {
+            color: #323130 !important;
+        }
+
+        .template-item .text-muted {
+            color: #8A8886 !important;
         }
 
         .template-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 8px;
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -476,21 +983,603 @@
             margin-bottom: 8px;
         }
 
-        .severity-critical { background: rgba(245, 101, 101, 0.2); color: #f56565; }
-        .severity-high { background: rgba(246, 173, 85, 0.2); color: #f6ad55; }
-        .severity-medium { background: rgba(66, 153, 225, 0.2); color: #4299e1; }
-        .severity-low { background: rgba(72, 187, 120, 0.2); color: #48bb78; }
+        /* Severity badges - Azure style with better visibility */
+        .severity-critical { background: #FEF0F1; color: var(--danger); font-weight: 600; }
+        .severity-high { background: #FFF7E6; color: var(--warning); font-weight: 600; }
+        .severity-medium { background: #E6F4FA; color: var(--info); font-weight: 600; }
+        .severity-low { background: #E8F5EA; color: var(--success); font-weight: 600; }
+
+        /* Agent Selector - Light blue to stand out as selector */
+        .agent-selector-clean {
+            background: #F0F6FC !important;
+            border: 1px solid #C7E0F4;
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .agent-selector-header-clean {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .agent-title-clean {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #323130 !important;
+        }
+
+        .agent-title-clean span {
+            color: #323130 !important;
+        }
+
+        .agent-title-clean i {
+            color: #605E5C !important;
+            font-size: 14px;
+        }
+
+        .agent-count-clean {
+            font-size: 12px;
+            color: #605E5C !important;
+        }
+
+        .agent-dropdown-clean {
+            margin: 0;
+        }
+
+        .agent-dropdown-clean .form-select {
+            border: 1px solid #C7E0F4;
+            border-radius: 4px;
+            padding: 8px 12px;
+            font-size: 14px;
+            color: #323130 !important;
+            background-color: #F8FCFF !important;
+        }
+
+        .agent-dropdown-clean .form-select option {
+            color: #323130 !important;
+            background-color: #FFFFFF !important;
+        }
+
+        .agent-dropdown-clean .form-select:focus {
+            border-color: #0078D4;
+            box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.1);
+        }
+
+        /* Clean stat cards - no background colors with proper text visibility */
+        .stats-grid-clean {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card-clean {
+            background: #FAFBFC !important;
+            border: 1px solid #EDEBE9;
+            border-radius: 6px;
+            padding: 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            transition: all 0.2s;
+        }
+
+        .stat-card-clean:hover {
+            background: #F5F5F5 !important;
+            border-color: #D1D1D1;
+            box-shadow: 0 0.3px 0.9px rgba(0,0,0,0.08), 0 1.6px 3.6px rgba(0,0,0,0.10);
+        }
+
+        .stat-icon-clean {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            background: #F0F0F0;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .stat-content-clean {
+            flex: 1;
+        }
+
+        .stat-label-clean {
+            font-size: 12px;
+            color: #605E5C !important;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .stat-value-clean {
+            font-size: 24px;
+            font-weight: 600;
+            color: #323130 !important;
+            margin-bottom: 4px;
+        }
+
+        .stat-footer-clean {
+            font-size: 12px;
+            color: #8A8886 !important;
+        }
+
+        #agent-context-banner {
+            background: #F9FAFB;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        #agent-context-banner .agent-context-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        #agent-context-banner .agent-context-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--panel-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #agent-context-banner .agent-context-icon i {
+            color: var(--primary);
+            font-size: 16px;
+        }
+
+        #agent-context-banner .agent-context-details h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+            margin: 0 0 2px 0;
+        }
+
+        #agent-context-banner .agent-context-details p {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        #agent-context-banner .clear-filter-btn {
+            background: var(--panel-bg);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 6px 12px;
+            font-size: 13px;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        #agent-context-banner .clear-filter-btn:hover {
+            background: #F3F2F1;
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        #agent-context-banner .clear-filter-btn i {
+            font-size: 12px;
+            margin-right: 4px;
+        }
 
         .sim-log-console {
             background: #1e1e1e;
             color: #d4d4d4;
             font-family: 'Courier New', monospace;
-            font-size: 13px;
+            font-size: 12px;
             padding: 15px;
-            height: 400px;
             overflow-y: auto;
+            border-radius: 6px;
+            border: 1px solid #E1DFDD;
+        }
+
+        /* Simulation Summary Cards */
+        .sim-stat-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .sim-stat-item {
+            background: #F8F8F8;
+            padding: 12px;
+            border-radius: 4px;
+            border: 1px solid #EDEBE9;
+        }
+
+        .sim-stat-label {
+            font-size: 11px;
+            color: #605E5C;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .sim-stat-value {
+            font-size: 20px;
+            font-weight: 600;
+            color: #323130;
+        }
+
+        /* Intelligence Sections */
+        .intel-section {
+            border-bottom: 1px solid #EDEBE9;
+            padding: 12px 0;
+        }
+
+        .intel-section:last-child {
+            border-bottom: none;
+        }
+
+        .intel-section-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #323130;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .intel-section-title i {
+            font-size: 14px;
+        }
+
+        .intel-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            font-size: 12px;
+        }
+
+        .intel-item-label {
+            color: #605E5C;
+        }
+
+        .intel-item-value {
+            color: #323130;
+            font-weight: 500;
+        }
+
+        .intel-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .intel-badge.malicious {
+            background: #FEF0F1;
+            color: #E74856;
+        }
+
+        .intel-badge.suspicious {
+            background: #FFF7E6;
+            color: #F59100;
+        }
+
+        .intel-badge.clean {
+            background: #E8F5EA;
+            color: #10893E;
+        }
+
+        /* Enhanced Intelligence Sections */
+        .intel-section-enhanced {
+            background: linear-gradient(to bottom, #FAFBFC, #FFFFFF);
+            border: 1px solid #EDEBE9;
             border-radius: 8px;
-            border: 1px solid rgba(255,255,255,0.1);
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .intel-header-main {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #EDEBE9;
+        }
+
+        .intel-header-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #323130;
+            flex: 1;
+        }
+
+        .intel-header-badge {
+            background: #F3F2F1;
+            color: #0078D4;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            font-family: 'Courier New', monospace;
+        }
+
+        .intel-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .intel-grid-item {
+            background: #FFFFFF;
+            border: 1px solid #EDEBE9;
+            border-radius: 6px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .intel-grid-label {
+            font-size: 11px;
+            color: #605E5C;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .intel-badge-large {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .intel-badge-large.malicious {
+            background: #FEF0F1;
+            color: #E74856;
+            border: 1px solid #E74856;
+        }
+
+        .intel-badge-large.suspicious {
+            background: #FFF7E6;
+            color: #F59100;
+            border: 1px solid #F59100;
+        }
+
+        .intel-badge-large.clean {
+            background: #E8F5EA;
+            color: #10893E;
+            border: 1px solid #10893E;
+        }
+
+        .intel-score-display {
+            font-size: 24px;
+            font-weight: 700;
+            color: #E74856;
+        }
+
+        .intel-score-max {
+            font-size: 14px;
+            color: #605E5C;
+            font-weight: 400;
+        }
+
+        .intel-value-large {
+            font-size: 18px;
+            font-weight: 600;
+            color: #323130;
+        }
+
+        .intel-section-header {
+            font-size: 13px;
+            font-weight: 700;
+            color: #323130;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #EDEBE9;
+        }
+
+        .intel-details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .intel-detail-card {
+            background: #FFFFFF;
+            border: 1px solid #EDEBE9;
+            border-radius: 6px;
+            padding: 12px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            transition: all 0.2s;
+        }
+
+        .intel-detail-card:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transform: translateY(-2px);
+        }
+
+        .intel-detail-card.malicious-bg {
+            background: linear-gradient(135deg, #FEF0F1 0%, #FFFFFF 100%);
+            border-color: #E74856;
+        }
+
+        .intel-detail-card.suspicious-bg {
+            background: linear-gradient(135deg, #FFF7E6 0%, #FFFFFF 100%);
+            border-color: #F59100;
+        }
+
+        .intel-detail-card.clean-bg {
+            background: linear-gradient(135deg, #E8F5EA 0%, #FFFFFF 100%);
+            border-color: #10893E;
+        }
+
+        .intel-detail-icon {
+            font-size: 24px;
+            color: #605E5C;
+        }
+
+        .intel-detail-card.malicious-bg .intel-detail-icon {
+            color: #E74856;
+        }
+
+        .intel-detail-card.suspicious-bg .intel-detail-icon {
+            color: #F59100;
+        }
+
+        .intel-detail-card.clean-bg .intel-detail-icon {
+            color: #10893E;
+        }
+
+        .intel-detail-content {
+            flex: 1;
+        }
+
+        .intel-detail-label {
+            font-size: 10px;
+            color: #605E5C;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .intel-detail-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #323130;
+        }
+
+        .intel-detail-sub {
+            font-size: 10px;
+            color: #858585;
+            margin-top: 2px;
+        }
+
+        .intel-info-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .intel-info-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            background: #FAFBFC;
+            border-radius: 4px;
+            border: 1px solid #EDEBE9;
+            transition: all 0.2s;
+        }
+
+        .intel-info-item:hover {
+            background: #F3F2F1;
+            border-color: #D1D1D1;
+        }
+
+        .intel-info-item.intel-warning-item {
+            background: #FFF7E6;
+            border-color: #F59100;
+        }
+
+        .intel-info-icon {
+            font-size: 16px;
+            color: #0078D4;
+            width: 24px;
+            text-align: center;
+        }
+
+        .intel-info-content {
+            flex: 1;
+        }
+
+        .intel-info-label {
+            font-size: 11px;
+            color: #605E5C;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            margin-bottom: 2px;
+        }
+
+        .intel-info-value {
+            font-size: 13px;
+            color: #323130;
+            font-weight: 600;
+        }
+
+        .intel-info-value-small {
+            font-size: 11px;
+            color: #323130;
+            font-weight: 500;
+            word-break: break-all;
+        }
+
+        /* Enhanced Login History Items */
+        .login-history-item {
+            background: #FAFBFC;
+            border: 1px solid #EDEBE9;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 8px;
+            transition: all 0.2s;
+        }
+
+        .login-history-item:hover {
+            background: #F3F2F1;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+            transform: translateX(4px);
+        }
+
+        .login-history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #EDEBE9;
+        }
+
+        .login-history-time {
+            font-size: 11px;
+            color: #605E5C;
+            font-weight: 500;
+        }
+
+        .login-history-body {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .login-history-user {
+            font-size: 13px;
+            color: #323130;
+        }
+
+        .login-history-location {
+            font-size: 12px;
+            color: #605E5C;
         }
 
         .log-entry {
@@ -549,7 +1638,353 @@
             padding: 2px 6px;
             border-radius: 10px;
         }
+
+        /* IP Intelligence Styles */
+        .service-status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            padding: 15px;
+        }
+
+        .service-status-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .service-status-item.status-available {
+            border-left: 3px solid #28a745;
+        }
+
+        .service-status-item.status-unavailable {
+            border-left: 3px solid #dc3545;
+        }
+
+        .service-icon {
+            font-size: 20px;
+        }
+
+        .service-status-item.status-available .service-icon {
+            color: #28a745;
+        }
+
+        .service-status-item.status-unavailable .service-icon {
+            color: #dc3545;
+        }
+
+        .ip-intel-container {
+            padding: 20px;
+        }
+
+        .intel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        /* Removed duplicate - using Azure threat badge styles defined above */
+
+        .intel-summary {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .summary-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .summary-item .label {
+            font-size: 12px;
+            color: #adb5bd;
+        }
+
+        .summary-item .value {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .threat-indicators {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .threat-indicators h4 {
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: #dc3545;
+        }
+
+        .threat-indicators ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .threat-indicators li {
+            padding: 5px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .threat-indicators li:before {
+            content: "⚠";
+            position: absolute;
+            left: 0;
+        }
+
+        .source-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .source-panel {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 8px;
+            border-top: 3px solid #007bff;
+        }
+
+        .source-panel h4 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: #007bff;
+        }
+
+        .source-panel.source-error {
+            border-top-color: #6c757d;
+            opacity: 0.6;
+        }
+
+        .vt-stats, .shodan-stats, .abuse-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+        }
+
+        .port-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 5px;
+        }
+
+        .port-badge {
+            background: #007bff;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .history-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        .history-item a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .history-item a:hover {
+            text-decoration: underline;
+        }
+
+        .history-item .threat-indicator {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .history-item .timestamp {
+            font-size: 12px;
+            color: #adb5bd;
+        }
+
+        .loading-state, .error-state {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #007bff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* User Profile Dropdown - Inline with buttons */
+        .user-profile-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .user-profile-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #0078D4;
+            border: 2px solid #FFFFFF;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-profile-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .user-avatar {
+            color: #FFFFFF;
+            font-weight: 600;
+            font-size: 13px;
+            user-select: none;
+        }
+
+        .user-dropdown-menu {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            background: #FFFFFF;
+            border: 1px solid #E1DFDD;
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            min-width: 220px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.2s;
+            padding: 8px 0;
+            z-index: 1050;
+        }
+
+        .user-profile-container:hover .user-dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .user-dropdown-header {
+            padding: 12px 16px;
+            border-bottom: 1px solid #EDEBE9;
+        }
+
+        .user-dropdown-email {
+            font-size: 13px;
+            font-weight: 600;
+            color: #323130;
+            margin-bottom: 2px;
+        }
+
+        .user-dropdown-role {
+            font-size: 11px;
+            color: #605E5C;
+        }
+
+        .user-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            color: #323130;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.1s;
+            text-decoration: none;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .user-dropdown-item:hover {
+            background: #F3F2F1;
+        }
+
+        .user-dropdown-item i {
+            width: 16px;
+            text-align: center;
+            color: #605E5C;
+        }
+
+        .user-dropdown-divider {
+            height: 1px;
+            background: #EDEBE9;
+            margin: 8px 0;
+        }
+
+        .user-dropdown-item.danger {
+            color: #A4262C;
+        }
+
+        .user-dropdown-item.danger:hover {
+            background: #FEF0F1;
+        }
+
+        .user-dropdown-item.danger i {
+            color: #A4262C;
+        }
+
     </style>
+
+    <!-- Multi-Agent Dashboard Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/multi-agent.css') }}">
 </head>
 <body>
     <!-- Hamburger Menu Button (Mobile Only) -->
@@ -562,19 +1997,15 @@
 
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
-        <div class="sidebar-logo">
+        <a href="#" class="sidebar-logo" onclick="switchTab('overview'); return false;">
             <i class="fas fa-shield-alt"></i>
             <span>SSH Guardian</span>
-        </div>
+        </a>
 
         <nav class="nav flex-column">
             <a class="nav-link active" href="#" data-tab="overview">
                 <i class="fas fa-home"></i>
                 <span>Overview</span>
-            </a>
-            <a class="nav-link" href="#" data-tab="threats">
-                <i class="fas fa-exclamation-triangle"></i>
-                <span>Threats</span>
             </a>
             <a class="nav-link" href="#" data-tab="live-stream">
                 <i class="fas fa-stream"></i>
@@ -584,17 +2015,17 @@
                 <i class="fas fa-network-wired"></i>
                 <span>IP Management</span>
             </a>
-            <a class="nav-link" href="#" data-tab="search">
-                <i class="fas fa-search"></i>
-                <span>Search & Filter</span>
-            </a>
             <a class="nav-link" href="#" data-tab="analytics">
-                <i class="fas fa-chart-line"></i>
+                <i class="fas fa-chart-bar"></i>
                 <span>Analytics</span>
             </a>
+            <a class="nav-link" href="#" data-tab="ml-analytics">
+                <i class="fas fa-brain"></i>
+                <span>ML Efficiency</span>
+            </a>
             <a class="nav-link" href="#" data-tab="simulation" id="nav-simulation" style="display: none;">
-                <i class="fas fa-flask"></i>
-                <span>Attack Simulation</span>
+                <i class="fas fa-vial"></i>
+                <span>Simulation</span>
             </a>
             <a class="nav-link" href="#" data-tab="settings">
                 <i class="fas fa-cog"></i>
@@ -602,23 +2033,10 @@
             </a>
             <a class="nav-link" href="#" data-tab="users" id="nav-users" style="display: none;">
                 <i class="fas fa-users"></i>
-                <span>User Management</span>
+                <span>Users</span>
             </a>
         </nav>
 
-        <div class="mt-auto pt-4" style="border-top: 1px solid rgba(255,255,255,0.1);">
-            <div class="small text-white-50">
-                <div class="mb-2" id="user-info-sidebar">
-                    <i class="fas fa-circle text-success"></i> System Online
-                </div>
-                <div>Version 2.0</div>
-                <div class="mt-2">
-                    <button class="btn btn-sm btn-outline-danger w-100" onclick="logout()">
-                        <i class="fas fa-sign-out-alt"></i> Logout
-                    </button>
-                </div>
-            </div>
-        </div>
     </div>
 
     <!-- Main Content -->
@@ -631,7 +2049,7 @@
                         <h1 class="mb-1">Security Dashboard</h1>
                         <p class="text-muted mb-0">Real-time SSH threat monitoring and management</p>
                     </div>
-                    <div class="d-flex gap-2">
+                    <div class="d-flex gap-2 align-items-center">
                         <div class="live-indicator">
                             <div class="live-dot"></div>
                             <span>Live</span>
@@ -639,12 +2057,42 @@
                         <button class="btn btn-outline-primary btn-sm" onclick="refreshDashboard()">
                             <i class="fas fa-sync-alt"></i> Refresh
                         </button>
+                        <!-- User Profile Dropdown -->
+                        <div class="user-profile-container" id="user-profile-container">
+                            <div class="user-profile-btn">
+                                <div class="user-avatar" id="user-avatar">U</div>
+                            </div>
+                            <div class="user-dropdown-menu">
+                                <div class="user-dropdown-header">
+                                    <div class="user-dropdown-email" id="user-email">user@example.com</div>
+                                    <div class="user-dropdown-role" id="user-role-detail">Viewer</div>
+                                </div>
+                                <button class="user-dropdown-item" onclick="showChangePasswordModal()">
+                                    <i class="fas fa-key"></i>
+                                    <span>Change password</span>
+                                </button>
+                                <div class="user-dropdown-divider"></div>
+                                <button class="user-dropdown-item danger" onclick="logout()">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                    <span>Sign out</span>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Stats Cards -->
-            <div class="row">
+            <!-- Multi-Agent Selector -->
+            <div id="agent-selector-container"></div>
+
+            <!-- Agent Context Banner -->
+            <div id="agent-context-banner" style="display: none;"></div>
+
+            <!-- Overview Stats (populated by multi-agent.js) -->
+            <div id="overview-stats"></div>
+
+            <!-- Legacy Stats Cards (hidden, kept for backward compatibility) -->
+            <div class="row" style="display: none;">
                 <div class="col-xl-3 col-lg-6">
                     <div class="stat-card">
                         <div class="stat-icon icon-primary">
@@ -705,6 +2153,7 @@
                                 <th>IP Address</th>
                                 <th>Country</th>
                                 <th>Username</th>
+                                <th>Agent</th>
                                 <th>Type</th>
                                 <th>Risk Score</th>
                                 <th>Actions</th>
@@ -712,7 +2161,7 @@
                         </thead>
                         <tbody id="threats-tbody">
                             <tr>
-                                <td colspan="7" class="text-center py-4">
+                                <td colspan="8" class="text-center py-4">
                                     <div class="loading-spinner"></div>
                                     <div class="mt-2">Loading threats...</div>
                                 </td>
@@ -755,163 +2204,369 @@
         <div class="tab-content-panel" id="ip-management-tab">
             <div class="page-header">
                 <h1>IP Management</h1>
-                <p class="text-muted mb-0">Block, unblock, and whitelist IP addresses</p>
+                <p class="text-muted mb-0">Manage blocked IPs and whitelist</p>
             </div>
 
             <div class="row">
-                <div class="col-lg-6">
+                <div class="col-md-6">
                     <div class="card-panel">
                         <div class="card-header-custom">
-                            <h5 class="card-title"><i class="fas fa-ban text-danger"></i> Blocked IPs</h5>
-                            <button class="btn btn-sm btn-danger" onclick="clearAllBlocks()">
-                                <i class="fas fa-trash"></i> Clear All
+                            <h5 class="card-title"><i class="fas fa-ban"></i> Blocked IPs</h5>
+                            <button class="btn btn-sm btn-outline-primary" onclick="loadBlockedIPs()">
+                                <i class="fas fa-sync"></i> Refresh
                             </button>
                         </div>
-                        <div id="blocked-ips-list">
-                            <div class="text-center py-4">
-                                <div class="loading-spinner"></div>
-                                <div class="mt-2">Loading blocked IPs...</div>
-                            </div>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>IP Address</th>
+                                        <th>Reason</th>
+                                        <th>Blocked At</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="blocked-ips-table">
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted">Loading...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-6">
+
+                <div class="col-md-6">
                     <div class="card-panel">
                         <div class="card-header-custom">
-                            <h5 class="card-title"><i class="fas fa-check-circle text-success"></i> Whitelisted IPs</h5>
-                            <button class="btn btn-sm btn-success" onclick="showAddWhitelistModal()">
+                            <h5 class="card-title"><i class="fas fa-check-circle"></i> Whitelist</h5>
+                            <button class="btn btn-sm btn-primary" onclick="showAddWhitelistModal()">
                                 <i class="fas fa-plus"></i> Add IP
                             </button>
                         </div>
-                        <div id="whitelist-ips-list">
-                            <div class="text-center py-4">
-                                <div class="loading-spinner"></div>
-                                <div class="mt-2">Loading whitelist...</div>
-                            </div>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>IP Address</th>
+                                        <th>Description</th>
+                                        <th>Added</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="whitelist-table">
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted">Loading...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card-panel">
-                <div class="card-header-custom">
-                    <h5 class="card-title"><i class="fas fa-search-plus"></i> IP Lookup</h5>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="search-box mb-3">
-                            <i class="fas fa-search"></i>
-                            <input type="text" class="form-control" id="ip-lookup-input" placeholder="Enter IP address (e.g., 1.2.3.4)">
-                        </div>
-                        <div class="action-buttons">
-                            <button class="btn btn-primary" onclick="lookupIP()">
-                                <i class="fas fa-search"></i> Lookup
-                            </button>
-                            <button class="btn btn-danger" onclick="blockIPFromLookup()">
-                                <i class="fas fa-ban"></i> Block IP
-                            </button>
-                            <button class="btn btn-success" onclick="whitelistIPFromLookup()">
-                                <i class="fas fa-check"></i> Whitelist IP
-                            </button>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div id="ip-lookup-result"></div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Search Tab -->
-        <div class="tab-content-panel" id="search-tab">
+        <!-- Analytics Tab -->
+        <div class="tab-content-panel" id="analytics-tab">
             <div class="page-header">
-                <h1>Search & Filter Events</h1>
-                <p class="text-muted mb-0">Advanced event search and filtering</p>
-            </div>
-
-            <div class="card-panel">
-                <form id="search-form" onsubmit="searchEvents(); return false;">
-                    <div class="row g-3">
-                        <div class="col-md-3">
-                            <label class="form-label">IP Address</label>
-                            <input type="text" class="form-control" id="search-ip" placeholder="1.2.3.4">
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Username</label>
-                            <input type="text" class="form-control" id="search-username" placeholder="root">
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Country</label>
-                            <input type="text" class="form-control" id="search-country" placeholder="United States">
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Min Risk Score</label>
-                            <input type="number" class="form-control" id="search-risk" min="0" max="100" placeholder="70">
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Event Type</label>
-                            <select class="form-select" id="search-event-type">
-                                <option value="">All</option>
-                                <option value="failed">Failed</option>
-                                <option value="successful">Successful</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Time Range</label>
-                            <select class="form-select" id="search-hours">
-                                <option value="1">Last Hour</option>
-                                <option value="6">Last 6 Hours</option>
-                                <option value="24" selected>Last 24 Hours</option>
-                                <option value="72">Last 3 Days</option>
-                                <option value="168">Last Week</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Limit</label>
-                            <select class="form-select" id="search-limit">
-                                <option value="50">50 Results</option>
-                                <option value="100" selected>100 Results</option>
-                                <option value="500">500 Results</option>
-                                <option value="1000">1000 Results</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">&nbsp;</label>
-                            <button type="submit" class="btn btn-primary w-100">
-                                <i class="fas fa-search"></i> Search
-                            </button>
-                        </div>
-                    </div>
-                </form>
+                <h1>Analytics</h1>
+                <p class="text-muted mb-0">Security metrics and trends</p>
             </div>
 
             <div class="card-panel">
                 <div class="card-header-custom">
-                    <h5 class="card-title"><i class="fas fa-list"></i> Search Results</h5>
-                    <span class="badge bg-primary" id="search-count">0 results</span>
+                    <h5 class="card-title"><i class="fas fa-chart-bar"></i> Analytics Dashboard</h5>
+                    <select class="form-select form-select-sm" style="width: auto;" onchange="loadAnalyticsTab(this.value)">
+                        <option value="7">Last 7 Days</option>
+                        <option value="30">Last 30 Days</option>
+                        <option value="90">Last 90 Days</option>
+                    </select>
                 </div>
-                <div class="table-responsive">
-                    <table class="table table-hover table-sm" id="search-results-table">
-                        <thead>
-                            <tr>
-                                <th>Time</th>
-                                <th>IP</th>
-                                <th>Username</th>
-                                <th>Country</th>
-                                <th>City</th>
-                                <th>Type</th>
-                                <th>Risk</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="search-results-tbody">
-                            <tr>
-                                <td colspan="8" class="text-center py-4 text-muted">
-                                    Use the filters above to search events
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div id="analytics-content">
+                    <div class="text-center py-5">
+                        <i class="fas fa-chart-line fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">Loading analytics...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ML Analytics Tab -->
+        <div class="tab-content-panel" id="ml-analytics-tab">
+            <div class="page-header">
+                <h1><i class="fas fa-brain"></i> ML vs Rule-Based Efficiency Analytics</h1>
+                <p class="text-muted mb-0">Compare machine learning detection against traditional rule-based approaches</p>
+            </div>
+
+            <!-- Filters Panel -->
+            <div class="card-panel mb-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">
+                <div class="card-header-custom" style="background: transparent; border: none;">
+                    <h5 class="card-title text-white"><i class="fas fa-sliders-h"></i> Analysis Filters</h5>
+                    <button class="btn btn-sm btn-light" onclick="resetMLFilters()" style="font-weight: 600;">
+                        <i class="fas fa-redo"></i> Reset
+                    </button>
+                </div>
+                <div class="p-3">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold text-white" style="font-size: 0.9rem; margin-bottom: 0.5rem;">
+                                <i class="fas fa-calendar-alt me-1"></i> Time Range
+                            </label>
+                            <select id="ml-filter-days" class="form-select" onchange="loadMLAnalytics()" style="padding: 0.6rem; font-size: 0.95rem; font-weight: 500; border: 2px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.95);">
+                                <option value="1">Last 24 Hours</option>
+                                <option value="3">Last 3 Days</option>
+                                <option value="7" selected>Last 7 Days</option>
+                                <option value="14">Last 14 Days</option>
+                                <option value="30">Last 30 Days</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold text-white" style="font-size: 0.9rem; margin-bottom: 0.5rem;">
+                                <i class="fas fa-globe me-1"></i> Country
+                            </label>
+                            <select id="ml-filter-country" class="form-select" onchange="filterMLDataByDimension()" style="padding: 0.6rem; font-size: 0.95rem; font-weight: 500; border: 2px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.95);">
+                                <option value="">All Countries</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold text-white" style="font-size: 0.9rem; margin-bottom: 0.5rem;">
+                                <i class="fas fa-network-wired me-1"></i> IP Address
+                            </label>
+                            <input type="text" id="ml-filter-ip" class="form-control" placeholder="e.g., 192.168.1.1" oninput="filterMLDataByDimension()" style="padding: 0.6rem; font-size: 0.95rem; font-weight: 500; border: 2px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.95);">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold text-white" style="font-size: 0.9rem; margin-bottom: 0.5rem;">
+                                <i class="fas fa-shield-alt me-1"></i> Threat Type
+                            </label>
+                            <select id="ml-filter-threat-type" class="form-select" onchange="filterMLDataByDimension()" style="padding: 0.6rem; font-size: 0.95rem; font-weight: 500; border: 2px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.95);">
+                                <option value="">All Types</option>
+                                <option value="brute_force">Brute Force</option>
+                                <option value="credential_stuffing">Credential Stuffing</option>
+                                <option value="port_scan">Port Scan</option>
+                                <option value="botnet">Botnet</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-3 p-2" style="background: rgba(255,255,255,0.2); border-radius: 6px; backdrop-filter: blur(10px);">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-info-circle text-white me-2" style="font-size: 1.1rem;"></i>
+                            <span id="ml-filter-status" class="text-white fw-semibold" style="font-size: 0.95rem;">Analyzing all data from last 7 days</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KPI Overview Cards -->
+            <div class="row mb-4">
+                <div class="col-xl-3 col-lg-6">
+                    <div class="stat-card">
+                        <div class="stat-icon icon-primary">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <div class="stat-label">ML Detection Rate</div>
+                        <div class="stat-value" id="ml-detection-rate">--</div>
+                        <div class="text-muted small" id="ml-detection-change">vs baseline</div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-6">
+                    <div class="stat-card">
+                        <div class="stat-icon icon-success">
+                            <i class="fas fa-bullseye"></i>
+                        </div>
+                        <div class="stat-label">Accuracy Improvement</div>
+                        <div class="stat-value text-success" id="ml-accuracy-improvement">--</div>
+                        <div class="text-muted small">Over rule-based</div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-6">
+                    <div class="stat-card">
+                        <div class="stat-icon icon-warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="stat-label">False Positive Reduction</div>
+                        <div class="stat-value text-warning" id="ml-false-positive-reduction">--</div>
+                        <div class="text-muted small">Fewer false alarms</div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-6">
+                    <div class="stat-card">
+                        <div class="stat-icon icon-info">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-label">Avg Response Time</div>
+                        <div class="stat-value text-info" id="ml-response-time">--</div>
+                        <div class="text-muted small">Detection speed</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comparison Charts -->
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="card-panel">
+                        <div class="card-header-custom">
+                            <h5 class="card-title"><i class="fas fa-chart-bar"></i> Detection Comparison</h5>
+                            <div class="btn-group btn-group-sm" role="group">
+                                <button type="button" class="btn btn-outline-primary active" onclick="switchMLChart('threats')">Threats Detected</button>
+                                <button type="button" class="btn btn-outline-primary" onclick="switchMLChart('accuracy')">Accuracy</button>
+                                <button type="button" class="btn btn-outline-primary" onclick="switchMLChart('response')">Response Time</button>
+                            </div>
+                        </div>
+                        <canvas id="ml-comparison-chart" height="80"></canvas>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card-panel">
+                        <div class="card-header-custom">
+                            <h5 class="card-title"><i class="fas fa-percentage"></i> Detection Breakdown</h5>
+                        </div>
+                        <canvas id="ml-breakdown-chart" height="250"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Metrics -->
+            <div class="row mt-4">
+                <div class="col-lg-6">
+                    <div class="card-panel">
+                        <div class="card-header-custom">
+                            <h5 class="card-title"><i class="fas fa-robot text-primary"></i> Machine Learning Metrics</h5>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <tbody id="ml-metrics-tbody">
+                                    <tr>
+                                        <td colspan="2" class="text-center py-4">
+                                            <div class="loading-spinner"></div>
+                                            <div class="mt-2">Loading ML metrics...</div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card-panel">
+                        <div class="card-header-custom">
+                            <h5 class="card-title"><i class="fas fa-list-alt text-secondary"></i> Rule-Based Metrics</h5>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <tbody id="rule-metrics-tbody">
+                                    <tr>
+                                        <td colspan="2" class="text-center py-4">
+                                            <div class="loading-spinner"></div>
+                                            <div class="mt-2">Loading baseline metrics...</div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Geographic Comparison -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card-panel">
+                        <div class="card-header-custom">
+                            <h5 class="card-title"><i class="fas fa-globe-americas"></i> Detection Efficiency by Location</h5>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Country</th>
+                                        <th>Total Threats</th>
+                                        <th>ML Detected</th>
+                                        <th>Rule-Based Detected</th>
+                                        <th>ML Accuracy</th>
+                                        <th>Rule Accuracy</th>
+                                        <th>ML Advantage</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ml-geo-tbody">
+                                    <tr>
+                                        <td colspan="7" class="text-center py-4">
+                                            <div class="loading-spinner"></div>
+                                            <div class="mt-2">Loading geographic data...</div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Threat Type Comparison -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card-panel">
+                        <div class="card-header-custom">
+                            <h5 class="card-title"><i class="fas fa-shield-virus"></i> Detection by Threat Type</h5>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Threat Type</th>
+                                        <th>Occurrences</th>
+                                        <th>ML Detection Rate</th>
+                                        <th>Rule Detection Rate</th>
+                                        <th>ML False Positives</th>
+                                        <th>Rule False Positives</th>
+                                        <th>Winner</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ml-threat-type-tbody">
+                                    <tr>
+                                        <td colspan="7" class="text-center py-4">
+                                            <div class="loading-spinner"></div>
+                                            <div class="mt-2">Loading threat type analysis...</div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- IP-Level Comparison -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card-panel">
+                        <div class="card-header-custom">
+                            <h5 class="card-title"><i class="fas fa-network-wired"></i> Top IPs: ML vs Rule-Based Detection</h5>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>IP Address</th>
+                                        <th>Country</th>
+                                        <th>Total Attempts</th>
+                                        <th>ML Risk Score</th>
+                                        <th>Rule Risk Score</th>
+                                        <th>ML Blocked?</th>
+                                        <th>Rule Blocked?</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ml-ip-comparison-tbody">
+                                    <tr>
+                                        <td colspan="8" class="text-center py-4">
+                                            <div class="loading-spinner"></div>
+                                            <div class="mt-2">Loading IP comparison...</div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -976,72 +2631,238 @@
                 <p class="text-muted mb-0">Test and validate security responses with realistic attack scenarios</p>
             </div>
 
-            <div class="row">
-                <!-- Left: Template List (30%) -->
-                <div class="col-md-3">
-                    <div class="card-panel" style="position: sticky; top: 20px;">
-                        <div class="card-header-custom">
-                            <h5 class="card-title"><i class="fas fa-list"></i> Attack Templates</h5>
-                        </div>
-                        <div id="template-list" style="max-height: 600px; overflow-y: auto;">
+            <!-- Template Selector -->
+            <div class="card-panel">
+                <div class="d-flex align-items-center gap-3 flex-wrap">
+                    <label class="mb-0 fw-semibold" style="font-size: 14px; color: #323130;">
+                        <i class="fas fa-layer-group text-primary"></i> Attack Template:
+                    </label>
+                    <div class="template-dropdown" id="template-dropdown">
+                        <button class="template-dropdown-btn" onclick="toggleTemplateDropdown()">
+                            <span id="selected-template-display">Select a template...</span>
+                            <i class="fas fa-chevron-down" id="dropdown-icon"></i>
+                        </button>
+                        <div class="template-dropdown-menu" id="template-list">
                             <div class="text-center py-4">
                                 <div class="loading-spinner"></div>
-                                <div class="mt-2">Loading templates...</div>
+                                <div class="mt-2" style="font-size: 13px; color: #605E5C;">Loading templates...</div>
                             </div>
+                        </div>
+                    </div>
+                    <div class="ms-auto">
+                        <span class="badge" id="selected-template-badge" style="display: none;"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Split Layout: Left (Parameters + Summary + Intel) | Right (History) -->
+            <div class="row">
+                <!-- LEFT COLUMN -->
+                <div class="col-lg-6">
+                    <!-- Parameters -->
+                    <div class="card-panel">
+                        <div class="card-header-custom">
+                            <h5 class="card-title"><i class="fas fa-code"></i> Parameters</h5>
+                            <button class="btn btn-sm btn-outline-primary" onclick="formatJSON()">
+                                <i class="fas fa-align-left"></i> Format
+                            </button>
+                        </div>
+                        <textarea id="sim-json-editor" class="form-control" rows="12" style="font-family: 'Courier New', monospace; font-size: 12px; resize: vertical;" placeholder='Select a template to begin...'></textarea>
+                        <div class="d-flex gap-2 mt-3">
+                            <button class="btn btn-sm btn-secondary" onclick="refreshIPPool()">
+                                <i class="fas fa-sync"></i> Refresh IPs
+                            </button>
+                            <button class="btn btn-sm btn-success flex-grow-1" onclick="executeSimulation()" id="execute-btn">
+                                <i class="fas fa-play"></i> Execute Simulation
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Summary -->
+                    <div class="card-panel">
+                        <div class="card-header-custom">
+                            <h5 class="card-title"><i class="fas fa-chart-pie"></i> Summary</h5>
+                            <span class="badge bg-info" id="sim-status-badge">Ready</span>
+                        </div>
+                        <div id="sim-summary">
+                            <div class="text-center py-4 text-muted">
+                                <i class="fas fa-info-circle fa-2x mb-2"></i>
+                                <p class="mb-0 small">Execute a simulation to view results</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- IP Analytics & Threat Intelligence -->
+                    <div class="card-panel" id="sim-intel-panel" style="display: none;">
+                        <div class="card-header-custom">
+                            <h5 class="card-title"><i class="fas fa-chart-line"></i> IP Analytics & Intelligence</h5>
+                            <span class="badge bg-secondary" id="analytics-ip-badge"></span>
+                        </div>
+                        <div id="sim-intel-content">
+                            <!-- Statistics Row -->
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <div class="stat-card">
+                                        <div class="stat-icon"><i class="fas fa-chart-bar"></i></div>
+                                        <div class="stat-info">
+                                            <div class="stat-label">Total Logins</div>
+                                            <div class="stat-value" id="stat-total">-</div>
+                                            <div class="stat-detail" id="stat-breakdown">-</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="stat-card">
+                                        <div class="stat-icon"><i class="fas fa-globe"></i></div>
+                                        <div class="stat-info">
+                                            <div class="stat-label">Location</div>
+                                            <div class="stat-value" id="stat-location">-</div>
+                                            <div class="stat-detail" id="stat-coords">-</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="stat-card">
+                                        <div class="stat-icon"><i class="fas fa-shield-alt"></i></div>
+                                        <div class="stat-info">
+                                            <div class="stat-label">Risk Assessment</div>
+                                            <div class="stat-value" id="stat-risk">-</div>
+                                            <div class="stat-detail" id="stat-reputation">-</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Behavior Analysis -->
+                            <div class="alert" id="behavior-alert" style="display: none;">
+                                <div class="d-flex align-items-start">
+                                    <i class="fas fa-robot me-2 mt-1"></i>
+                                    <div class="flex-grow-1">
+                                        <strong id="behavior-type">Pattern Analysis</strong>
+                                        <div id="behavior-suggestions" class="mt-2 small"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Login History -->
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <div class="history-panel">
+                                        <div class="history-header">
+                                            <i class="fas fa-check-circle text-success"></i>
+                                            <span>Recent Successful Logins</span>
+                                        </div>
+                                        <div id="successful-logins-list" class="history-list"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="history-panel">
+                                        <div class="history-header">
+                                            <i class="fas fa-times-circle text-danger"></i>
+                                            <span>Recent Failed Attempts</span>
+                                        </div>
+                                        <div id="failed-logins-list" class="history-list"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Threat Intelligence Details (Collapsible) -->
+                            <div class="card mb-2">
+                                <div class="card-header" style="cursor: pointer;" onclick="toggleThreatIntel()">
+                                    <i class="fas fa-database"></i> 3rd Party Threat Intelligence
+                                    <i class="fas fa-chevron-down float-end" id="threat-intel-chevron"></i>
+                                </div>
+                                <div class="card-body" id="threat-intel-details" style="display: none;">
+                                    <div id="threat-intel-content"></div>
+                                </div>
+                            </div>
+
+                            <!-- Activity Pattern -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <i class="fas fa-clock"></i> Activity Pattern (24h)
+                                </div>
+                                <div class="card-body">
+                                    <div id="activity-chart" style="height: 100px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-panel" id="sim-intel-placeholder">
+                        <div class="card-header-custom">
+                            <h5 class="card-title"><i class="fas fa-chart-line"></i> IP Analytics & Intelligence</h5>
+                        </div>
+                        <div class="text-center py-4 text-muted">
+                            <i class="fas fa-chart-line fa-2x mb-2"></i>
+                            <p class="mb-0 small">Run a simulation to view IP analytics</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Right: Editor + Logs (70%) -->
-                <div class="col-md-9">
-                    <!-- JSON Editor -->
-                    <div class="card-panel">
-                        <div class="card-header-custom">
-                            <h5 class="card-title"><i class="fas fa-code"></i> Simulation Parameters</h5>
-                            <div class="d-flex gap-2">
-                                <button class="btn btn-sm btn-secondary" onclick="refreshIPPool()">
-                                    <i class="fas fa-sync"></i> Refresh IPs
-                                </button>
-                                <button class="btn btn-sm btn-success" onclick="executeSimulation()" id="execute-btn">
-                                    <i class="fas fa-play"></i> Execute Simulation
-                                </button>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span class="small text-muted" id="selected-template-name">No template selected</span>
-                                <button class="btn btn-sm btn-outline-primary" onclick="formatJSON()">
-                                    <i class="fas fa-align-left"></i> Format
-                                </button>
-                            </div>
-                            <textarea id="sim-json-editor" class="form-control" rows="12" style="font-family: 'Courier New', monospace; font-size: 13px;" placeholder='Select a template from the left to begin...'></textarea>
-                        </div>
-                        <div class="alert alert-info mb-0">
-                            <i class="fas fa-info-circle"></i>
-                            <strong>Note:</strong> All simulations are flagged and will actually execute through the Guardian pipeline. IPs will be blocked, alerts sent (with [SIMULATION] prefix), and ML models engaged.
-                        </div>
-                    </div>
-
-                    <!-- Live Execution Logs -->
-                    <div class="card-panel">
+                <!-- RIGHT COLUMN: History -->
+                <div class="col-lg-6">
+                    <!-- Floating Log Panel (initially hidden) -->
+                    <div class="card-panel" id="floating-log-panel" style="display: none; position: relative; z-index: 10;">
                         <div class="card-header-custom">
                             <h5 class="card-title"><i class="fas fa-terminal"></i> Live Execution Logs</h5>
                             <div class="d-flex gap-2">
-                                <button class="btn btn-sm btn-outline-secondary" onclick="clearSimulationLogs()">
-                                    <i class="fas fa-trash"></i> Clear
+                                <button class="btn btn-sm btn-outline-secondary" onclick="toggleLogPanel()" title="Minimize">
+                                    <i class="fas fa-window-minimize"></i>
                                 </button>
-                                <button class="btn btn-sm btn-outline-primary" onclick="showSimulationHistory()">
-                                    <i class="fas fa-history"></i> History
+                                <button class="btn btn-sm btn-outline-secondary" onclick="clearSimulationLogs()">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="closeLogPanel()">
+                                    <i class="fas fa-times"></i>
                                 </button>
                             </div>
                         </div>
-                        <div id="sim-logs" class="sim-log-console">
-                            <div class="text-center text-muted py-5">
-                                <i class="fas fa-terminal fa-3x mb-3"></i>
-                                <p>Execute a simulation to view real-time logs...</p>
+                        <div id="sim-logs-content" style="display: block;">
+                            <div id="sim-logs" class="sim-log-console" style="height: 400px;">
+                                <div class="text-center text-muted py-5">
+                                    <i class="fas fa-terminal fa-3x mb-3"></i>
+                                    <p>Logs will appear here...</p>
+                                </div>
                             </div>
                         </div>
                     </div>
+
+                    <!-- History Section -->
+                    <div class="card-panel" id="history-section">
+                        <div class="card-header-custom">
+                            <h5 class="card-title"><i class="fas fa-history"></i> Simulation History</h5>
+                            <div class="d-flex gap-2 align-items-center">
+                                <select id="attack-type-filter" class="form-select form-select-sm" style="width: auto; min-width: 150px;" onchange="filterHistoryByAttackType()">
+                                    <option value="">All Attack Types</option>
+                                    <!-- Options loaded dynamically from database -->
+                                </select>
+                                <button class="btn btn-sm btn-outline-primary" onclick="loadSimulationHistory()">
+                                    <i class="fas fa-sync"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div id="history-list" style="max-height: 500px; overflow-y: auto;">
+                            <div class="text-center py-5 text-muted">
+                                <i class="fas fa-history fa-3x mb-3"></i>
+                                <p>No simulation history yet</p>
+                            </div>
+                        </div>
+                        <!-- Pagination Controls -->
+                        <div class="card-footer-custom" id="history-pagination" style="display: none;">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <button class="btn btn-sm btn-outline-secondary" id="prev-page-btn" onclick="loadPreviousPage()" disabled>
+                                    <i class="fas fa-chevron-left"></i> Previous
+                                </button>
+                                <span class="text-muted small" id="page-info">Page 1 of 1</span>
+                                <button class="btn btn-sm btn-outline-secondary" id="next-page-btn" onclick="loadNextPage()" disabled>
+                                    Next <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
 
                     <!-- Simulation History -->
                     <div class="card-panel" id="simulation-history-panel" style="display: none;">
@@ -1186,6 +3007,41 @@
         </div>
     </div>
 
+    <!-- Change Password Modal -->
+    <div class="modal fade" id="changePasswordModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-key"></i> Change Password</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="change-password-form">
+                        <div class="mb-3">
+                            <label class="form-label">Current Password <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control" id="current-password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">New Password <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control" id="new-password" required>
+                            <small class="form-text text-muted">Min 8 chars with uppercase, lowercase, digit, and special character</small>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Confirm New Password <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control" id="confirm-password" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="changePassword()">
+                        <i class="fas fa-save"></i> Change Password
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Create/Edit User Modal -->
     <div class="modal fade" id="userModal" tabindex="-1">
         <div class="modal-dialog">
@@ -1251,6 +3107,78 @@
 
     <!-- Mobile Menu Toggle -->
     <script>
+        // Load user info
+        function loadUserInfo() {
+            fetch('/auth/me')
+                .then(r => r.json())
+                .then(data => {
+                    if (data.user) {
+                        const initials = data.user.full_name
+                            .split(' ')
+                            .map(n => n[0])
+                            .join('')
+                            .toUpperCase()
+                            .substring(0, 2);
+
+                        document.getElementById('user-avatar').textContent = initials;
+                        document.getElementById('user-email').textContent = data.user.email;
+                        document.getElementById('user-role-detail').textContent = data.user.role.charAt(0).toUpperCase() + data.user.role.slice(1);
+                    }
+                })
+                .catch(err => console.error('Failed to load user info:', err));
+        }
+
+        // Show change password modal
+        function showChangePasswordModal() {
+            const modal = new bootstrap.Modal(document.getElementById('changePasswordModal'));
+            modal.show();
+        }
+
+        // Change password
+        function changePassword() {
+            const current = document.getElementById('current-password').value;
+            const newPass = document.getElementById('new-password').value;
+            const confirm = document.getElementById('confirm-password').value;
+
+            if (!current || !newPass || !confirm) {
+                showNotification('Please fill in all fields', 'error');
+                return;
+            }
+
+            if (newPass !== confirm) {
+                showNotification('New passwords do not match', 'error');
+                return;
+            }
+
+            if (newPass.length < 8) {
+                showNotification('Password must be at least 8 characters', 'error');
+                return;
+            }
+
+            fetch('/auth/change-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    current_password: current,
+                    new_password: newPass
+                })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('Password changed successfully', 'success');
+                    bootstrap.Modal.getInstance(document.getElementById('changePasswordModal')).hide();
+                    document.getElementById('change-password-form').reset();
+                } else {
+                    showNotification(data.error || 'Failed to change password', 'error');
+                }
+            })
+            .catch(() => showNotification('Failed to change password', 'error'));
+        }
+
+        // Initialize user info on page load
+        document.addEventListener('DOMContentLoaded', loadUserInfo);
+
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebar-overlay');
@@ -1264,6 +3192,114 @@
             sidebar.classList.remove('show');
             overlay.classList.remove('show');
         }
+
+        // Template dropdown toggle
+        function toggleTemplateDropdown() {
+            const dropdown = document.getElementById('template-dropdown');
+            const icon = document.getElementById('dropdown-icon');
+            dropdown.classList.toggle('open');
+            icon.classList.toggle('fa-chevron-down');
+            icon.classList.toggle('fa-chevron-up');
+        }
+
+        // Close dropdown
+        function closeTemplateDropdown() {
+            const dropdown = document.getElementById('template-dropdown');
+            const icon = document.getElementById('dropdown-icon');
+            if (dropdown) {
+                dropdown.classList.remove('open');
+            }
+            if (icon) {
+                icon.classList.remove('fa-chevron-up');
+                icon.classList.add('fa-chevron-down');
+            }
+        }
+
+        // Update selected template display
+        function updateTemplateDisplay(templateName, severity) {
+            const display = document.getElementById('selected-template-display');
+            const badge = document.getElementById('selected-template-badge');
+
+            if (display && templateName) {
+                display.textContent = templateName;
+            }
+
+            if (badge && severity) {
+                badge.textContent = severity;
+                badge.className = 'badge';
+
+                // Set badge color based on severity
+                if (severity.toLowerCase().includes('critical')) {
+                    badge.classList.add('badge-danger');
+                } else if (severity.toLowerCase().includes('high')) {
+                    badge.classList.add('badge-warning');
+                } else if (severity.toLowerCase().includes('medium')) {
+                    badge.classList.add('badge-info');
+                } else {
+                    badge.classList.add('badge-success');
+                }
+
+                badge.style.display = 'inline-block';
+            }
+        }
+
+        // Handle template item clicks
+        document.addEventListener('click', function(event) {
+            const clickedItem = event.target.closest('.template-item');
+            if (clickedItem) {
+                // Get template info
+                const templateName = clickedItem.querySelector('.fw-bold')?.textContent || 'Selected Template';
+                const iconElement = clickedItem.querySelector('.template-icon');
+                let severity = 'Unknown';
+
+                if (iconElement) {
+                    if (iconElement.classList.contains('severity-critical')) {
+                        severity = 'Critical';
+                    } else if (iconElement.classList.contains('severity-high')) {
+                        severity = 'High';
+                    } else if (iconElement.classList.contains('severity-medium')) {
+                        severity = 'Medium';
+                    } else if (iconElement.classList.contains('severity-low')) {
+                        severity = 'Low';
+                    }
+                }
+
+                // Update display
+                updateTemplateDisplay(templateName, severity);
+
+                // Close dropdown
+                setTimeout(() => closeTemplateDropdown(), 100);
+            }
+        }, true); // Use capture phase to ensure we catch it first
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('template-dropdown');
+            if (dropdown && !dropdown.contains(event.target)) {
+                closeTemplateDropdown();
+            }
+        });
+
+        // Observe template list for dynamic content
+        document.addEventListener('DOMContentLoaded', function() {
+            const templateList = document.getElementById('template-list');
+            if (templateList) {
+                // Observer for when templates are loaded dynamically
+                const observer = new MutationObserver(function(mutations) {
+                    // Reattach handlers to new template items
+                    const items = templateList.querySelectorAll('.template-item');
+                    items.forEach(item => {
+                        // Remove inline onclick to avoid conflicts
+                        item.removeAttribute('onclick');
+                    });
+                });
+
+                observer.observe(templateList, {
+                    childList: true,
+                    subtree: true
+                });
+            }
+        });
 
         // Close sidebar when clicking a nav link on mobile
         document.addEventListener('DOMContentLoaded', function() {
@@ -1279,7 +3315,10 @@
     </script>
 
     <!-- Custom JavaScript -->
-    <script src="/static/js/enhanced-dashboard.js"></script>
-    <script src="/static/js/simulation.js"></script>
+    <script src="/static/js/multi-agent.js"></script>
+    <script src="/static/js/enhanced-dashboard.js?v=2.5"></script>
+    <script src="/static/js/ip-intelligence.js"></script>
+    <script src="/static/js/simulation.js?v=3.0"></script>
+    <script src="/static/js/ml-analytics.js"></script>
 </body>
 </html>

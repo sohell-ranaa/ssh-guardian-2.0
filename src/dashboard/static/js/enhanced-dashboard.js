@@ -12,6 +12,7 @@ let availableRoles = [];
 
 // API Base URL
 const API_BASE = '';
+window.API_BASE = API_BASE; // Export for other modules
 
 // Initialize dashboard on page load
 document.addEventListener('DOMContentLoaded', function() {
@@ -67,9 +68,6 @@ function switchTab(tabName) {
             loadOverviewStats();
             loadRecentThreats(50);
             break;
-        case 'threats':
-            loadRecentThreats(100);
-            break;
         case 'live-stream':
             loadLiveEvents();
             break;
@@ -77,17 +75,25 @@ function switchTab(tabName) {
             loadBlockedIPs();
             loadWhitelist();
             break;
+        case 'analytics':
+            loadAnalyticsTab();
+            break;
+        case 'ml-analytics':
+            if (typeof loadMLAnalytics === 'function') {
+                loadMLAnalytics();
+            }
+            break;
+        case 'simulation':
+            if (typeof initializeSimulation === 'function') {
+                initializeSimulation();
+            }
+            break;
         case 'settings':
             loadSystemHealth();
             break;
         case 'users':
             loadUsers();
             loadRoles();
-            break;
-        case 'simulation':
-            if (typeof initializeSimulation === 'function') {
-                initializeSimulation();
-            }
             break;
     }
 }
@@ -189,24 +195,27 @@ async function loadOverviewStats() {
 async function loadRecentThreats(limit = 50) {
     try {
         const tbody = document.getElementById('threats-tbody');
-        tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4"><div class="loading-spinner"></div><div class="mt-2">Loading threats...</div></td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" class="text-center py-4"><div class="loading-spinner"></div><div class="mt-2">Loading threats...</div></td></tr>';
 
-        const response = await fetch(`${API_BASE}/api/threats/recent?limit=${limit}`);
-        const threats = await response.json();
+        // Get selected agent if multiAgent is available
+        const agentId = window.multiAgent ? window.multiAgent.getSelectedAgent() : 'all';
+        const response = await fetch(`${API_BASE}/api/threats/recent?limit=${limit}&agent_id=${agentId}`);
+        const data = await response.json();
 
-        if (threats.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-muted">No recent threats found</td></tr>';
+        if (!data.threats || data.threats.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="8" class="text-center py-4 text-muted">No recent threats found</td></tr>';
             return;
         }
 
-        tbody.innerHTML = threats.map(threat => `
+        tbody.innerHTML = data.threats.map(threat => `
             <tr>
                 <td>${formatTime(threat.timestamp)}</td>
                 <td><span class="ip-badge">${threat.ip}</span></td>
                 <td>${threat.country || 'Unknown'}</td>
                 <td>${threat.username || 'N/A'}</td>
-                <td><span class="badge ${threat.event_type === 'failed' ? 'bg-danger' : 'bg-success'}">${threat.event_type}</span></td>
-                <td><span class="threat-badge ${getRiskClass(threat.ml_risk_score)}">${threat.ml_risk_score}</span></td>
+                <td><span class="badge bg-info text-dark" style="font-family: monospace; font-size: 0.75rem;">${threat.agent_id || 'Unknown'}</span></td>
+                <td><span class="badge ${threat.event_type === 'failed' ? 'bg-danger' : 'bg-success'}">${threat.event_type || 'failed'}</span></td>
+                <td><span class="threat-badge ${getRiskClass(threat.risk || threat.ml_risk_score)}">${threat.risk || threat.ml_risk_score}</span></td>
                 <td>
                     <div class="btn-group btn-group-sm">
                         <button class="btn btn-outline-primary" onclick="lookupIPDirect('${threat.ip}')" title="Lookup">
@@ -298,33 +307,42 @@ function toggleAutoRefresh() {
 // Load blocked IPs
 async function loadBlockedIPs() {
     try {
-        const container = document.getElementById('blocked-ips-list');
-        container.innerHTML = '<div class="text-center py-4"><div class="loading-spinner"></div><div class="mt-2">Loading...</div></div>';
+        const container = document.getElementById('blocked-ips-table');
+        if (!container) {
+            console.error('blocked-ips-table element not found');
+            return;
+        }
+
+        container.innerHTML = '<tr><td colspan="4" class="text-center"><div class="spinner-border spinner-border-sm"></div> Loading...</td></tr>';
 
         const response = await fetch(`${API_BASE}/api/blocks/active`);
         const data = await response.json();
         const blocks = data.blocked_ips || data.blocks || [];
 
         if (blocks.length === 0) {
-            container.innerHTML = '<div class="text-center py-4 text-muted">No blocked IPs</div>';
+            container.innerHTML = '<tr><td colspan="4" class="text-center text-muted">No blocked IPs</td></tr>';
             return;
         }
 
         container.innerHTML = blocks.map(block => `
-            <div class="d-flex justify-content-between align-items-center mb-2 p-2 border rounded">
-                <div>
-                    <span class="ip-badge">${block.ip || block}</span>
-                    ${block.reason ? `<div class="small text-muted">${block.reason}</div>` : ''}
-                </div>
-                <button class="btn btn-sm btn-outline-success" onclick="unblockIP('${block.ip || block}')">
-                    <i class="fas fa-unlock"></i> Unblock
-                </button>
-            </div>
+            <tr>
+                <td><span class="ip-badge">${block.ip || block}</span></td>
+                <td><span class="text-muted" style="font-size: 13px;">${block.reason || 'Manual block'}</span></td>
+                <td><span class="text-muted" style="font-size: 13px;">${new Date(block.blocked_at).toLocaleString()}</span></td>
+                <td>
+                    <button class="btn btn-sm btn-outline-success" onclick="unblockIP('${block.ip || block}')">
+                        <i class="fas fa-unlock"></i> Unblock
+                    </button>
+                </td>
+            </tr>
         `).join('');
 
     } catch (error) {
         console.error('Error loading blocked IPs:', error);
-        document.getElementById('blocked-ips-list').innerHTML = '<div class="text-center py-4 text-danger">Failed to load</div>';
+        const container = document.getElementById('blocked-ips-table');
+        if (container) {
+            container.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Failed to load blocked IPs</td></tr>';
+        }
     }
 }
 
@@ -342,30 +360,48 @@ async function loadBlockedIPsCount() {
 // Load whitelist
 async function loadWhitelist() {
     try {
-        const container = document.getElementById('whitelist-ips-list');
-        container.innerHTML = '<div class="text-center py-4"><div class="loading-spinner"></div><div class="mt-2">Loading...</div></div>';
+        const container = document.getElementById('whitelist-table');
+        if (!container) {
+            console.error('whitelist-table element not found');
+            return;
+        }
+
+        container.innerHTML = '<tr><td colspan="4" class="text-center"><div class="spinner-border spinner-border-sm"></div> Loading...</td></tr>';
 
         const response = await fetch(`${API_BASE}/api/admin/whitelist`);
         const data = await response.json();
         const whitelist = data.whitelist || [];
 
         if (whitelist.length === 0) {
-            container.innerHTML = '<div class="text-center py-4 text-muted">No whitelisted IPs</div>';
+            container.innerHTML = '<tr><td colspan="4" class="text-center text-muted">No whitelisted IPs</td></tr>';
             return;
         }
 
-        container.innerHTML = whitelist.map(ip => `
-            <div class="d-flex justify-content-between align-items-center mb-2 p-2 border rounded">
-                <span class="ip-badge">${ip}</span>
-                <button class="btn btn-sm btn-outline-danger" onclick="removeWhitelist('${ip}')">
-                    <i class="fas fa-times"></i> Remove
-                </button>
-            </div>
-        `).join('');
+        container.innerHTML = whitelist.map((entry, index) => {
+            const ip = typeof entry === 'string' ? entry : entry.ip;
+            const description = entry.description || 'N/A';
+            const added = entry.added_at ? new Date(entry.added_at).toLocaleString() : 'N/A';
+
+            return `
+                <tr>
+                    <td><span class="ip-badge">${ip}</span></td>
+                    <td><span class="text-muted" style="font-size: 13px;">${description}</span></td>
+                    <td><span class="text-muted" style="font-size: 13px;">${added}</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-danger" onclick="removeWhitelist('${ip}')">
+                            <i class="fas fa-times"></i> Remove
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
 
     } catch (error) {
         console.error('Error loading whitelist:', error);
-        document.getElementById('whitelist-ips-list').innerHTML = '<div class="text-center py-4 text-danger">Failed to load</div>';
+        const container = document.getElementById('whitelist-table');
+        if (container) {
+            container.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Failed to load whitelist</td></tr>';
+        }
     }
 }
 
@@ -379,17 +415,46 @@ async function lookupIP() {
 
     try {
         const resultDiv = document.getElementById('ip-lookup-result');
-        resultDiv.innerHTML = '<div class="text-center py-4"><div class="loading-spinner"></div><div class="mt-2">Looking up...</div></div>';
+        resultDiv.innerHTML = '<div class="text-center py-4"><div class="loading-spinner"></div><div class="mt-2">Looking up IP statistics and threat intelligence...</div></div>';
 
-        const response = await fetch(`${API_BASE}/api/threats/lookup/${ip}`);
-        const data = await response.json();
+        // Fetch both local stats and threat intelligence in parallel
+        const [statsResponse, intelResponse] = await Promise.all([
+            fetch(`${API_BASE}/api/threats/lookup/${ip}`),
+            fetch(`${API_BASE}/api/ip/intel/lookup/${ip}`).catch(() => null)
+        ]);
 
-        if (data.error) {
-            resultDiv.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+        const statsData = await statsResponse.json();
+
+        if (statsData.error) {
+            resultDiv.innerHTML = `<div class="alert alert-danger">${statsData.error}</div>`;
             return;
         }
 
-        const stats = data.statistics;
+        const stats = statsData.statistics;
+        let intelHTML = '';
+
+        // Add threat intelligence data if available
+        if (intelResponse && intelResponse.ok) {
+            const intelData = await intelResponse.json();
+            if (intelData.status === 'success' && intelData.data) {
+                const intel = intelData.data;
+                const summary = intel.summary || {};
+
+                intelHTML = `
+                    <div class="mt-3">
+                        <h6 class="mb-2"><i class="fas fa-shield-alt"></i> Threat Intelligence</h6>
+                        <div class="mb-2">
+                            <span class="badge ${getThreatBadgeClass(summary.threat_level)}">
+                                ${(summary.threat_level || 'unknown').toUpperCase()}
+                            </span>
+                            <span class="ms-2">Score: ${summary.threat_score || 0}/100</span>
+                        </div>
+                        ${renderCompactIntel(intel)}
+                    </div>
+                `;
+            }
+        }
+
         resultDiv.innerHTML = `
             <div class="card">
                 <div class="card-body">
@@ -421,8 +486,9 @@ async function lookupIP() {
                             <div class="small">${stats.last_seen ? formatTime(stats.last_seen) : 'N/A'}</div>
                         </div>
                     </div>
+                    ${intelHTML}
                     <hr>
-                    <div class="small text-muted">${data.events.length} recent events</div>
+                    <div class="small text-muted">${statsData.events.length} recent events</div>
                 </div>
             </div>
         `;
@@ -431,6 +497,67 @@ async function lookupIP() {
         console.error('Error looking up IP:', error);
         showNotification('Failed to lookup IP', 'danger');
     }
+}
+
+function getThreatBadgeClass(level) {
+    const classes = {
+        'critical': 'bg-danger',
+        'high': 'bg-warning text-dark',
+        'medium': 'bg-info',
+        'low': 'bg-secondary',
+        'clean': 'bg-success',
+        'unknown': 'bg-secondary'
+    };
+    return classes[level] || 'bg-secondary';
+}
+
+function renderCompactIntel(intel) {
+    const sources = intel.sources || {};
+    let html = '<div class="row g-2 small mt-2">';
+
+    // VirusTotal
+    if (sources.virustotal && !sources.virustotal.error) {
+        const vt = sources.virustotal;
+        html += `
+            <div class="col-12">
+                <strong class="text-primary"><i class="fas fa-check-circle"></i> VirusTotal:</strong>
+                <span class="${vt.malicious_count > 0 ? 'text-danger fw-bold' : ''}">
+                    ${vt.malicious_count}/${vt.total_scanners} malicious
+                </span>
+                ${vt.network_info ? ` | ${vt.network_info.country}` : ''}
+            </div>
+        `;
+    }
+
+    // AbuseIPDB
+    if (sources.abuseipdb && !sources.abuseipdb.error) {
+        const abuse = sources.abuseipdb;
+        html += `
+            <div class="col-12">
+                <strong class="text-warning"><i class="fas fa-exclamation-triangle"></i> AbuseIPDB:</strong>
+                <span class="${abuse.abuse_confidence_score >= 50 ? 'text-danger fw-bold' : ''}">
+                    ${abuse.abuse_confidence_score}% confidence
+                </span>
+                ${abuse.report_stats ? ` | ${abuse.report_stats.total_reports} reports` : ''}
+            </div>
+        `;
+    }
+
+    // Shodan
+    if (sources.shodan && !sources.shodan.error) {
+        const shodan = sources.shodan;
+        html += `
+            <div class="col-12">
+                <strong class="text-info"><i class="fas fa-server"></i> Shodan:</strong>
+                ${shodan.port_count} ports
+                ${shodan.vulnerability_count > 0 ? ` | <span class="text-danger">${shodan.vulnerability_count} vulns</span>` : ''}
+                ${shodan.location ? ` | ${shodan.location.country}` : ''}
+            </div>
+        `;
+    }
+
+    html += '</div>';
+    return html;
 }
 
 function lookupIPDirect(ip) {
@@ -954,25 +1081,19 @@ function formatNumber(num) {
 function formatTime(timestamp) {
     if (!timestamp) return 'N/A';
     const date = new Date(timestamp);
-    const now = new Date();
-    const diff = now - date;
 
-    // If less than 1 minute
-    if (diff < 60000) {
-        return 'Just now';
-    }
-    // If less than 1 hour
-    if (diff < 3600000) {
-        const mins = Math.floor(diff / 60000);
-        return `${mins}m ago`;
-    }
-    // If less than 24 hours
-    if (diff < 86400000) {
-        const hours = Math.floor(diff / 3600000);
-        return `${hours}h ago`;
-    }
-    // Otherwise full date
-    return date.toLocaleString();
+    // Format as: Dec 3, 2025 12:30:45
+    const options = {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+    };
+
+    return date.toLocaleString('en-US', options);
 }
 
 function getRiskClass(score) {
@@ -1006,4 +1127,254 @@ function showNotification(message, type = 'info') {
         notification.style.opacity = '0';
         setTimeout(() => notification.remove(), 300);
     }, 3000);
+}
+
+// Export showNotification for use by other modules
+window.showNotification = showNotification;
+
+// Global variable to store all threats for filtering
+let allThreats = [];
+
+// Load Threats Tab Data
+async function loadThreatsTab(limit = 100) {
+    try {
+        // Get limit from filter if available
+        const filterLimit = document.getElementById('filter-limit');
+        if (filterLimit) {
+            limit = parseInt(filterLimit.value);
+        }
+
+        // Get selected agent if multiAgent is available
+        const agentId = window.multiAgent ? window.multiAgent.getSelectedAgent() : 'all';
+        const response = await fetch(`${API_BASE}/api/threats/recent?limit=${limit}&agent_id=${agentId}`);
+        const data = await response.json();
+
+        if (!data.threats || data.threats.length === 0) {
+            allThreats = [];
+            const tbody = document.getElementById('threats-tbody-full');
+            tbody.innerHTML = '<tr><td colspan="8" class="text-center py-4 text-muted">No threats recorded</td></tr>';
+            updateThreatCount(0);
+            return;
+        }
+
+        // Store all threats globally
+        allThreats = data.threats;
+
+        // Populate agent filter dropdown
+        populateAgentFilter();
+
+        // Apply current filters
+        applyThreatFilters();
+
+    } catch (error) {
+        console.error('Error loading threats:', error);
+        const tbody = document.getElementById('threats-tbody-full');
+        tbody.innerHTML = '<tr><td colspan="8" class="text-center py-4 text-danger">Error loading threats</td></tr>';
+    }
+}
+
+// Populate agent filter dropdown with unique agents
+function populateAgentFilter() {
+    const agentFilter = document.getElementById('filter-agent');
+    if (!agentFilter) return;
+
+    const uniqueAgents = [...new Set(allThreats.map(t => t.agent_id).filter(a => a))];
+
+    agentFilter.innerHTML = '<option value="">All Agents</option>' +
+        uniqueAgents.map(agent => `<option value="${agent}">${agent}</option>`).join('');
+}
+
+// Apply threat filters (client-side)
+function applyThreatFilters() {
+    const filterAgent = document.getElementById('filter-agent')?.value || '';
+    const filterType = document.getElementById('filter-type')?.value || '';
+    const filterIP = document.getElementById('filter-ip')?.value.toLowerCase() || '';
+
+    // Filter threats
+    let filteredThreats = allThreats.filter(threat => {
+        const matchesAgent = !filterAgent || threat.agent_id === filterAgent;
+        const matchesType = !filterType || threat.event_type === filterType;
+        const matchesIP = !filterIP || (threat.ip && threat.ip.toLowerCase().includes(filterIP));
+
+        return matchesAgent && matchesType && matchesIP;
+    });
+
+    // Render filtered threats
+    renderThreats(filteredThreats);
+    updateFilterStatus(filteredThreats.length, allThreats.length);
+}
+
+// Render threats to table
+function renderThreats(threats) {
+    const tbody = document.getElementById('threats-tbody-full');
+
+    if (threats.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" class="text-center py-4 text-muted">No threats match the selected filters</td></tr>';
+        updateThreatCount(0);
+        return;
+    }
+
+    tbody.innerHTML = threats.map(threat => `
+        <tr>
+            <td>${formatTime(threat.timestamp)}</td>
+            <td><span class="ip-badge">${threat.ip}</span></td>
+            <td>${threat.country || 'Unknown'}</td>
+            <td>${threat.username || 'N/A'}</td>
+            <td><span class="badge bg-info text-dark" style="font-family: monospace; font-size: 0.75rem;">${threat.agent_id || 'Unknown'}</span></td>
+            <td><span class="badge ${threat.event_type === 'failed' ? 'bg-danger' : 'bg-success'}">${threat.event_type || 'failed'}</span></td>
+            <td><span class="threat-badge ${getRiskClass(threat.risk)}">${threat.risk}</span></td>
+            <td>
+                <button class="btn btn-sm btn-outline-primary" onclick="lookupIPDirect('${threat.ip}')">
+                    <i class="fas fa-search"></i>
+                </button>
+            </td>
+        </tr>
+    `).join('');
+
+    updateThreatCount(threats.length);
+}
+
+// Update threat count badge
+function updateThreatCount(count) {
+    const badge = document.getElementById('threats-count');
+    if (badge) {
+        badge.textContent = `${count} threat${count !== 1 ? 's' : ''}`;
+    }
+}
+
+// Update filter status message
+function updateFilterStatus(filtered, total) {
+    const status = document.getElementById('filter-status');
+    if (!status) return;
+
+    const filterAgent = document.getElementById('filter-agent')?.value || '';
+    const filterType = document.getElementById('filter-type')?.value || '';
+    const filterIP = document.getElementById('filter-ip')?.value || '';
+
+    const hasFilters = filterAgent || filterType || filterIP;
+
+    if (!hasFilters) {
+        status.textContent = `Showing all ${total} threats`;
+    } else {
+        const parts = [];
+        if (filterAgent) parts.push(`agent: ${filterAgent}`);
+        if (filterType) parts.push(`type: ${filterType}`);
+        if (filterIP) parts.push(`IP: ${filterIP}`);
+
+        status.textContent = `Filtered ${filtered} of ${total} threats (${parts.join(', ')})`;
+    }
+}
+
+// Clear all threat filters
+function clearThreatFilters() {
+    const filterAgent = document.getElementById('filter-agent');
+    const filterType = document.getElementById('filter-type');
+    const filterIP = document.getElementById('filter-ip');
+
+    if (filterAgent) filterAgent.value = '';
+    if (filterType) filterType.value = '';
+    if (filterIP) filterIP.value = '';
+
+    applyThreatFilters();
+}
+
+// Load Analytics Tab Data
+async function loadAnalyticsTab() {
+    loadTopIPs();
+    loadTopUsernames();
+    loadGeographicDistribution();
+}
+
+async function loadTopIPs() {
+    try {
+        const response = await fetch(`${API_BASE}/api/analytics/top-ips?limit=10`);
+        const data = await response.json();
+
+        const tbody = document.getElementById('top-ips-tbody');
+        if (!data.top_ips || data.top_ips.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center py-3 text-muted">No data available</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = data.top_ips.map((item, index) => `
+            <tr>
+                <td>
+                    <span class="badge bg-secondary me-2">#${index + 1}</span>
+                    <span class="ip-badge">${item.ip}</span>
+                </td>
+                <td>${item.country || 'Unknown'}</td>
+                <td><strong>${item.count}</strong></td>
+                <td><span class="threat-badge ${getRiskClass(item.avg_risk)}">${Math.round(item.avg_risk)}</span></td>
+            </tr>
+        `).join('');
+
+    } catch (error) {
+        console.error('Error loading top IPs:', error);
+        document.getElementById('top-ips-tbody').innerHTML = '<tr><td colspan="4" class="text-center text-danger">Error loading data</td></tr>';
+    }
+}
+
+async function loadTopUsernames() {
+    try {
+        const response = await fetch(`${API_BASE}/api/analytics/top-usernames?limit=10`);
+        const data = await response.json();
+
+        const tbody = document.getElementById('top-users-tbody');
+        if (!data.top_usernames || data.top_usernames.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center py-3 text-muted">No data available</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = data.top_usernames.map((item, index) => `
+            <tr>
+                <td>
+                    <span class="badge bg-secondary me-2">#${index + 1}</span>
+                    <code>${item.username}</code>
+                </td>
+                <td><strong>${item.count}</strong></td>
+                <td>${item.unique_ips || 0}</td>
+                <td>${item.success_rate ? (item.success_rate * 100).toFixed(1) : '0.0'}%</td>
+            </tr>
+        `).join('');
+
+    } catch (error) {
+        console.error('Error loading top usernames:', error);
+        document.getElementById('top-users-tbody').innerHTML = '<tr><td colspan="4" class="text-center text-danger">Error loading data</td></tr>';
+    }
+}
+
+async function loadGeographicDistribution() {
+    try {
+        const response = await fetch(`${API_BASE}/api/analytics/geographic?limit=15`);
+        const data = await response.json();
+
+        const tbody = document.getElementById('geo-dist-tbody');
+        if (!data.countries || data.countries.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="3" class="text-center py-3 text-muted">No data available</td></tr>';
+            return;
+        }
+
+        const total = data.countries.reduce((sum, item) => sum + item.count, 0);
+
+        tbody.innerHTML = data.countries.map(item => {
+            const percentage = ((item.count / total) * 100).toFixed(1);
+            return `
+                <tr>
+                    <td>${item.country || 'Unknown'}</td>
+                    <td><strong>${item.count}</strong></td>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="progress flex-grow-1" style="height: 20px;">
+                                <div class="progress-bar" style="width: ${percentage}%">${percentage}%</div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+
+    } catch (error) {
+        console.error('Error loading geographic distribution:', error);
+        document.getElementById('geo-dist-tbody').innerHTML = '<tr><td colspan="3" class="text-center text-danger">Error loading data</td></tr>';
+    }
 }

@@ -1,0 +1,45 @@
+{
+  "timestamp": "2025-12-04T05:00:51.425407",
+  "key": "shodan_185.220.101.45",
+  "data": {
+    "service": "shodan",
+    "ip_address": "185.220.101.45",
+    "hostnames": [
+      "tor-exit-45.for-privacy.net"
+    ],
+    "domains": [
+      "for-privacy.net"
+    ],
+    "location": {
+      "country": "Germany",
+      "country_code": "DE",
+      "city": "Berlin"
+    },
+    "organization": {
+      "name": "Network for Tor-Exit traffic.",
+      "isp": "Stiftung Erneuerbare Freiheit"
+    },
+    "open_ports": [
+      80
+    ],
+    "port_count": 1,
+    "services": [
+      {
+        "port": 80,
+        "transport": "tcp",
+        "product": "Tor built-in httpd",
+        "version": "",
+        "banner": "HTTP/1.0 200 OK\r\nDate: Wed, 03 Dec 2025 20:15:48 GMT\r\nContent-Type: text/html\r\nX-Your-Address-Is: 224.39.244.169\r\nContent-Encoding: identity\r\nContent-Length: 17550\r\nExpires: Wed, 03 Dec 2025 20:35:48 "
+      }
+    ],
+    "vulnerabilities": [],
+    "vulnerability_count": 0,
+    "tags": [],
+    "threat_score": 0,
+    "threat_indicators": [],
+    "is_threat": false,
+    "last_update": "2025-12-03T20:13:24.951989",
+    "os": null,
+    "asn": "AS60729"
+  }
+}

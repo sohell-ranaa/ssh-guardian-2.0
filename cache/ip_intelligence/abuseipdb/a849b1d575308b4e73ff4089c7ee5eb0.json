@@ -1,0 +1,131 @@
+{
+  "timestamp": "2025-12-04T07:22:56.363311",
+  "key": "abuseipdb_107.189.11.111_90",
+  "data": {
+    "service": "abuseipdb",
+    "ip_address": "107.189.11.111",
+    "is_public": true,
+    "ip_version": 4,
+    "is_whitelisted": false,
+    "abuse_confidence_score": 94,
+    "threat_score": 94,
+    "threat_level": "critical",
+    "is_threat": true,
+    "location": {
+      "country_code": "CH",
+      "country_name": "Switzerland"
+    },
+    "network_info": {
+      "usage_type": "Data Center/Web Hosting/Transit",
+      "isp": "BuyVM",
+      "domain": "frantech.ca"
+    },
+    "report_stats": {
+      "total_reports": 115,
+      "distinct_reporters": 44,
+      "last_reported_at": "2025-12-03T16:42:23+00:00"
+    },
+    "recent_reports": [
+      {
+        "reported_at": "2025-12-03T16:42:23+00:00",
+        "comment": "Try to access /xmlrpc.php",
+        "categories": [
+          21
+        ],
+        "reporter_id": 25736,
+        "reporter_country": "DE"
+      },
+      {
+        "reported_at": "2025-12-03T13:40:56+00:00",
+        "comment": "Coordinated attack",
+        "categories": [
+          13,
+          15
+        ],
+        "reporter_id": 60875,
+        "reporter_country": "SE"
+      },
+      {
+        "reported_at": "2025-12-02T03:06:00+00:00",
+        "comment": "Failed login attempt detected by Fail2Ban in plesk-modsecurity jail",
+        "categories": [
+          20
+        ],
+        "reporter_id": 120355,
+        "reporter_country": "DE"
+      },
+      {
+        "reported_at": "2025-12-02T03:05:35+00:00",
+        "comment": "Form spam",
+        "categories": [
+          10
+        ],
+        "reporter_id": 86372,
+        "reporter_country": "AU"
+      },
+      {
+        "reported_at": "2025-12-01T22:15:46+00:00",
+        "comment": "attack on webform",
+        "categories": [
+          18,
+          21
+        ],
+        "reporter_id": 162019,
+        "reporter_country": "DE"
+      },
+      {
+        "reported_at": "2025-12-01T16:59:45+00:00",
+        "comment": "Coordinated attack",
+        "categories": [
+          13,
+          15
+        ],
+        "reporter_id": 60875,
+        "reporter_country": "SE"
+      },
+      {
+        "reported_at": "2025-11-30T19:16:37+00:00",
+        "comment": "2025/11/30 20:16:36 [error] 30138#101464: *987157 access forbidden by rule, client: 107.189.11.111, server: new.hondaforum.hu, request: \"GET /topic/honda-szerviz/247551 HTTP/1.1\", host: \"new.hondaforu",
+        "categories": [
+          10
+        ],
+        "reporter_id": 47851,
+        "reporter_country": "DE"
+      },
+      {
+        "reported_at": "2025-11-30T13:04:49+00:00",
+        "comment": "attack on webform",
+        "categories": [
+          18,
+          21
+        ],
+        "reporter_id": 162019,
+        "reporter_country": "DE"
+      },
+      {
+        "reported_at": "2025-11-29T09:22:38+00:00",
+        "comment": "attack on webform",
+        "categories": [
+          18,
+          21
+        ],
+        "reporter_id": 162019,
+        "reporter_country": "DE"
+      },
+      {
+        "reported_at": "2025-11-28T08:20:04+00:00",
+        "comment": "attack on webform",
+        "categories": [
+          18,
+          21
+        ],
+        "reporter_id": 162019,
+        "reporter_country": "DE"
+      }
+    ],
+    "threat_indicators": [
+      "115 abuse reports from 44 users",
+      "Usage type: Data Center/Web Hosting/Transit"
+    ]
+  }
+}

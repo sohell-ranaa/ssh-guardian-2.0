@@ -1,0 +1,31 @@
+{
+  "timestamp": "2025-12-03T16:57:25.366176",
+  "key": "abuseipdb_103.236.168.25_90",
+  "data": {
+    "service": "abuseipdb",
+    "ip_address": "103.236.168.25",
+    "is_public": true,
+    "ip_version": 4,
+    "is_whitelisted": null,
+    "abuse_confidence_score": 0,
+    "threat_score": 0,
+    "threat_level": "clean",
+    "is_threat": false,
+    "location": {
+      "country_code": "IN",
+      "country_name": "India"
+    },
+    "network_info": {
+      "usage_type": null,
+      "isp": "Andhra Pradesh State FiberNet Limited",
+      "domain": "ap.gov.in"
+    },
+    "report_stats": {
+      "total_reports": 0,
+      "distinct_reporters": 0,
+      "last_reported_at": null
+    },
+    "recent_reports": [],
+    "threat_indicators": []
+  }
+}

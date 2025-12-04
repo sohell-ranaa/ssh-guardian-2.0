@@ -1,0 +1,31 @@
+{
+  "timestamp": "2025-12-03T17:00:04.743565",
+  "key": "abuseipdb_157.248.170.45_90",
+  "data": {
+    "service": "abuseipdb",
+    "ip_address": "157.248.170.45",
+    "is_public": true,
+    "ip_version": 4,
+    "is_whitelisted": null,
+    "abuse_confidence_score": 0,
+    "threat_score": 0,
+    "threat_level": "clean",
+    "is_threat": false,
+    "location": {
+      "country_code": "US",
+      "country_name": "United States of America"
+    },
+    "network_info": {
+      "usage_type": null,
+      "isp": "Sentry Insurance a Mutual Company",
+      "domain": "sentry.com"
+    },
+    "report_stats": {
+      "total_reports": 0,
+      "distinct_reporters": 0,
+      "last_reported_at": null
+    },
+    "recent_reports": [],
+    "threat_indicators": []
+  }
+}

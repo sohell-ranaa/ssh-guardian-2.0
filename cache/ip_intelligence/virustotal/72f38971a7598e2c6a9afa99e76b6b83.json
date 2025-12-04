@@ -1,0 +1,85 @@
+{
+  "timestamp": "2025-12-04T06:00:39.270957",
+  "key": "vt_107.175.228.153",
+  "data": {
+    "service": "virustotal",
+    "ip_address": "107.175.228.153",
+    "malicious_count": 9,
+    "suspicious_count": 3,
+    "harmless_count": 54,
+    "undetected_count": 29,
+    "total_scanners": 95,
+    "is_malicious": true,
+    "threat_score": 11.05,
+    "reputation": -2,
+    "network_info": {
+      "as_owner": "AS-COLOCROSSING",
+      "country": "US",
+      "network": "107.175.224.0/20"
+    },
+    "detections": [
+      {
+        "scanner": "Criminal IP",
+        "category": "malicious",
+        "result": "malicious"
+      },
+      {
+        "scanner": "alphaMountain.ai",
+        "category": "suspicious",
+        "result": "suspicious"
+      },
+      {
+        "scanner": "AlphaSOC",
+        "category": "suspicious",
+        "result": "suspicious"
+      },
+      {
+        "scanner": "CRDF",
+        "category": "malicious",
+        "result": "malicious"
+      },
+      {
+        "scanner": "Cyble",
+        "category": "malicious",
+        "result": "malicious"
+      },
+      {
+        "scanner": "CyRadar",
+        "category": "malicious",
+        "result": "malicious"
+      },
+      {
+        "scanner": "GreenSnow",
+        "category": "malicious",
+        "result": "malicious"
+      },
+      {
+        "scanner": "Gridinsoft",
+        "category": "suspicious",
+        "result": "suspicious"
+      },
+      {
+        "scanner": "IPsum",
+        "category": "malicious",
+        "result": "malicious"
+      },
+      {
+        "scanner": "Lionic",
+        "category": "malicious",
+        "result": "malicious"
+      }
+    ],
+    "total_votes": {
+      "harmless": 0,
+      "malicious": 2
+    },
+    "last_analysis_date": 1764450812,
+    "raw_stats": {
+      "malicious": 9,
+      "suspicious": 3,
+      "undetected": 29,
+      "harmless": 54,
+      "timeout": 0
+    }
+  }
+}
