@@ -30,6 +30,7 @@ import requests
 from auth import login_required, permission_required, SessionManager
 from auth_routes import auth_bp
 from multi_agent_api import multi_agent_bp
+from reports_api import reports_bp
 
 # Import simulation modules
 sys.path.append(str(PROJECT_ROOT / "src"))
@@ -83,6 +84,9 @@ app.register_blueprint(auth_bp)
 
 # Register multi-agent blueprint
 app.register_blueprint(multi_agent_bp)
+
+# Register reports blueprint
+app.register_blueprint(reports_bp)
 
 # Guardian API endpoint
 GUARDIAN_API = os.getenv('GUARDIAN_API_URL', 'http://localhost:5000')
@@ -740,57 +744,438 @@ def lookup_ip(ip):
 @app.route('/api/events/live')
 @login_required
 def get_live_events():
-    """Get most recent events for live stream"""
+    """
+    Get live events with comprehensive filtering and pagination
+
+    Query Parameters:
+    - limit (int): Events per page (default: 25, max: 100)
+    - offset (int): Pagination offset (default: 0)
+    - event_type (str): 'all', 'failed', 'successful' (default: 'all')
+    - risk_level (str): 'all', 'critical', 'high', 'medium', 'low' (default: 'all')
+    - ip_type (str): 'all', 'public', 'private' (default: 'all')
+    - agent_id (str): Filter by server_hostname (optional)
+    - search (str): Search IP or username (partial match, optional)
+    """
+    conn = None
+    cursor = None
     try:
-        limit = int(request.args.get('limit', 20))
-        since_id = request.args.get('since_id')
+        # Parse parameters
+        limit = min(int(request.args.get('limit', 25)), 100)
+        offset = int(request.args.get('offset', 0))
+        event_type = request.args.get('event_type', 'all')
+        risk_level = request.args.get('risk_level', 'all')
+        ip_type = request.args.get('ip_type', 'all')
+        agent_id = request.args.get('agent_id', '').strip()
+        search = request.args.get('search', '').strip()
+
+        # Build WHERE conditions
+        conditions = []
+        params = []
+
+        # Exclude simulations
+        conditions.append("(is_simulation = FALSE OR is_simulation IS NULL)")
+
+        # Risk level filter
+        if risk_level == 'critical':
+            conditions.append("ml_risk_score >= 80")
+        elif risk_level == 'high':
+            conditions.append("ml_risk_score >= 60 AND ml_risk_score < 80")
+        elif risk_level == 'medium':
+            conditions.append("ml_risk_score >= 40 AND ml_risk_score < 60")
+        elif risk_level == 'low':
+            conditions.append("ml_risk_score < 40")
+
+        # Agent filter
+        if agent_id:
+            conditions.append("server_hostname = %s")
+            params.append(agent_id)
+
+        # Search filter
+        if search:
+            conditions.append("(source_ip LIKE %s OR username LIKE %s)")
+            params.extend([f"%{search}%", f"%{search}%"])
+
+        where_clause = " AND ".join(conditions) if conditions else "1=1"
+
+        # Build queries
+        failed_query = f"""
+            SELECT
+                fl.id,
+                fl.timestamp,
+                fl.source_ip,
+                fl.username,
+                fl.server_hostname,
+                fl.port,
+                'failed' as event_type,
+                fl.failure_reason,
+                NULL as session_duration,
+                fl.country,
+                fl.city,
+                fl.latitude,
+                fl.longitude,
+                fl.ml_risk_score,
+                fl.ml_threat_type,
+                fl.ml_confidence,
+                fl.is_anomaly,
+                CASE
+                    WHEN fl.ml_risk_score >= 80 THEN 'critical'
+                    WHEN fl.ml_risk_score >= 60 THEN 'high'
+                    WHEN fl.ml_risk_score >= 40 THEN 'medium'
+                    ELSE 'low'
+                END as risk_level,
+                CASE
+                    WHEN fl.source_ip LIKE '192.168.%%'
+                        OR fl.source_ip LIKE '10.%%'
+                        OR fl.source_ip LIKE '172.16.%%'
+                        OR fl.source_ip LIKE '172.17.%%'
+                        OR fl.source_ip LIKE '172.18.%%'
+                        OR fl.source_ip LIKE '172.19.%%'
+                        OR fl.source_ip LIKE '172.20.%%'
+                        OR fl.source_ip LIKE '172.21.%%'
+                        OR fl.source_ip LIKE '172.22.%%'
+                        OR fl.source_ip LIKE '172.23.%%'
+                        OR fl.source_ip LIKE '172.24.%%'
+                        OR fl.source_ip LIKE '172.25.%%'
+                        OR fl.source_ip LIKE '172.26.%%'
+                        OR fl.source_ip LIKE '172.27.%%'
+                        OR fl.source_ip LIKE '172.28.%%'
+                        OR fl.source_ip LIKE '172.29.%%'
+                        OR fl.source_ip LIKE '172.30.%%'
+                        OR fl.source_ip LIKE '172.31.%%'
+                        OR fl.source_ip LIKE '127.%%'
+                    THEN FALSE
+                    ELSE TRUE
+                END as is_public_ip,
+                ib.is_active as is_blocked,
+                ib.block_reason,
+                ib.blocked_at
+            FROM failed_logins fl
+            LEFT JOIN ip_blocks ib ON fl.source_ip = ib.ip_address AND ib.is_active = TRUE
+            WHERE {where_clause}
+        """
+
+        successful_query = f"""
+            SELECT
+                sl.id,
+                sl.timestamp,
+                sl.source_ip,
+                sl.username,
+                sl.server_hostname,
+                sl.port,
+                'successful' as event_type,
+                NULL as failure_reason,
+                sl.session_duration,
+                sl.country,
+                sl.city,
+                sl.latitude,
+                sl.longitude,
+                sl.ml_risk_score,
+                sl.ml_threat_type,
+                sl.ml_confidence,
+                sl.is_anomaly,
+                CASE
+                    WHEN sl.ml_risk_score >= 80 THEN 'critical'
+                    WHEN sl.ml_risk_score >= 60 THEN 'high'
+                    WHEN sl.ml_risk_score >= 40 THEN 'medium'
+                    ELSE 'low'
+                END as risk_level,
+                CASE
+                    WHEN sl.source_ip LIKE '192.168.%%'
+                        OR sl.source_ip LIKE '10.%%'
+                        OR sl.source_ip LIKE '172.16.%%'
+                        OR sl.source_ip LIKE '172.17.%%'
+                        OR sl.source_ip LIKE '172.18.%%'
+                        OR sl.source_ip LIKE '172.19.%%'
+                        OR sl.source_ip LIKE '172.20.%%'
+                        OR sl.source_ip LIKE '172.21.%%'
+                        OR sl.source_ip LIKE '172.22.%%'
+                        OR sl.source_ip LIKE '172.23.%%'
+                        OR sl.source_ip LIKE '172.24.%%'
+                        OR sl.source_ip LIKE '172.25.%%'
+                        OR sl.source_ip LIKE '172.26.%%'
+                        OR sl.source_ip LIKE '172.27.%%'
+                        OR sl.source_ip LIKE '172.28.%%'
+                        OR sl.source_ip LIKE '172.29.%%'
+                        OR sl.source_ip LIKE '172.30.%%'
+                        OR sl.source_ip LIKE '172.31.%%'
+                        OR sl.source_ip LIKE '127.%%'
+                    THEN FALSE
+                    ELSE TRUE
+                END as is_public_ip,
+                ib.is_active as is_blocked,
+                ib.block_reason,
+                ib.blocked_at
+            FROM successful_logins sl
+            LEFT JOIN ip_blocks ib ON sl.source_ip = ib.ip_address AND ib.is_active = TRUE
+            WHERE {where_clause}
+        """
+
+        # Combine based on event_type filter
+        if event_type == 'failed':
+            main_query = failed_query
+            count_query = f"SELECT COUNT(*) as total FROM failed_logins fl WHERE {where_clause}"
+        elif event_type == 'successful':
+            main_query = successful_query
+            count_query = f"SELECT COUNT(*) as total FROM successful_logins sl WHERE {where_clause}"
+        else:
+            main_query = f"{failed_query} UNION ALL {successful_query}"
+            count_query = f"""
+                SELECT COUNT(*) as total FROM (
+                    SELECT id FROM failed_logins fl WHERE {where_clause}
+                    UNION ALL
+                    SELECT id FROM successful_logins sl WHERE {where_clause}
+                ) AS combined
+            """
+            params = params * 2  # Duplicate params for both queries
+
+        main_query += " ORDER BY timestamp DESC LIMIT %s OFFSET %s"
 
         conn = get_connection()
         cursor = conn.cursor(dictionary=True)
 
-        query = """
-            SELECT
-                id, timestamp, source_ip, username, country, city,
-                'failed' as event_type, ml_risk_score, ml_threat_type, is_anomaly
-            FROM failed_logins
-        """
+        # Get total count
+        cursor.execute(count_query, tuple(params) if params else ())
+        total = cursor.fetchone()['total']
 
-        params = []
-        if since_id:
-            query += " WHERE id > %s"
-            params.append(since_id)
-
-        query += """
-            UNION ALL
-            SELECT
-                id, timestamp, source_ip, username, country, city,
-                'successful' as event_type, ml_risk_score, ml_threat_type, is_anomaly
-            FROM successful_logins
-        """
-
-        if since_id:
-            query += " WHERE id > %s"
-            params.append(since_id)
-
-        query += " ORDER BY timestamp DESC LIMIT %s"
-        params.append(limit)
-
-        cursor.execute(query, params if params else (limit,))
+        # Get events
+        cursor.execute(main_query, tuple(params + [limit, offset]) if params else (limit, offset))
         events = cursor.fetchall()
 
-        # Convert datetime to string
+        # IP type filter (post-query filtering for flexibility)
+        if ip_type == 'public':
+            events = [e for e in events if e.get('is_public_ip')]
+        elif ip_type == 'private':
+            events = [e for e in events if not e.get('is_public_ip')]
+
+        # Convert datetime objects to ISO format
         for event in events:
-            if event['timestamp']:
+            if event.get('timestamp'):
                 event['timestamp'] = event['timestamp'].isoformat()
+            if event.get('blocked_at'):
+                event['blocked_at'] = event['blocked_at'].isoformat()
 
-        cursor.close()
-        conn.close()
+        # Calculate pagination
+        pages = (total + limit - 1) // limit if limit > 0 else 1
+        page = (offset // limit) + 1 if limit > 0 else 1
 
-        return jsonify(events)
+        return jsonify({
+            "success": True,
+            "events": events,
+            "total": total,
+            "page": page,
+            "pages": pages,
+            "limit": limit
+        })
 
     except Exception as e:
         print(f"Error in get_live_events: {e}")
-        return jsonify({'error': str(e)}), 500
+        import traceback
+        traceback.print_exc()
+        return jsonify({"success": False, "error": str(e)}), 500
+
+    finally:
+        if cursor:
+            try:
+                cursor.close()
+            except:
+                pass
+        if conn:
+            try:
+                conn.close()
+            except:
+                pass
+
+@app.route('/api/events/analytics/<ip_address>')
+@login_required
+def get_ip_analytics(ip_address):
+    """
+    Get detailed analytics for a specific IP address
+
+    Returns:
+    - Statistics: total attempts, success/fail counts, unique usernames, first/last seen
+    - ML Prediction: risk score, threat type, confidence, prediction category
+    - Block Information: block status, reason, timestamps
+    - Recent Activity: Last 50 events with details
+    - Location: country, city, coordinates
+    """
+    conn = None
+    cursor = None
+    try:
+        conn = get_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        # Get statistics from both tables
+        cursor.execute("""
+            SELECT
+                COUNT(*) as total_failed,
+                COUNT(DISTINCT username) as unique_usernames_failed,
+                MIN(timestamp) as first_seen_failed,
+                MAX(timestamp) as last_seen_failed,
+                AVG(ml_risk_score) as avg_risk_score,
+                MAX(ml_risk_score) as max_risk_score,
+                MAX(ml_threat_type) as threat_type,
+                MAX(ml_confidence) as confidence,
+                MAX(country) as country,
+                MAX(city) as city,
+                MAX(latitude) as latitude,
+                MAX(longitude) as longitude
+            FROM failed_logins
+            WHERE source_ip = %s AND (is_simulation = FALSE OR is_simulation IS NULL)
+        """, (ip_address,))
+        failed_stats = cursor.fetchone()
+
+        cursor.execute("""
+            SELECT
+                COUNT(*) as total_successful,
+                COUNT(DISTINCT username) as unique_usernames_success,
+                MIN(timestamp) as first_seen_success,
+                MAX(timestamp) as last_seen_success
+            FROM successful_logins
+            WHERE source_ip = %s AND (is_simulation = FALSE OR is_simulation IS NULL)
+        """, (ip_address,))
+        success_stats = cursor.fetchone()
+
+        # Get block information
+        cursor.execute("""
+            SELECT
+                is_active,
+                block_reason,
+                blocked_at,
+                unblock_at
+            FROM ip_blocks
+            WHERE ip_address = %s
+            ORDER BY blocked_at DESC
+            LIMIT 1
+        """, (ip_address,))
+        block_info = cursor.fetchone()
+
+        # Get recent activity (last 50 events)
+        cursor.execute("""
+            SELECT
+                timestamp,
+                'failed' as event_type,
+                username,
+                server_hostname,
+                port,
+                failure_reason,
+                NULL as session_duration,
+                ml_risk_score,
+                ml_threat_type,
+                is_anomaly
+            FROM failed_logins
+            WHERE source_ip = %s AND (is_simulation = FALSE OR is_simulation IS NULL)
+            UNION ALL
+            SELECT
+                timestamp,
+                'successful' as event_type,
+                username,
+                server_hostname,
+                port,
+                NULL as failure_reason,
+                session_duration,
+                ml_risk_score,
+                ml_threat_type,
+                is_anomaly
+            FROM successful_logins
+            WHERE source_ip = %s AND (is_simulation = FALSE OR is_simulation IS NULL)
+            ORDER BY timestamp DESC
+            LIMIT 50
+        """, (ip_address, ip_address))
+        recent_activity = cursor.fetchall()
+
+        # Convert datetime objects to ISO format
+        for event in recent_activity:
+            if event.get('timestamp'):
+                event['timestamp'] = event['timestamp'].isoformat()
+
+        # Calculate combined statistics
+        total_attempts = (failed_stats.get('total_failed') or 0) + (success_stats.get('total_successful') or 0)
+        total_failed = failed_stats.get('total_failed') or 0
+        total_successful = success_stats.get('total_successful') or 0
+
+        # Determine first and last seen across both tables
+        first_seen_dates = [d for d in [
+            failed_stats.get('first_seen_failed'),
+            success_stats.get('first_seen_success')
+        ] if d is not None]
+        last_seen_dates = [d for d in [
+            failed_stats.get('last_seen_failed'),
+            success_stats.get('last_seen_success')
+        ] if d is not None]
+
+        first_seen = min(first_seen_dates).isoformat() if first_seen_dates else None
+        last_seen = max(last_seen_dates).isoformat() if last_seen_dates else None
+
+        # ML Prediction
+        risk_score = failed_stats.get('avg_risk_score') or 0
+        threat_type = failed_stats.get('threat_type') or 'unknown'
+        confidence = failed_stats.get('confidence') or 0
+
+        # Categorize prediction
+        if risk_score >= 70:
+            prediction = 'threat'
+        elif risk_score >= 40:
+            prediction = 'suspicious'
+        else:
+            prediction = 'clean'
+
+        # Build response
+        analytics = {
+            'ip_address': ip_address,
+            'statistics': {
+                'total_attempts': total_attempts,
+                'total_failed': total_failed,
+                'total_successful': total_successful,
+                'unique_usernames': max(
+                    failed_stats.get('unique_usernames_failed') or 0,
+                    success_stats.get('unique_usernames_success') or 0
+                ),
+                'first_seen': first_seen,
+                'last_seen': last_seen
+            },
+            'ml_prediction': {
+                'risk_score': round(risk_score, 2),
+                'threat_type': threat_type,
+                'confidence': round(confidence, 2),
+                'prediction': prediction
+            },
+            'block_info': {
+                'is_blocked': block_info.get('is_active') if block_info else False,
+                'block_reason': block_info.get('block_reason') if block_info else None,
+                'blocked_at': block_info.get('blocked_at').isoformat() if block_info and block_info.get('blocked_at') else None,
+                'unblock_at': block_info.get('unblock_at').isoformat() if block_info and block_info.get('unblock_at') else None
+            },
+            'location': {
+                'country': failed_stats.get('country'),
+                'city': failed_stats.get('city'),
+                'latitude': failed_stats.get('latitude'),
+                'longitude': failed_stats.get('longitude')
+            },
+            'recent_activity': recent_activity
+        }
+
+        return jsonify({
+            'success': True,
+            'analytics': analytics
+        })
+
+    except Exception as e:
+        print(f"Error in get_ip_analytics: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+    finally:
+        if cursor:
+            try:
+                cursor.close()
+            except:
+                pass
+        if conn:
+            try:
+                conn.close()
+            except:
+                pass
 
 @app.route('/api/admin/whitelist', methods=['GET', 'POST', 'DELETE'])
 @permission_required('manage_blocks')

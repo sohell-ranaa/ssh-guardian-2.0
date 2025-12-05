@@ -1,0 +1,70 @@
+{
+  "timestamp": "2025-12-04T09:30:57.830917",
+  "key": "vt_45.225.236.255",
+  "data": {
+    "service": "virustotal",
+    "ip_address": "45.225.236.255",
+    "malicious_count": 3,
+    "suspicious_count": 4,
+    "harmless_count": 58,
+    "undetected_count": 30,
+    "total_scanners": 95,
+    "is_malicious": true,
+    "threat_score": 5.26,
+    "reputation": 0,
+    "network_info": {
+      "as_owner": "DIRECT WIFI TELECOM LTDA",
+      "country": "BR",
+      "network": "45.225.236.0/22"
+    },
+    "detections": [
+      {
+        "scanner": "Criminal IP",
+        "category": "malicious",
+        "result": "malicious"
+      },
+      {
+        "scanner": "AlphaSOC",
+        "category": "suspicious",
+        "result": "suspicious"
+      },
+      {
+        "scanner": "CyRadar",
+        "category": "suspicious",
+        "result": "suspicious"
+      },
+      {
+        "scanner": "Fortinet",
+        "category": "malicious",
+        "result": "malware"
+      },
+      {
+        "scanner": "Gridinsoft",
+        "category": "suspicious",
+        "result": "suspicious"
+      },
+      {
+        "scanner": "MalwareURL",
+        "category": "malicious",
+        "result": "malware"
+      },
+      {
+        "scanner": "SOCRadar",
+        "category": "suspicious",
+        "result": "suspicious"
+      }
+    ],
+    "total_votes": {
+      "harmless": 0,
+      "malicious": 0
+    },
+    "last_analysis_date": 1763590669,
+    "raw_stats": {
+      "malicious": 3,
+      "suspicious": 4,
+      "undetected": 30,
+      "harmless": 58,
+      "timeout": 0
+    }
+  }
+}

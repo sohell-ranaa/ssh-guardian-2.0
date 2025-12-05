@@ -304,5 +304,23 @@
     "unblock_at": "2025-12-11T07:50:17.021381",
     "duration_hours": 168,
     "manual": false
+  },
+  "45.225.236.255": {
+    "ip": "45.225.236.255",
+    "reason": "[SIMULATION] ",
+    "threat_level": "critical",
+    "blocked_at": "2025-12-04T09:30:56.067796",
+    "unblock_at": "2025-12-11T09:30:56.067796",
+    "duration_hours": 168,
+    "manual": false
+  },
+  "89.147.110.82": {
+    "ip": "89.147.110.82",
+    "reason": "[SIMULATION] Suspicious username: root",
+    "threat_level": "critical",
+    "blocked_at": "2025-12-04T09:34:46.962894",
+    "unblock_at": "2025-12-11T09:34:46.962894",
+    "duration_hours": 168,
+    "manual": false
   }
 }

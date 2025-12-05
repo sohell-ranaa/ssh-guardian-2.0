@@ -69,7 +69,9 @@ function switchTab(tabName) {
             loadRecentThreats(50);
             break;
         case 'live-stream':
-            loadLiveEvents();
+            if (typeof initializeLiveStream === 'function') {
+                initializeLiveStream();
+            }
             break;
         case 'ip-management':
             loadBlockedIPs();
@@ -81,6 +83,11 @@ function switchTab(tabName) {
         case 'ml-analytics':
             if (typeof loadMLAnalytics === 'function') {
                 loadMLAnalytics();
+            }
+            break;
+        case 'reports-daily':
+            if (typeof initializeDailyReports === 'function') {
+                initializeDailyReports();
             }
             break;
         case 'simulation':

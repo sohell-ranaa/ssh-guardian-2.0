@@ -1985,6 +1985,9 @@
 
     <!-- Multi-Agent Dashboard Styles -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/multi-agent.css') }}">
+
+    <!-- Live Stream Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/live-stream.css') }}">
 </head>
 <body>
     <!-- Hamburger Menu Button (Mobile Only) -->
@@ -2022,6 +2025,10 @@
             <a class="nav-link" href="#" data-tab="ml-analytics">
                 <i class="fas fa-brain"></i>
                 <span>ML Efficiency</span>
+            </a>
+            <a class="nav-link" href="#" data-tab="reports-daily">
+                <i class="fas fa-file-alt"></i>
+                <span>Daily Reports</span>
             </a>
             <a class="nav-link" href="#" data-tab="simulation" id="nav-simulation" style="display: none;">
                 <i class="fas fa-vial"></i>
@@ -2175,26 +2182,167 @@
         <!-- Live Stream Tab -->
         <div class="tab-content-panel" id="live-stream-tab">
             <div class="page-header">
-                <h1>Live Event Stream</h1>
-                <p class="text-muted mb-0">Real-time SSH authentication events</p>
+                <h1><i class="fas fa-stream"></i> Live Event Stream</h1>
+                <p class="text-muted mb-0">Real-time SSH authentication events with ML analysis</p>
             </div>
 
-            <div class="card-panel">
-                <div class="card-header-custom">
-                    <h5 class="card-title"><i class="fas fa-stream"></i> Recent Events</h5>
-                    <div class="action-buttons">
-                        <button class="btn btn-sm btn-success" onclick="toggleAutoRefresh()">
-                            <i class="fas fa-play" id="auto-refresh-icon"></i> <span id="auto-refresh-text">Start Auto-Refresh</span>
-                        </button>
-                        <button class="btn btn-sm btn-outline-secondary" onclick="loadLiveEvents()">
-                            <i class="fas fa-sync"></i> Refresh Now
-                        </button>
+            <!-- Mini Stats Row -->
+            <div class="row g-3 mb-3">
+                <div class="col-md-3">
+                    <div class="stat-card-mini">
+                        <div class="stat-mini-icon" style="background: linear-gradient(135deg, #0078D4 0%, #106EBE 100%);">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-mini-content">
+                            <div class="stat-mini-label">Last 24 Hours</div>
+                            <div class="stat-mini-value" id="stat-total-24h">-</div>
+                        </div>
                     </div>
                 </div>
-                <div class="event-stream" id="live-events">
-                    <div class="text-center py-5">
-                        <i class="fas fa-stream fa-3x text-muted mb-3"></i>
-                        <p class="text-muted">Click "Start Auto-Refresh" to begin streaming events</p>
+                <div class="col-md-3">
+                    <div class="stat-card-mini">
+                        <div class="stat-mini-icon" style="background: linear-gradient(135deg, #E74856 0%, #C42B1C 100%);">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
+                        <div class="stat-mini-content">
+                            <div class="stat-mini-label">Failed</div>
+                            <div class="stat-mini-value" id="stat-failed">-</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card-mini">
+                        <div class="stat-mini-icon" style="background: linear-gradient(135deg, #F59100 0%, #D87000 100%);">
+                            <i class="fas fa-ban"></i>
+                        </div>
+                        <div class="stat-mini-content">
+                            <div class="stat-mini-label">Blocked</div>
+                            <div class="stat-mini-value" id="stat-blocked">-</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card-mini">
+                        <div class="stat-mini-icon" style="background: linear-gradient(135deg, #D13438 0%, #A4262C 100%);">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="stat-mini-content">
+                            <div class="stat-mini-label">High Risk</div>
+                            <div class="stat-mini-value" id="stat-high-risk">-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filters and Controls Card -->
+            <div class="card-panel mb-3">
+                <div class="card-header-custom">
+                    <h5 class="card-title"><i class="fas fa-filter"></i> Filters & Controls</h5>
+                </div>
+                <div class="p-3">
+                    <div class="row g-3">
+                        <div class="col-md-2">
+                            <label class="form-label fw-bold" style="font-size: 0.85rem;">Event Type</label>
+                            <select id="event-filter" class="form-select form-select-sm">
+                                <option value="all">All Events</option>
+                                <option value="failed">Failed Only</option>
+                                <option value="successful">Successful Only</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-bold" style="font-size: 0.85rem;">Risk Level</label>
+                            <select id="risk-filter" class="form-select form-select-sm">
+                                <option value="all">All Levels</option>
+                                <option value="critical">Critical</option>
+                                <option value="high">High</option>
+                                <option value="medium">Medium</option>
+                                <option value="low">Low</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-bold" style="font-size: 0.85rem;">IP Type</label>
+                            <select id="ip-type-filter" class="form-select form-select-sm">
+                                <option value="all">All IPs</option>
+                                <option value="public">Public Only</option>
+                                <option value="private">Private Only</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold" style="font-size: 0.85rem;">Search IP/Username</label>
+                            <input type="text" id="search-box" class="form-control form-control-sm" placeholder="Search...">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold" style="font-size: 0.85rem;">&nbsp;</label>
+                            <div class="d-flex gap-2">
+                                <button id="refresh-toggle-btn" class="btn btn-sm btn-outline-success flex-fill">
+                                    <i class="fas fa-play" id="refresh-toggle-icon"></i> <span id="refresh-toggle-text">Auto</span>
+                                </button>
+                                <button onclick="loadRecentEvents()" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-sync"></i>
+                                </button>
+                                <button id="export-csv-btn" class="btn btn-sm btn-success">
+                                    <i class="fas fa-download"></i> CSV
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Events Table Card -->
+            <div class="card-panel">
+                <div class="card-header-custom">
+                    <h5 class="card-title"><i class="fas fa-table"></i> Recent Events</h5>
+                    <span class="badge bg-primary" style="font-size: 0.9rem;" id="page-info">Page 1 of 1</span>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover table-sm mb-0">
+                        <thead style="background: #F3F2F1; position: sticky; top: 0; z-index: 10;">
+                            <tr>
+                                <th style="width: 120px;">Time</th>
+                                <th style="width: 90px;">Event</th>
+                                <th style="width: 140px;">Source IP</th>
+                                <th style="width: 120px;">Username</th>
+                                <th style="width: 150px;">Location</th>
+                                <th style="width: 80px;">Risk</th>
+                                <th style="width: 110px;">ML Pred</th>
+                                <th style="width: 90px;">Status</th>
+                                <th style="width: 120px;">Server</th>
+                                <th style="width: 60px;">Port</th>
+                                <th style="width: 180px;">Detail</th>
+                                <th style="width: 120px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="events-tbody">
+                            <tr>
+                                <td colspan="12" class="text-center py-4">
+                                    <div class="loading-spinner"></div>
+                                    <div class="mt-2 text-muted">Loading events...</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination Footer -->
+                <div class="card-footer-custom">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <select id="per-page" class="form-select form-select-sm d-inline-block" style="width: auto;">
+                                <option value="25" selected>25</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                            <span class="small text-muted ms-2">events per page</span>
+                        </div>
+                        <div>
+                            <button id="prev-page" class="btn btn-sm btn-outline-secondary" disabled>
+                                <i class="fas fa-chevron-left"></i> Previous
+                            </button>
+                            <button id="next-page" class="btn btn-sm btn-outline-secondary ms-2" disabled>
+                                Next <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -2965,6 +3113,194 @@
                 </div>
             </div>
         </div>
+
+        <!-- Daily Reports Tab -->
+        <div class="tab-content-panel" id="reports-daily-tab">
+            <div class="page-header">
+                <div class="d-flex justify-content-between align-items-center flex-wrap">
+                    <div>
+                        <h1><i class="fas fa-file-alt text-primary"></i> Daily Security Report</h1>
+                        <p class="text-muted mb-0">Comprehensive daily security analysis and statistics</p>
+                    </div>
+                    <div class="d-flex gap-2 align-items-center mt-2 mt-md-0">
+                        <input type="date" id="report-date-picker" class="form-control form-control-sm"
+                               onchange="onReportDateChange(this.value)" style="width: auto;">
+                        <button class="btn btn-sm btn-outline-primary" onclick="loadDailyReport()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                        <button class="btn btn-sm btn-success" onclick="exportDailyReport()">
+                            <i class="fas fa-download"></i> Export CSV
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="printDailyReport()">
+                            <i class="fas fa-print"></i> Print
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Date Selection -->
+            <div class="card-panel mb-3">
+                <div class="d-flex align-items-center flex-wrap gap-2">
+                    <span class="text-muted me-2"><i class="fas fa-calendar-alt"></i> Quick select:</span>
+                    <div id="available-dates-list">
+                        <div class="loading-spinner-inline"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Summary Cards -->
+            <div class="row g-3 mb-4" id="report-summary-cards">
+                <div class="col-12 text-center py-4">
+                    <div class="loading-spinner"></div>
+                    <div class="mt-2 text-muted">Loading report data...</div>
+                </div>
+            </div>
+
+            <!-- Day-over-Day Comparison -->
+            <div class="card-panel mb-4">
+                <div class="card-header-custom">
+                    <h5 class="card-title"><i class="fas fa-exchange-alt"></i> Day-over-Day Comparison</h5>
+                </div>
+                <div class="row g-3" id="comparison-container">
+                    <div class="col-12 text-center py-4">
+                        <div class="loading-spinner"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="row g-4 mb-4">
+                <!-- Hourly Breakdown Chart -->
+                <div class="col-lg-8">
+                    <div class="card-panel h-100">
+                        <div class="card-header-custom">
+                            <h5 class="card-title"><i class="fas fa-chart-area"></i> Hourly Activity</h5>
+                        </div>
+                        <div style="height: 300px;">
+                            <canvas id="hourly-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Threat Types Chart -->
+                <div class="col-lg-4">
+                    <div class="card-panel h-100">
+                        <div class="card-header-custom">
+                            <h5 class="card-title"><i class="fas fa-shield-virus"></i> Threat Types</h5>
+                        </div>
+                        <div style="height: 300px;">
+                            <canvas id="threat-types-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Tables Row -->
+            <div class="row g-4 mb-4">
+                <!-- Top Threats Table -->
+                <div class="col-lg-8">
+                    <div class="card-panel">
+                        <div class="card-header-custom">
+                            <h5 class="card-title"><i class="fas fa-skull-crossbones text-danger"></i> Top Threat IPs</h5>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>IP Address</th>
+                                        <th>Location</th>
+                                        <th>Attempts</th>
+                                        <th>Usernames</th>
+                                        <th>Max Risk</th>
+                                        <th>Type</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="top-threats-tbody">
+                                    <tr>
+                                        <td colspan="7" class="text-center py-4">
+                                            <div class="loading-spinner"></div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Targeted Usernames -->
+                <div class="col-lg-4">
+                    <div class="card-panel">
+                        <div class="card-header-custom">
+                            <h5 class="card-title"><i class="fas fa-user-shield"></i> Targeted Usernames</h5>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Username</th>
+                                        <th>Attempts</th>
+                                        <th>IPs</th>
+                                        <th>Risk</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usernames-tbody">
+                                    <tr>
+                                        <td colspan="4" class="text-center py-4">
+                                            <div class="loading-spinner"></div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Geographic Breakdown Row -->
+            <div class="row g-4">
+                <!-- Geographic Chart -->
+                <div class="col-lg-5">
+                    <div class="card-panel h-100">
+                        <div class="card-header-custom">
+                            <h5 class="card-title"><i class="fas fa-globe-americas"></i> Attack Origins</h5>
+                        </div>
+                        <div style="height: 300px;">
+                            <canvas id="geo-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Geographic Table -->
+                <div class="col-lg-7">
+                    <div class="card-panel h-100">
+                        <div class="card-header-custom">
+                            <h5 class="card-title"><i class="fas fa-map-marked-alt"></i> Countries Breakdown</h5>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Country</th>
+                                        <th>Attempts</th>
+                                        <th>Unique IPs</th>
+                                        <th>Anomalies</th>
+                                        <th>Avg Risk</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="geo-table-tbody">
+                                    <tr>
+                                        <td colspan="5" class="text-center py-4">
+                                            <div class="loading-spinner"></div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Modals -->
@@ -3314,11 +3650,39 @@
         });
     </script>
 
+    <!-- Live Stream Analytics Modal -->
+    <div class="modal fade" id="analyticsModal" tabindex="-1" aria-labelledby="analyticsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header" style="background: linear-gradient(135deg, #0078D4 0%, #106EBE 100%); color: white;">
+                    <h5 class="modal-title" id="analyticsModalLabel">
+                        <i class="fas fa-chart-line me-2"></i>
+                        IP Analytics & Intelligence: <code id="modal-ip" style="color: #FFE699;"></code>
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="modal-body-content">
+                    <div class="text-center py-5">
+                        <div class="loading-spinner"></div>
+                        <div class="mt-2">Loading analytics...</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times"></i> Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Custom JavaScript -->
     <script src="/static/js/multi-agent.js"></script>
     <script src="/static/js/enhanced-dashboard.js?v=2.5"></script>
     <script src="/static/js/ip-intelligence.js"></script>
     <script src="/static/js/simulation.js?v=3.0"></script>
     <script src="/static/js/ml-analytics.js"></script>
+    <script src="/static/js/reports-daily.js?v=1.0"></script>
+    <script src="/static/js/live-stream.js?v=2.1"></script>
 </body>
 </html>

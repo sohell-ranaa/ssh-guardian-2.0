@@ -1,0 +1,139 @@
+{
+  "timestamp": "2025-12-04T09:30:58.885661",
+  "key": "abuseipdb_45.225.236.255_90",
+  "data": {
+    "service": "abuseipdb",
+    "ip_address": "45.225.236.255",
+    "is_public": true,
+    "ip_version": 4,
+    "is_whitelisted": false,
+    "abuse_confidence_score": 100,
+    "threat_score": 100,
+    "threat_level": "critical",
+    "is_threat": true,
+    "location": {
+      "country_code": "BR",
+      "country_name": "Brazil"
+    },
+    "network_info": {
+      "usage_type": "Fixed Line ISP",
+      "isp": "DIRECT WIFI TELECOM LTDA",
+      "domain": "directwifi.com.br",
+      "hostnames": [
+        "45-225-236-255.directwifi.com.br"
+      ],
+      "tor": false
+    },
+    "report_stats": {
+      "total_reports": 658,
+      "distinct_reporters": 36,
+      "last_reported_at": "2025-12-03T20:10:30+00:00"
+    },
+    "recent_reports": [
+      {
+        "reported_at": "2025-12-03T19:54:58+00:00",
+        "comment": "Invalid user migrationlabs from 45.225.236.255 port 38360",
+        "categories": [
+          18,
+          22
+        ],
+        "reporter_id": 88899,
+        "reporter_country": "DE"
+      },
+      {
+        "reported_at": "2025-12-03T11:09:34+00:00",
+        "comment": "Dec  3 12:02:26 odin sshd[32643]: Failed password for root from 45.225.236.255 port 53710 ssh2\nDec  3 12:06:31 odin sshd[1210]: Failed password for root from 45.225.236.255 port 39894 ssh2",
+        "categories": [
+          18,
+          22
+        ],
+        "reporter_id": 51418,
+        "reporter_country": "NL"
+      },
+      {
+        "reported_at": "2025-12-03T11:01:05+00:00",
+        "comment": "Invalid user ibrichter from 45.225.236.255 port 40060",
+        "categories": [
+          18,
+          22
+        ],
+        "reporter_id": 16068,
+        "reporter_country": "DE"
+      },
+      {
+        "reported_at": "2025-12-03T11:00:18+00:00",
+        "comment": "Failed password for root Dec 03 11:02:05 port 51278",
+        "categories": [
+          18,
+          22
+        ],
+        "reporter_id": 140783,
+        "reporter_country": "FR"
+      },
+      {
+        "reported_at": "2025-12-03T09:59:04+00:00",
+        "comment": "Automated abuse report by SpeedIT Security Team",
+        "categories": [
+          18,
+          20,
+          22
+        ],
+        "reporter_id": 77159,
+        "reporter_country": "DE"
+      },
+      {
+        "reported_at": "2025-12-03T07:40:27+00:00",
+        "comment": "Dec  3 08:31:14 odin sshd[14252]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=45.225.236.255 \nDec  3 08:31:17 odin sshd[14252]: Failed password for invalid ",
+        "categories": [
+          18,
+          22
+        ],
+        "reporter_id": 51418,
+        "reporter_country": "NL"
+      },
+      {
+        "reported_at": "2025-12-03T07:27:52+00:00",
+        "comment": "SSH login attempt with user jkhorvath",
+        "categories": [
+          18,
+          22
+        ],
+        "reporter_id": 156675,
+        "reporter_country": "US"
+      },
+      {
+        "reported_at": "2025-12-03T07:00:17+00:00",
+        "comment": "Failed password for root Dec 03 05:00:12 port 36168",
+        "categories": [
+          18,
+          22
+        ],
+        "reporter_id": 140783,
+        "reporter_country": "FR"
+      },
+      {
+        "reported_at": "2025-12-03T06:58:08+00:00",
+        "comment": "Dec  3 00:58:03 mailman sshd[12207]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=45.225.236.255\nDec  3 00:58:05 mailman sshd[12207]: Failed password for inv",
+        "categories": [
+          18,
+          22
+        ],
+        "reporter_id": 10374,
+        "reporter_country": "US"
+      },
+      {
+        "reported_at": "2025-12-03T06:46:34+00:00",
+        "comment": "$f2bV_matches",
+        "categories": [
+          18
+        ],
+        "reporter_id": 29444,
+        "reporter_country": "FR"
+      }
+    ],
+    "threat_indicators": [
+      "658 abuse reports from 36 users",
+      "Usage type: Fixed Line ISP"
+    ]
+  }
+}

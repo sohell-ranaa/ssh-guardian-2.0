@@ -1,0 +1,4 @@
+now what i want:
+i want to follow the same design pattern and concept for live stream menu.
+
+here i want to see recent events in a table format with all available information in the db in a clean nice format. there should be an action button with icon. one to look for database and ML related analytics in a modal windows with prediction, action taken, ip blocked information etc list of previous attempt and activities etc. there should be a button for public IP's to lok for more information through 3rd party APIs on demand. if someone click then  the lower section of modal will expand and those information will be showed. if private ip then the button/icon for 3rd party api will stay disabled. follow design pattern of simulation page. make a plan first. 
